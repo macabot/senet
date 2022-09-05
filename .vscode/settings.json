@@ -1,5 +1,10 @@
 {
-    "gopls": {
-        "build.experimentalWorkspaceModule": true
+    "go.toolsEnvVars": {
+        "GOARCH": "wasm",
+        "GOOS": "js",
     },
+    "go.testEnvVars": {
+        "GOARCH": "wasm",
+        "GOOS": "js",
+    }
 }

@@ -29,7 +29,6 @@ func Board(board model.Board) *hypp.VNode {
 			})
 			i++
 		}
-
 	}
 	return html.Main(
 		hypp.HProps{

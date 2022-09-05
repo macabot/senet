@@ -15,15 +15,22 @@ type PieceProps struct {
 }
 
 func Piece(props PieceProps) *hypp.VNode {
-	return html.Button(
+	return html.Div(
 		hypp.HProps{
 			"class": []string{
-				"piece",
+				"piece-wrapper",
 				fmt.Sprintf("row-%d", props.Position[0]),
 				fmt.Sprintf("column-%d", props.Position[1]),
-				fmt.Sprintf("player-%d", props.Player),
 			},
-			"disabled": !props.CanSelect,
 		},
+		html.Button(
+			hypp.HProps{
+				"class": []string{
+					"piece",
+					fmt.Sprintf("player-%d", props.Player),
+				},
+				"disabled": !props.CanSelect,
+			},
+		),
 	)
 }
