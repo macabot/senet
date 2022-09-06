@@ -4,6 +4,10 @@
 *.dll
 *.so
 *.dylib
+*.wasm
+
+# Go version specific files
+wasm_exec.js
 
 # Test binary, built with `go test -c`
 *.test

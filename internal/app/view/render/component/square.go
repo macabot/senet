@@ -14,28 +14,36 @@ type SquareProps struct {
 	Highlighted bool
 }
 
-var iconToClass = map[model.Icon]string{
-	model.Foo: "foo",
-	model.Bar: "bar",
-	model.Pit: "pit",
-	model.Buz: "buz",
+var iconToLabel = map[model.Icon]string{
+	model.Two:   "II",
+	model.Three: "III",
+	model.Cross: "☓",
+	model.Ankh:  "☥",
 }
 
 func Square(props SquareProps) *hypp.VNode {
-	classes := map[string]bool{
-		"square":                                 true,
-		"selected":                               props.Selected,
-		"highlighted":                            props.Highlighted,
-		fmt.Sprintf("row-%d", props.Position[0]): true,
-		fmt.Sprintf("column-%d", props.Position[1]): true,
-	}
+	var text *hypp.VNode
 	if icon, ok := model.SpecialPositions[props.Position]; ok {
-		classes[iconToClass[icon]] = true
+		text = hypp.Text(iconToLabel[icon])
 	}
-	return html.Button(
+	return html.Div(
 		hypp.HProps{
-			"class":    classes,
-			"disabled": !props.Highlighted,
+			"class": map[string]bool{
+				"square":                                    true,
+				fmt.Sprintf("row-%d", props.Position[0]):    true,
+				fmt.Sprintf("column-%d", props.Position[1]): true,
+			},
 		},
+		html.Button(
+			hypp.HProps{
+				"class": map[string]bool{
+					"inner-square": true,
+					"selected":     props.Selected,
+					"highlighted":  props.Highlighted,
+				},
+				"disabled": !props.Highlighted,
+			},
+			text,
+		),
 	)
 }

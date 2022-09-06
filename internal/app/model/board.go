@@ -14,17 +14,17 @@ type Board struct {
 type Icon int
 
 const (
-	Foo Icon = iota // TODO rename
-	Bar
-	Pit
-	Buz
+	Two Icon = iota
+	Three
+	Cross
+	Ankh
 )
 
 var SpecialPositions = map[Position]Icon{
-	{0, 1}: Foo,
-	{0, 2}: Bar,
-	{0, 3}: Pit,
-	{0, 4}: Buz,
+	{0, 1}: Two,
+	{0, 2}: Three,
+	{0, 3}: Cross,
+	{0, 4}: Ankh,
 }
 
 func NewBoard() Board {
