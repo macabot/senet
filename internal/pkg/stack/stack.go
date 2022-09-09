@@ -8,8 +8,8 @@ func NewStack[T any](values ...T) *Stack[T] {
 	return &Stack[T]{values: values}
 }
 
-func (s *Stack[T]) Push(v T) {
-	s.values = append(s.values, v)
+func (s *Stack[T]) Push(values ...T) {
+	s.values = append(s.values, values...)
 }
 
 func (s *Stack[T]) Pop() T {

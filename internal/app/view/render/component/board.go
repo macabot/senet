@@ -16,6 +16,8 @@ func Board(board model.Board) *hypp.VNode {
 				Position:    position,
 				Selected:    board.Selected != nil && *board.Selected == position,
 				Highlighted: board.Highlighted.Has(position),
+				Protected:   board.IsProtected(position),
+				Blocking:    board.IsBlocking(position),
 			})
 			i++
 		}

@@ -42,6 +42,8 @@ func Square(props SquareProps) *hypp.VNode {
 					"inner-square": true,
 					"selected":     props.Selected,
 					"highlighted":  props.Highlighted,
+					"protected":    props.Protected,
+					"blocking":     props.Blocking,
 				},
 				"disabled": !props.Highlighted,
 			},

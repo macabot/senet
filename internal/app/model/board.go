@@ -1,8 +1,35 @@
 package model
 
-import "github.com/macabot/senet/internal/pkg/set"
+import (
+	"errors"
 
-type Position [2]int
+	"github.com/macabot/senet/internal/pkg/set"
+	"github.com/macabot/senet/internal/pkg/stack"
+)
+
+type Position [2]int // [Row, Column]
+
+func (p Position) Move(steps int) Position {
+	row, column := p
+	rowsUp := steps / 10
+	remainder := steps % 10
+	row -= rowsUp
+
+
+	rowsUp := steps / 20
+	row := p[0] - rowsUp
+	remainder := steps % 20
+	moveLeft := row % 2 == 0
+	oppositeSteps := steps < 0
+	if moveLeft == oppositeSteps {
+		//    on row that moves left and steps to right
+		// or on row that moves right and steps to right
+		if p[1] + remainder
+	} else {
+		//    on row that moves left and steps to left
+		// or on row that oves right and steps to left
+	}
+}
 
 type Board struct {
 	Pieces      [2]set.Set[Position]
@@ -70,16 +97,22 @@ func (b Board) Neighbours(position Position) []Position {
 	return neighbours
 }
 
+func (b Board) piecesForPosition(position Position) set.Set[Position] {
+	if b.Pieces[0].Has(position) {
+		return b.Pieces[0]
+	} else if b.Pieces[1].Has(position) {
+		return b.Pieces[1]
+	} else {
+		return nil
+	}
+}
+
 func (b Board) IsProtected(position Position) bool {
 	if special, ok := SpecialPositions[position]; ok && special.Protects {
 		return true
 	}
-	var pieces set.Set[Position]
-	if b.Pieces[0].Has(position) {
-		pieces = b.Pieces[0]
-	} else if b.Pieces[1].Has(position) {
-		pieces = b.Pieces[1]
-	} else {
+	pieces := b.piecesForPosition(position)
+	if pieces == nil {
 		return false
 	}
 	neighbours := b.Neighbours(position)
@@ -89,4 +122,39 @@ func (b Board) IsProtected(position Position) bool {
 		}
 	}
 	return false
+}
+
+func (b Board) IsBlocking(position Position) bool {
+	pieces := b.piecesForPosition(position)
+	if pieces == nil {
+		return false
+	}
+	toSee := stack.NewStack(position)
+	seen := set.Set[Position]{}
+	for toSee.Len() > 0 {
+		current := toSee.Pop()
+		seen.Add(current)
+		neighbours := b.Neighbours(current)
+		for _, neighbour := range neighbours {
+			if seen.Has(neighbour) {
+				continue
+			}
+			if pieces.Has(position) {
+				toSee.Push(position)
+			}
+		}
+	}
+	return len(seen) >= 3
+}
+
+var (
+	ErrPieceNotFound = errors.New("piece not found")
+)
+
+func (b *Board) Move(from Position, steps int) error {
+	pieces := b.piecesForPosition(from)
+	if pieces == nil {
+		return ErrPieceNotFound
+	}
+
 }
