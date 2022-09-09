@@ -34,10 +34,10 @@ func BoardTale() *fairy.Tale {
 			[]fairy.SelectOption[int]{
 				{Label: "New game", Value: 0},
 				{Label: "P1- Protecting", Value: 1},
-				{Label: "P2 - Protecting", Vaue: 2},
+				{Label: "P2 - Protecting", Value: 2},
 				{Label: "P1 - Blocking", Value: 3},
 				{Label: "P2 - Blocking", Value: 4},
-			}
-		)
+			},
+		),
 	)
 }

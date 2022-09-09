@@ -21,3 +21,15 @@ func (s Set[T]) Has(v T) bool {
 func (s Set[T]) Add(v T) {
 	s[v] = struct{}{}
 }
+
+func (s Set[T]) Equal(other Set[T]) bool {
+	if len(s) != len(other) {
+		return false
+	}
+	for x := range s {
+		if !other.Has(x) {
+			return false
+		}
+	}
+	return true
+}

@@ -10,25 +10,31 @@ import (
 type Position [2]int // [Row, Column]
 
 func (p Position) Move(steps int) Position {
-	row, column := p
-	rowsUp := steps / 10
-	remainder := steps % 10
-	row -= rowsUp
+	row, column := p[0], p[1]
 
-
-	rowsUp := steps / 20
-	row := p[0] - rowsUp
-	remainder := steps % 20
-	moveLeft := row % 2 == 0
-	oppositeSteps := steps < 0
-	if moveLeft == oppositeSteps {
-		//    on row that moves left and steps to right
-		// or on row that moves right and steps to right
-		if p[1] + remainder
+	var sign int
+	if steps >= 0 {
+		sign = 1
 	} else {
-		//    on row that moves left and steps to left
-		// or on row that oves right and steps to left
+		sign = -1
 	}
+
+	for ; steps*sign > 0; steps -= sign {
+		if row%2 == 0 {
+			column -= sign
+		} else {
+			column += sign
+		}
+		if column < 0 {
+			row -= sign
+			column = 0
+		} else if column > 9 {
+			row -= sign
+			column = 9
+		}
+	}
+
+	return Position{row, column}
 }
 
 type Board struct {
@@ -80,19 +86,19 @@ func NewBoard() Board {
 	}
 }
 
-func (b Board) Neighbours(position Position) []Position {
-	var neighbours []Position
+func (b Board) Neighbours(position Position) set.Set[Position] {
+	neighbours := set.Set[Position]{}
 	if position[0] > 0 {
-		neighbours = append(neighbours, Position{position[0] - 1, position[1]})
+		neighbours.Add(Position{position[0] - 1, position[1]})
 	}
 	if position[0] < 2 {
-		neighbours = append(neighbours, Position{position[0] + 1, position[1]})
+		neighbours.Add(Position{position[0] + 1, position[1]})
 	}
 	if position[1] > 0 {
-		neighbours = append(neighbours, Position{position[0], position[1] - 1})
+		neighbours.Add(Position{position[0], position[1] - 1})
 	}
-	if position[1] < 2 {
-		neighbours = append(neighbours, Position{position[0], position[1] + 1})
+	if position[1] < 9 {
+		neighbours.Add(Position{position[0], position[1] + 1})
 	}
 	return neighbours
 }
@@ -116,7 +122,7 @@ func (b Board) IsProtected(position Position) bool {
 		return false
 	}
 	neighbours := b.Neighbours(position)
-	for _, neighbour := range neighbours {
+	for neighbour := range neighbours {
 		if pieces.Has(neighbour) {
 			return true
 		}
@@ -135,7 +141,7 @@ func (b Board) IsBlocking(position Position) bool {
 		current := toSee.Pop()
 		seen.Add(current)
 		neighbours := b.Neighbours(current)
-		for _, neighbour := range neighbours {
+		for neighbour := range neighbours {
 			if seen.Has(neighbour) {
 				continue
 			}
@@ -151,10 +157,10 @@ var (
 	ErrPieceNotFound = errors.New("piece not found")
 )
 
-func (b *Board) Move(from Position, steps int) error {
-	pieces := b.piecesForPosition(from)
-	if pieces == nil {
-		return ErrPieceNotFound
-	}
+// func (b *Board) Move(from Position, steps int) error {
+// 	pieces := b.piecesForPosition(from)
+// 	if pieces == nil {
+// 		return ErrPieceNotFound
+// 	}
 
-}
+// }
