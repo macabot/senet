@@ -12,6 +12,8 @@ type SquareProps struct {
 	Position    model.Position
 	Selected    bool
 	Highlighted bool
+	Protected   bool
+	Blocking    bool
 }
 
 var iconToLabel = map[model.Icon]string{
@@ -23,8 +25,8 @@ var iconToLabel = map[model.Icon]string{
 
 func Square(props SquareProps) *hypp.VNode {
 	var text *hypp.VNode
-	if icon, ok := model.SpecialPositions[props.Position]; ok {
-		text = hypp.Text(iconToLabel[icon])
+	if special, ok := model.SpecialPositions[props.Position]; ok {
+		text = hypp.Text(iconToLabel[special.Icon])
 	}
 	return html.Div(
 		hypp.HProps{
