@@ -43,3 +43,29 @@ func TestBoardNeighbours(t *testing.T) {
 		).Equal(model.Board{}.Neighbours(model.Position{2, 9})),
 	)
 }
+
+func TestBoardMove(t *testing.T) {
+	board := model.NewBoard()
+	board.Move(model.Position{2, 0}, 1)
+	assert.True(t, board.Pieces[0].Has(model.Position{1, 0}))
+	assert.False(t, board.Pieces[1].Has(model.Position{1, 0}))
+	assert.False(t, board.Pieces[0].Has(model.Position{2, 0}))
+	assert.False(t, board.Pieces[1].Has(model.Position{2, 0}))
+
+	board = model.NewBoard()
+	board.Move(model.Position{2, 3}, 4)
+	board.Move(model.Position{2, 5}, 7)
+	assert.False(t, board.Pieces[1].Has(model.Position{2, 3}))
+	assert.False(t, board.Pieces[1].Has(model.Position{2, 5}))
+	assert.True(t, board.Pieces[1].Has(model.Position{1, 0}))
+	assert.True(t, board.Pieces[1].Has(model.Position{1, 1}))
+}
+
+func TestBoardIsBlocking(t *testing.T) {
+	board := model.NewBoard()
+	board.Move(model.Position{2, 2}, 3)
+	board.Move(model.Position{2, 4}, 24)
+	assert.True(t, board.IsBlocking(model.Position{0, 0}))
+	assert.True(t, board.IsBlocking(model.Position{1, 0}))
+	assert.True(t, board.IsBlocking(model.Position{2, 0}))
+}

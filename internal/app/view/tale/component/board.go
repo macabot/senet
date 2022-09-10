@@ -4,31 +4,41 @@ import (
 	"github.com/macabot/fairytale/fairy"
 	"github.com/macabot/senet/internal/app/model"
 	"github.com/macabot/senet/internal/app/view/render/component"
+	"github.com/macabot/senet/internal/app/view/state"
 )
 
 func BoardTale() *fairy.Tale {
 	configuration := 0
 	return fairy.NewTale(
 		"Board",
-		model.NewBoard(),
+		component.BoardProps{
+			Board: model.NewBoard(),
+			Meta:  state.Meta{},
+		},
 		component.Board,
 	).WithControls(
 		fairy.NewSelectControl(
 			"Configuration",
-			func(board model.Board, option int) model.Board {
+			func(props component.BoardProps, option int) component.BoardProps {
 				configuration = option
+				props.Board = model.NewBoard()
 				switch option {
 				case 0:
-					board = model.NewBoard()
+					// no-op
 				case 1:
-
+					props.Board.Move(model.Position{2, 2}, 3)
 				case 2:
+					props.Board.Move(model.Position{2, 3}, 5)
 				case 3:
+					props.Board.Move(model.Position{2, 2}, 3)
+					props.Board.Move(model.Position{2, 4}, 6)
 				case 4:
+					props.Board.Move(model.Position{2, 3}, 4)
+					props.Board.Move(model.Position{2, 5}, 7)
 				}
-				return board
+				return props
 			},
-			func(props model.Board) int {
+			func(_ component.BoardProps) int {
 				return configuration
 			},
 			[]fairy.SelectOption[int]{
