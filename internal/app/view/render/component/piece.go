@@ -9,7 +9,7 @@ import (
 )
 
 type PieceProps struct {
-	Position  model.Position
+	Piece     *model.Piece
 	Player    int
 	CanSelect bool
 }
@@ -19,8 +19,8 @@ func Piece(props PieceProps) *hypp.VNode {
 		hypp.HProps{
 			"class": []string{
 				"piece-wrapper",
-				fmt.Sprintf("row-%d", props.Position[0]),
-				fmt.Sprintf("column-%d", props.Position[1]),
+				fmt.Sprintf("row-%d", props.Piece.Position[0]),
+				fmt.Sprintf("column-%d", props.Piece.Position[1]),
 			},
 		},
 		html.Button(

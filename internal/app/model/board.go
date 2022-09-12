@@ -71,14 +71,51 @@ var SpecialPositions = map[Position]SpecialPosition{
 }
 
 type Piece struct {
-	ID int
+	ID       int
+	Position Position
 }
 
-type Pieces map[Position]Piece
+type Pieces []*Piece
 
 func (p Pieces) Has(position Position) bool {
-	_, ok := p[position]
-	return ok
+	return p.Find(position) != nil
+}
+
+func (p Pieces) FindIndex(position Position) int {
+	for i, piece := range p {
+		if piece.Position == position {
+			return i
+		}
+	}
+	return -1
+}
+
+func (p Pieces) Find(position Position) *Piece {
+	index := p.FindIndex(position)
+	if index == -1 {
+		return nil
+	}
+	return p[index]
+}
+
+func (p *Pieces) Add(piece *Piece) {
+	index := 0
+	for i, otherPiece := range *p {
+		if piece.ID > otherPiece.ID {
+			break
+		}
+		index = i
+	}
+	*p = append((*p)[:index+1], (*p)[index:]...)
+	(*p)[index] = piece
+}
+
+func (p *Pieces) Delete(position Position) {
+	index := p.FindIndex(position)
+	if index == -1 {
+		return
+	}
+	*p = append((*p)[:index], (*p)[index+1:]...)
 }
 
 type Board struct {
@@ -90,18 +127,18 @@ func NewBoard() Board {
 	return Board{
 		Pieces: [2]Pieces{
 			{
-				Position{2, 0}: {ID: 1},
-				Position{2, 2}: {ID: 2},
-				Position{2, 4}: {ID: 3},
-				Position{2, 6}: {ID: 4},
-				Position{2, 8}: {ID: 5},
+				{ID: 1, Position: Position{2, 0}},
+				{ID: 2, Position: Position{2, 2}},
+				{ID: 3, Position: Position{2, 4}},
+				{ID: 4, Position: Position{2, 6}},
+				{ID: 5, Position: Position{2, 8}},
 			},
 			{
-				Position{2, 1}: {ID: 6},
-				Position{2, 3}: {ID: 7},
-				Position{2, 5}: {ID: 8},
-				Position{2, 7}: {ID: 9},
-				Position{2, 9}: {ID: 10},
+				{ID: 6, Position: Position{2, 1}},
+				{ID: 7, Position: Position{2, 3}},
+				{ID: 8, Position: Position{2, 5}},
+				{ID: 9, Position: Position{2, 7}},
+				{ID: 10, Position: Position{2, 9}},
 			},
 		},
 	}
@@ -144,7 +181,7 @@ func (b Board) IsProtected(position Position) bool {
 	}
 	neighbours := b.Neighbours(position)
 	for neighbour := range neighbours {
-		if _, ok := pieces[neighbour]; ok {
+		if pieces.Has(neighbour) {
 			return true
 		}
 	}
@@ -184,28 +221,29 @@ func (b Board) IsBlocking(position Position) bool {
 func (b *Board) Move(from Position, steps int) {
 	var pieces Pieces
 	var otherPieces Pieces
-	if b.Pieces[0].Has(from) {
+	var piece *Piece
+	if piece = b.Pieces[0].Find(from); piece != nil {
 		pieces = b.Pieces[0]
 		otherPieces = b.Pieces[1]
-	} else if b.Pieces[1].Has(from) {
+	} else if piece = b.Pieces[1].Find(from); piece != nil {
 		pieces = b.Pieces[1]
 		otherPieces = b.Pieces[0]
 	} else {
 		return
 	}
+
 	to := from.Move(steps)
+	if pieces.Has(to) {
+		return
+	}
 	if to == (Position{0, 3}) {
 		for to = (Position{2, 9}); b.Pieces[0].Has(to) || b.Pieces[1].Has(to); to = to.Next() {
 			// no-op
 		}
 	}
-	if pieces.Has(to) {
-		return
-	}
-	pieces[to] = pieces[from]
-	delete(pieces, from)
-	if otherPieces.Has(to) {
-		otherPieces[from] = otherPieces[to]
-		delete(otherPieces, to)
+	piece.Position = to
+
+	if otherPiece := otherPieces.Find(to); otherPiece != nil {
+		otherPiece.Position = from
 	}
 }

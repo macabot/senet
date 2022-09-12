@@ -36,10 +36,10 @@ func Board(props BoardProps) *hypp.VNode {
 		}
 	}
 	for player, pieces := range board.Pieces {
-		for piecePosition, piece := range pieces {
+		for _, piece := range pieces {
 			children[i] = hoc.With(
 				Piece(PieceProps{
-					Position:  piecePosition,
+					Piece:     piece,
 					Player:    player,
 					CanSelect: player == board.You,
 				}),
