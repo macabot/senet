@@ -12,6 +12,7 @@ type PieceProps struct {
 	Piece     *model.Piece
 	Player    int
 	CanSelect bool
+	Moving    bool
 }
 
 func Piece(props PieceProps) *hypp.VNode {
@@ -25,9 +26,10 @@ func Piece(props PieceProps) *hypp.VNode {
 		},
 		html.Button(
 			hypp.HProps{
-				"class": []string{
-					"piece",
-					fmt.Sprintf("player-%d", props.Player),
+				"class": map[string]bool{
+					"piece":                                true,
+					fmt.Sprintf("player-%d", props.Player): true,
+					"moving":                               props.Moving,
 				},
 				"disabled": !props.CanSelect,
 			},

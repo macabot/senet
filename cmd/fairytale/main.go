@@ -13,6 +13,7 @@ func main() {
 			fairy.NewBranch(
 				"Components",
 				component.BoardTale(),
+				component.PieceTale(),
 			),
 		),
 		[]*hypp.VNode{

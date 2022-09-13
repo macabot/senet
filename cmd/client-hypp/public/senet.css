@@ -98,6 +98,10 @@ html {
     box-shadow: 0 0 10px #000000;
 }
 
+.piece:not(:disabled) {
+    cursor: pointer;
+}
+
 .piece.player-0 {
     background: rgb(204,255,253);
     background: radial-gradient(ellipse at 10% 20%, rgba(204,255,253,1) 0%, rgba(86,122,121,1) 100%);
