@@ -14,6 +14,7 @@ func main() {
 				"Components",
 				component.BoardTale(),
 				component.PieceTale(),
+				component.StickTale(),
 			),
 		),
 		[]*hypp.VNode{

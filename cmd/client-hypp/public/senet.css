@@ -122,3 +122,17 @@ html {
     animation-name: moving;
     animation-duration: 1s;
 }
+
+.stick {
+    width: 40%;
+    aspect-ratio: 5 / 1;
+    box-shadow: 0 0 10px #000000;
+    background: rgb(100,100,100);
+    background: linear-gradient(180deg, rgb(100, 100, 100) 0%, rgb(25, 25, 25) 100%);
+    border-radius: 10px;
+}
+
+.stick.up {
+    background: rgb(232,232,232);
+    background: linear-gradient(180deg, rgba(232,232,232,1) 0%, rgba(189,189,189,1) 100%);
+}
