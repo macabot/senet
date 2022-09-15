@@ -136,3 +136,11 @@ html {
     background: rgb(232,232,232);
     background: linear-gradient(180deg, rgba(232,232,232,1) 0%, rgba(189,189,189,1) 100%);
 }
+
+.sticks {
+    width: 100%;
+    aspect-ratio: 10 / 3;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
