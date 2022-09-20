@@ -8,16 +8,16 @@ import (
 func StickTale() *fairy.Tale {
 	return fairy.NewTale(
 		"Stick",
-		false,
+		0,
 		component.Stick,
 	).WithControls(
-		fairy.NewCheckboxControl(
-			"Up",
-			func(_ bool, up bool) bool {
-				return up
+		fairy.NewNumberInputControl(
+			"Flips",
+			func(_ int, flips int) int {
+				return flips
 			},
-			func(up bool) bool {
-				return up
+			func(flips int) int {
+				return flips
 			},
 		),
 	)

@@ -1,146 +1,196 @@
 html {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-*, *:before, *:after {
-    box-sizing: inherit;
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
 .board {
-    width: 100%;
-    aspect-ratio: 10 / 3;
-    background-color: #fdd978;
-    border: 5px solid #fdd978;
-    border-radius: 20px;
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    position: relative;
+  width: 100%;
+  aspect-ratio: 10 / 3;
+  background-color: #fdd978;
+  border: 5px solid #fdd978;
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  position: relative;
 }
 
 .square {
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .inner-square {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    background-color: #605542;
-    border: none;
-    margin: 5px;
-    border-radius: 10px;
-    box-shadow: inset 0 0 10px #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: black;
-    font-size: 3rem;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #605542;
+  border: none;
+  margin: 5px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 3rem;
 }
 
 .piece-wrapper {
-    width: 10%;
-    aspect-ratio: 1 / 1;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: top 1s, left 1s;
+  width: 10%;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top 1s, left 1s;
 }
 
 .row-0 {
-    top: calc(100% * 0/3);
+  top: calc(100% * 0 / 3);
 }
 .row-1 {
-    top: calc(100% * 1/3);
+  top: calc(100% * 1 / 3);
 }
 .row-2 {
-    top: calc(100% * 2/3);
+  top: calc(100% * 2 / 3);
 }
 
 .column-0 {
-    left: calc(100% * 0/10);
+  left: calc(100% * 0 / 10);
 }
 .column-1 {
-    left: calc(100% * 1/10);
+  left: calc(100% * 1 / 10);
 }
 .column-2 {
-    left: calc(100% * 2/10);
+  left: calc(100% * 2 / 10);
 }
 .column-3 {
-    left: calc(100% * 3/10);
+  left: calc(100% * 3 / 10);
 }
-.column-4{
-    left: calc(100% * 4/10);
+.column-4 {
+  left: calc(100% * 4 / 10);
 }
 .column-5 {
-    left: calc(100% * 5/10);
+  left: calc(100% * 5 / 10);
 }
 .column-6 {
-    left: calc(100% * 6/10);
+  left: calc(100% * 6 / 10);
 }
 .column-7 {
-    left: calc(100% * 7/10);
+  left: calc(100% * 7 / 10);
 }
 .column-8 {
-    left: calc(100% * 8/10);
+  left: calc(100% * 8 / 10);
 }
 .column-9 {
-    left: calc(100% * 9/10);
+  left: calc(100% * 9 / 10);
 }
 
 .piece {
-    width: 80%;
-    aspect-ratio: 1 / 1;
-    border: none;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #000000;
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #000000;
 }
 
 .piece:not(:disabled) {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .piece.player-0 {
-    background: rgb(204,255,253);
-    background: radial-gradient(ellipse at 10% 20%, rgba(204,255,253,1) 0%, rgba(86,122,121,1) 100%);
+  background: rgb(204, 255, 253);
+  background: radial-gradient(
+    ellipse at 10% 20%,
+    rgba(204, 255, 253, 1) 0%,
+    rgba(86, 122, 121, 1) 100%
+  );
 }
 
 .piece.player-1 {
-    background: rgb(248,206,204);
-    background: radial-gradient(ellipse at 10% 20%, rgba(248,206,204,1) 0%, rgba(110,47,59,1) 100%);
+  background: rgb(248, 206, 204);
+  background: radial-gradient(
+    ellipse at 10% 20%,
+    rgba(248, 206, 204, 1) 0%,
+    rgba(110, 47, 59, 1) 100%
+  );
 }
 
 @keyframes moving {
-    0% {transform: scale(1);}
-    50% {transform: scale(1.3);}
-    100% {transform: scale(1);}
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .piece.moving {
-    animation-name: moving;
-    animation-duration: 1s;
+  animation-name: moving;
+  animation-duration: 1s;
 }
 
+/* Based on https://www.w3schools.com/howto/howto_css_flip_card.asp */
 .stick {
-    width: 40%;
-    aspect-ratio: 5 / 1;
-    box-shadow: 0 0 10px #000000;
-    background: rgb(100,100,100);
-    background: linear-gradient(180deg, rgb(100, 100, 100) 0%, rgb(25, 25, 25) 100%);
-    border-radius: 10px;
+  background-color: transparent;
+  width: 90%;
+  aspect-ratio: 5 / 1;
+  perspective: 1000px;
 }
 
-.stick.up {
-    background: rgb(232,232,232);
-    background: linear-gradient(180deg, rgba(232,232,232,1) 0%, rgba(189,189,189,1) 100%);
+.stick-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s;
+  transition-timing-function: cubic-bezier(0.42, -0.4, 0.46, 1.4);
+  transform-style: preserve-3d;
+}
+
+.stick-front,
+.stick-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000000;
+}
+
+.stick-front {
+  background: rgb(100, 100, 100);
+  background: linear-gradient(
+      180deg,
+      rgb(100, 100, 100) 0%,
+      rgb(25, 25, 25) 100%
+  );
+}
+
+.stick-back {
+  background: rgb(232, 232, 232);
+  background: linear-gradient(
+    180deg,
+    rgba(232, 232, 232, 1) 0%,
+    rgba(189, 189, 189, 1) 100%
+  );
+  transform: rotateY(180deg);
 }
 
 .sticks {
-    width: 100%;
-    aspect-ratio: 10 / 3;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+  width: 100%;
+  aspect-ratio: 10 / 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  place-items: center;
 }

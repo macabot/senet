@@ -5,7 +5,7 @@ import (
 	"github.com/macabot/hypp/tag/html"
 )
 
-func Sticks(sticks [4]bool) *hypp.VNode {
+func Sticks(sticks [4]int) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": "sticks",
