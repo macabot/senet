@@ -97,7 +97,7 @@ html {
   aspect-ratio: 1 / 1;
   border: none;
   border-radius: 50%;
-  box-shadow: 0 0 10px #000000;
+  box-shadow: 0 0 5px #000000;
 }
 
 .piece:not(:disabled) {
