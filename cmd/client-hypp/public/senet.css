@@ -145,15 +145,17 @@ html {
   width: 90%;
   aspect-ratio: 5 / 1;
   perspective: 1000px;
+  position: relative;
 }
 
 .stick-inner {
-  position: relative;
+  position: absolute;
   width: 100%;
   height: 100%;
   transition: transform 1s;
   transition-timing-function: cubic-bezier(0.42, -0.4, 0.46, 1.4);
   transform-style: preserve-3d;
+  opacity: 0.1;
 }
 
 .stick-front,
@@ -164,6 +166,9 @@ html {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   border-radius: 10px;
+}
+
+.stick-inner:first-child .stick-front {
   box-shadow: 0 0 10px #000000;
 }
 
@@ -193,4 +198,69 @@ html {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   place-items: center;
+}
+
+/* Based on https://css-tricks.com/how-to-create-a-realistic-motion-blur-with-css-transitions/ */
+.delay-0 {
+  transition-delay: 0ms;
+}
+.delay-1 {
+  transition-delay: 3ms;
+}
+.delay-2 {
+  transition-delay: 6ms;
+}
+.delay-3 {
+  transition-delay: 9ms;
+}
+.delay-4 {
+  transition-delay: 12ms;
+}
+.delay-5 {
+  transition-delay: 15ms;
+}
+.delay-6 {
+  transition-delay: 18ms;
+}
+.delay-7 {
+  transition-delay: 21ms;
+}
+.delay-8 {
+  transition-delay: 24ms;
+}
+.delay-9 {
+  transition-delay: 27ms;
+}
+.delay-10 {
+  transition-delay: 30ms;
+}
+.delay-11 {
+  transition-delay: 33ms;
+}
+.delay-12 {
+  transition-delay: 36ms;
+}
+.delay-13 {
+  transition-delay: 39ms;
+}
+.delay-14 {
+  transition-delay: 42ms;
+}
+.delay-15 {
+  transition-delay: 45ms;
+}
+.delay-16 {
+  transition-delay: 48ms;
+}
+.delay-17 {
+  transition-delay: 51ms;
+}
+.delay-18 {
+  transition-delay: 54ms;
+}
+.delay-19 {
+  transition-delay: 57ms;
+}
+.delay-20 {
+  transition-delay: 60ms;
 }
