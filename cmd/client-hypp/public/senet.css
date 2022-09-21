@@ -14,8 +14,8 @@ html {
   border: 5px solid #fdd978;
   border-radius: 20px;
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   position: relative;
 }
 
