@@ -155,7 +155,7 @@ html {
   transition: transform 1s;
   transition-timing-function: cubic-bezier(0.42, -0.4, 0.46, 1.4);
   transform-style: preserve-3d;
-  opacity: 0.1;
+
 }
 
 .stick-front,
@@ -166,6 +166,7 @@ html {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   border-radius: 10px;
+  opacity: 0.1;
 }
 
 .stick-inner:first-child .stick-front {
@@ -184,9 +185,9 @@ html {
 .stick-back {
   background: rgb(232, 232, 232);
   background: linear-gradient(
-    180deg,
-    rgba(232, 232, 232, 1) 0%,
-    rgba(189, 189, 189, 1) 100%
+    0deg,
+    rgb(232, 232, 232) 0%,
+    rgb(189, 189, 189) 100%
   );
   transform: rotateY(180deg);
 }
