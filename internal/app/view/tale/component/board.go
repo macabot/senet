@@ -49,5 +49,19 @@ func BoardTale() *fairy.Tale {
 				{Label: "P2 - Blocking", Value: 4},
 			},
 		),
+		fairy.NewSelectControl(
+			"Player",
+			func(props component.BoardProps, you int) component.BoardProps {
+				props.Board.You = you
+				return props
+			},
+			func(props component.BoardProps) int {
+				return props.Board.You
+			},
+			[]fairy.SelectOption[int]{
+				{Label: "Player 1", Value: 0},
+				{Label: "Player 2", Value: 1},
+			},
+		),
 	)
 }

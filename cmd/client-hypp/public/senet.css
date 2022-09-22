@@ -113,6 +113,10 @@ html {
   );
 }
 
+.piece.player-0:not(:disabled) {
+  animation: player-0-pulse 2s infinite;
+}
+
 .piece.player-1 {
   background: rgb(248, 206, 204);
   background: radial-gradient(
@@ -120,6 +124,10 @@ html {
     rgba(248, 206, 204, 1) 0%,
     rgba(110, 47, 59, 1) 100%
   );
+}
+
+.piece.player-1:not(:disabled) {
+  animation: player-1-pulse 2s infinite;
 }
 
 @keyframes moving {
@@ -131,6 +139,40 @@ html {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes player-0-pulse {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 0 rgba(204, 255, 253, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(204, 255, 253, 0);
+  }
+
+  100% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 0 rgba(204, 255, 253, 0);
+  }
+}
+
+@keyframes player-1-pulse {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 0 rgba(248, 206, 204, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(248, 206, 204, 0);
+  }
+
+  100% {
+    transform: scale(0.98);
+    box-shadow: 0 0 0 0 rgba(248, 206, 204, 0);
   }
 }
 
