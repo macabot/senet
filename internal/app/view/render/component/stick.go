@@ -15,7 +15,7 @@ func Stick(flips int) *hypp.VNode {
 	}
 	return html.Div(
 		hypp.HProps{
-			"class": "stick",
+			"class": "stick-container",
 		},
 		children...,
 	)
@@ -24,20 +24,25 @@ func Stick(flips int) *hypp.VNode {
 func innerStick(flips int, i int) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
-			"class": []string{"stick-inner", fmt.Sprintf("delay-%d", i)},
-			"style": map[string]string{
-				"transform": fmt.Sprintf("rotateX(%ddeg)", 180*flips),
-			},
+			"class": "stick",
 		},
 		html.Div(
 			hypp.HProps{
-				"class": "stick-front",
+				"class": []string{"stick-inner", fmt.Sprintf("delay-%d", i)},
+				"style": map[string]string{
+					"transform": fmt.Sprintf("rotateX(%ddeg)", 180*flips),
+				},
 			},
-		),
-		html.Div(
-			hypp.HProps{
-				"class": "stick-back",
-			},
+			html.Div(
+				hypp.HProps{
+					"class": "stick-front",
+				},
+			),
+			html.Div(
+				hypp.HProps{
+					"class": "stick-back",
+				},
+			),
 		),
 	)
 }
