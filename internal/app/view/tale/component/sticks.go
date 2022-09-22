@@ -25,18 +25,34 @@ func flipStick(flips int) int {
 func SticksTale() *fairy.Tale {
 	return fairy.NewTale(
 		"Sticks",
-		[4]int{0, 0, 0, 0},
+		component.SticksProps{
+			Sticks:   [4]int{0, 0, 0, 0},
+			CanThrow: true,
+		},
 		component.Sticks,
 	).WithControls(
 		fairy.NewButtonControl(
 			"Throw",
-			func(sticks [4]int) [4]int {
-				return [4]int{
-					flipStick(sticks[0]),
-					flipStick(sticks[1]),
-					flipStick(sticks[2]),
-					flipStick(sticks[3]),
+			func(props component.SticksProps) component.SticksProps {
+				return component.SticksProps{
+					Sticks: [4]int{
+						flipStick(props.Sticks[0]),
+						flipStick(props.Sticks[1]),
+						flipStick(props.Sticks[2]),
+						flipStick(props.Sticks[3]),
+					},
+					CanThrow: false,
 				}
+			},
+		),
+		fairy.NewCheckboxControl(
+			"CanThrow",
+			func(props component.SticksProps, canThrow bool) component.SticksProps {
+				props.CanThrow = canThrow
+				return props
+			},
+			func(props component.SticksProps) bool {
+				return props.CanThrow
 			},
 		),
 	)

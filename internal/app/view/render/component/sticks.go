@@ -5,14 +5,29 @@ import (
 	"github.com/macabot/hypp/tag/html"
 )
 
-func Sticks(sticks [4]int) *hypp.VNode {
+type SticksProps struct {
+	Sticks   [4]int
+	CanThrow bool
+}
+
+func Sticks(props SticksProps) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": "sticks",
 		},
-		Stick(sticks[0]),
-		Stick(sticks[1]),
-		Stick(sticks[2]),
-		Stick(sticks[3]),
+		Stick(props.Sticks[0]),
+		Stick(props.Sticks[1]),
+		Stick(props.Sticks[2]),
+		Stick(props.Sticks[3]),
+		throwButton(!props.CanThrow),
+	)
+}
+
+func throwButton(disabled bool) *hypp.VNode {
+	return html.Button(
+		hypp.HProps{
+			"class":    "throw-button",
+			"disabled": disabled,
+		},
 	)
 }
