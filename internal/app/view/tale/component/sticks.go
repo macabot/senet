@@ -7,7 +7,7 @@ import (
 	"github.com/macabot/senet/internal/app/view/render/component"
 )
 
-var minFlips = 3
+const minFlips = 3
 
 func flipStick(flips int) int {
 	sign := 1
