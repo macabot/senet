@@ -5,11 +5,11 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/model"
+	"github.com/macabot/senet/internal/app/view/state"
 )
 
 type PieceProps struct {
-	Piece     *model.Piece
+	Piece     *state.Piece
 	Player    int
 	CanSelect bool
 	Moving    bool

@@ -5,27 +5,27 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/model"
+	"github.com/macabot/senet/internal/app/view/state"
 )
 
 type SquareProps struct {
-	Position    model.Position
+	Position    state.Position
 	Selected    bool
 	Highlighted bool
 	Protected   bool
 	Blocking    bool
 }
 
-var iconToLabel = map[model.Icon]string{
-	model.Two:   "II",
-	model.Three: "III",
-	model.Cross: "☓",
-	model.Ankh:  "☥",
+var iconToLabel = map[state.Icon]string{
+	state.Two:   "II",
+	state.Three: "III",
+	state.Cross: "☓",
+	state.Ankh:  "☥",
 }
 
 func Square(props SquareProps) *hypp.VNode {
 	var text *hypp.VNode
-	if special, ok := model.SpecialPositions[props.Position]; ok {
+	if special, ok := state.SpecialPositions[props.Position]; ok {
 		text = hypp.Text(iconToLabel[special.Icon])
 	}
 	return html.Div(

@@ -1,4 +1,4 @@
-package model
+package state
 
 import (
 	"github.com/macabot/senet/internal/pkg/set"
@@ -77,21 +77,35 @@ type Piece struct {
 
 type Pieces []*Piece
 
-func (p Pieces) Has(position Position) bool {
-	return p.Find(position) != nil
+func (p Pieces) Has(match Match) bool {
+	return p.Find(match) != nil
 }
 
-func (p Pieces) FindIndex(position Position) int {
+type Match func(piece *Piece) bool
+
+func ByID(id int) Match {
+	return func(piece *Piece) bool {
+		return piece.ID == id
+	}
+}
+
+func ByPosition(position Position) Match {
+	return func(piece *Piece) bool {
+		return piece.Position == position
+	}
+}
+
+func (p Pieces) FindIndex(match Match) int {
 	for i, piece := range p {
-		if piece.Position == position {
+		if match(piece) {
 			return i
 		}
 	}
 	return -1
 }
 
-func (p Pieces) Find(position Position) *Piece {
-	index := p.FindIndex(position)
+func (p Pieces) Find(match Match) *Piece {
+	index := p.FindIndex(match)
 	if index == -1 {
 		return nil
 	}
@@ -110,8 +124,8 @@ func (p *Pieces) Add(piece *Piece) {
 	(*p)[index] = piece
 }
 
-func (p *Pieces) Delete(position Position) {
-	index := p.FindIndex(position)
+func (p *Pieces) Delete(match Match) {
+	index := p.FindIndex(match)
 	if index == -1 {
 		return
 	}
@@ -119,13 +133,13 @@ func (p *Pieces) Delete(position Position) {
 }
 
 type Board struct {
-	Pieces [2]Pieces
-	You    int
+	PlayerPieces [2]Pieces
+	Selected     *Piece
 }
 
 func NewBoard() Board {
 	return Board{
-		Pieces: [2]Pieces{
+		PlayerPieces: [2]Pieces{
 			{
 				{ID: 1, Position: Position{2, 0}},
 				{ID: 2, Position: Position{2, 2}},
@@ -162,10 +176,11 @@ func (b Board) Neighbours(position Position) set.Set[Position] {
 }
 
 func (b Board) piecesForPosition(position Position) Pieces {
-	if b.Pieces[0].Has(position) {
-		return b.Pieces[0]
-	} else if b.Pieces[1].Has(position) {
-		return b.Pieces[1]
+	match := ByPosition(position)
+	if b.PlayerPieces[0].Has(match) {
+		return b.PlayerPieces[0]
+	} else if b.PlayerPieces[1].Has(match) {
+		return b.PlayerPieces[1]
 	} else {
 		return nil
 	}
@@ -181,7 +196,7 @@ func (b Board) IsProtected(position Position) bool {
 	}
 	neighbours := b.Neighbours(position)
 	for neighbour := range neighbours {
-		if pieces.Has(neighbour) {
+		if pieces.Has(ByPosition(neighbour)) {
 			return true
 		}
 	}
@@ -203,7 +218,7 @@ func (b Board) IsBlocking(position Position) bool {
 			if seen.Has(neighbour) {
 				continue
 			}
-			if pieces.Has(neighbour) {
+			if pieces.Has(ByPosition(neighbour)) {
 				toSee.Push(neighbour)
 			}
 		}
@@ -222,28 +237,30 @@ func (b *Board) Move(from Position, steps int) {
 	var pieces Pieces
 	var otherPieces Pieces
 	var piece *Piece
-	if piece = b.Pieces[0].Find(from); piece != nil {
-		pieces = b.Pieces[0]
-		otherPieces = b.Pieces[1]
-	} else if piece = b.Pieces[1].Find(from); piece != nil {
-		pieces = b.Pieces[1]
-		otherPieces = b.Pieces[0]
+	fromMatch := ByPosition(from)
+	if piece = b.PlayerPieces[0].Find(fromMatch); piece != nil {
+		pieces = b.PlayerPieces[0]
+		otherPieces = b.PlayerPieces[1]
+	} else if piece = b.PlayerPieces[1].Find(fromMatch); piece != nil {
+		pieces = b.PlayerPieces[1]
+		otherPieces = b.PlayerPieces[0]
 	} else {
 		return
 	}
 
 	to := from.Move(steps)
-	if pieces.Has(to) {
+	toMatch := ByPosition(to)
+	if pieces.Has(toMatch) {
 		return
 	}
 	if to == (Position{0, 3}) {
-		for to = (Position{2, 9}); b.Pieces[0].Has(to) || b.Pieces[1].Has(to); to = to.Next() {
+		for to = (Position{2, 9}); b.PlayerPieces[0].Has(toMatch) || b.PlayerPieces[1].Has(toMatch); to = to.Next() {
 			// no-op
 		}
 	}
 	piece.Position = to
 
-	if otherPiece := otherPieces.Find(to); otherPiece != nil {
+	if otherPiece := otherPieces.Find(toMatch); otherPiece != nil {
 		otherPiece.Position = from
 	}
 }

@@ -1,4 +1,4 @@
-package model_test
+package state_test
 
 import (
 	"testing"
@@ -47,18 +47,18 @@ func TestBoardNeighbours(t *testing.T) {
 func TestBoardMove(t *testing.T) {
 	board := model.NewBoard()
 	board.Move(model.Position{2, 0}, 1)
-	assert.True(t, board.Pieces[0].Has(model.Position{1, 0}))
-	assert.False(t, board.Pieces[1].Has(model.Position{1, 0}))
-	assert.False(t, board.Pieces[0].Has(model.Position{2, 0}))
-	assert.False(t, board.Pieces[1].Has(model.Position{2, 0}))
+	assert.True(t, board.PlayerPieces[0].Has(model.Position{1, 0}))
+	assert.False(t, board.PlayerPieces[1].Has(model.Position{1, 0}))
+	assert.False(t, board.PlayerPieces[0].Has(model.Position{2, 0}))
+	assert.False(t, board.PlayerPieces[1].Has(model.Position{2, 0}))
 
 	board = model.NewBoard()
 	board.Move(model.Position{2, 3}, 4)
 	board.Move(model.Position{2, 5}, 7)
-	assert.False(t, board.Pieces[1].Has(model.Position{2, 3}))
-	assert.False(t, board.Pieces[1].Has(model.Position{2, 5}))
-	assert.True(t, board.Pieces[1].Has(model.Position{1, 0}))
-	assert.True(t, board.Pieces[1].Has(model.Position{1, 1}))
+	assert.False(t, board.PlayerPieces[1].Has(model.Position{2, 3}))
+	assert.False(t, board.PlayerPieces[1].Has(model.Position{2, 5}))
+	assert.True(t, board.PlayerPieces[1].Has(model.Position{1, 0}))
+	assert.True(t, board.PlayerPieces[1].Has(model.Position{1, 1}))
 }
 
 func TestBoardIsBlocking(t *testing.T) {

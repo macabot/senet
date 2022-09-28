@@ -5,28 +5,22 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/model"
 	"github.com/macabot/senet/internal/app/view/render/hoc"
 	"github.com/macabot/senet/internal/app/view/state"
 )
 
-type BoardProps struct {
-	Board model.Board
-	Meta  state.Meta
-}
-
-func Board(props BoardProps) *hypp.VNode {
-	board := props.Board
-	children := make([]*hypp.VNode, 30+len(board.Pieces[0])+len(board.Pieces[1]))
+func Board(props *state.State) *hypp.VNode {
+	board := props.Game.Board
+	children := make([]*hypp.VNode, 30+len(board.PlayerPieces[0])+len(board.PlayerPieces[1]))
 	i := 0
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
-			position := model.Position{row, column}
+			position := state.Position{row, column}
 			children[i] = hoc.With(
 				Square(SquareProps{
 					Position:    position,
-					Selected:    props.Meta.Selected != nil && *props.Meta.Selected == position,
-					Highlighted: props.Meta.Highlighted.Has(position),
+					Selected:    props.Game.Board.Selected != nil && *&props.Game.Board.Selected.Position == position,
+					Highlighted: false, // TODO
 					Protected:   board.IsProtected(position),
 					Blocking:    board.IsBlocking(position),
 				}),
@@ -35,13 +29,13 @@ func Board(props BoardProps) *hypp.VNode {
 			i++
 		}
 	}
-	for player, pieces := range board.Pieces {
+	for player, pieces := range board.PlayerPieces {
 		for _, piece := range pieces {
 			children[i] = hoc.With(
 				Piece(PieceProps{
 					Piece:     piece,
 					Player:    player,
-					CanSelect: player == board.You,
+					CanSelect: props.Game.Board.Selected == nil && player == props.Game.You && props.Game.Sticks.HasThrown,
 				}),
 				hoc.Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)

@@ -2,15 +2,15 @@ package component
 
 import (
 	"github.com/macabot/fairytale/fairy"
-	"github.com/macabot/senet/internal/app/model"
 	"github.com/macabot/senet/internal/app/view/render/component"
+	"github.com/macabot/senet/internal/app/view/state"
 )
 
 func PieceTale() *fairy.Tale {
 	return fairy.NewTale(
 		"Piece",
 		component.PieceProps{
-			Piece:     &model.Piece{ID: 1, Position: model.Position{0, 0}},
+			Piece:     &state.Piece{ID: 1, Position: state.Position{0, 0}},
 			Player:    0,
 			CanSelect: true,
 			Moving:    false,
