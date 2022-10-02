@@ -9,19 +9,21 @@ import (
 )
 
 type PieceProps struct {
-	Piece     *state.Piece
+	Piece     state.Piece
 	Player    int
 	CanSelect bool
 	Moving    bool
+	Selected  bool
 }
 
 func Piece(props PieceProps) *hypp.VNode {
+	coordinate := props.Piece.Position.Coordinate()
 	return html.Div(
 		hypp.HProps{
 			"class": []string{
 				"piece-wrapper",
-				fmt.Sprintf("row-%d", props.Piece.Position[0]),
-				fmt.Sprintf("column-%d", props.Piece.Position[1]),
+				fmt.Sprintf("row-%d", coordinate.Row),
+				fmt.Sprintf("column-%d", coordinate.Column),
 			},
 		},
 		html.Button(
@@ -30,6 +32,7 @@ func Piece(props PieceProps) *hypp.VNode {
 					"piece":                                true,
 					fmt.Sprintf("player-%d", props.Player): true,
 					"moving":                               props.Moving,
+					"selected":                             props.Selected,
 				},
 				"disabled": !props.CanSelect,
 			},

@@ -24,17 +24,83 @@ func BoardTale() *fairy.Tale {
 				props.Game.Board = state.NewBoard()
 				switch option {
 				case 0:
-					// no-op
+					props.Game.Board = state.NewBoard()
 				case 1:
-					props.Game.Board.Move(state.Position{2, 2}, 3)
+					props.Game.Board = state.Board{
+						PlayerPieces: [2]state.PiecesByPosition{
+							state.NewPiecesByPosition(
+								state.Piece{ID: 1, Position: 9},
+								state.Piece{ID: 2, Position: 10},
+								state.Piece{ID: 3, Position: 5},
+								state.Piece{ID: 4, Position: 3},
+								state.Piece{ID: 5, Position: 1},
+							),
+							state.NewPiecesByPosition(
+								state.Piece{ID: 6, Position: 8},
+								state.Piece{ID: 7, Position: 6},
+								state.Piece{ID: 8, Position: 4},
+								state.Piece{ID: 9, Position: 2},
+								state.Piece{ID: 10, Position: 0},
+							),
+						},
+					}
 				case 2:
-					props.Game.Board.Move(state.Position{2, 3}, 5)
+					props.Game.Board = state.Board{
+						PlayerPieces: [2]state.PiecesByPosition{
+							state.NewPiecesByPosition(
+								state.Piece{ID: 1, Position: 9},
+								state.Piece{ID: 2, Position: 7},
+								state.Piece{ID: 3, Position: 5},
+								state.Piece{ID: 4, Position: 3},
+								state.Piece{ID: 5, Position: 1},
+							),
+							state.NewPiecesByPosition(
+								state.Piece{ID: 6, Position: 8},
+								state.Piece{ID: 7, Position: 11},
+								state.Piece{ID: 8, Position: 4},
+								state.Piece{ID: 9, Position: 2},
+								state.Piece{ID: 10, Position: 0},
+							),
+						},
+					}
 				case 3:
-					props.Game.Board.Move(state.Position{2, 2}, 3)
-					props.Game.Board.Move(state.Position{2, 4}, 6)
+					props.Game.Board = state.Board{
+						PlayerPieces: [2]state.PiecesByPosition{
+							state.NewPiecesByPosition(
+								state.Piece{ID: 1, Position: 9},
+								state.Piece{ID: 2, Position: 10},
+								state.Piece{ID: 3, Position: 11},
+								state.Piece{ID: 4, Position: 3},
+								state.Piece{ID: 5, Position: 1},
+							),
+							state.NewPiecesByPosition(
+								state.Piece{ID: 6, Position: 8},
+								state.Piece{ID: 7, Position: 6},
+								state.Piece{ID: 8, Position: 4},
+								state.Piece{ID: 9, Position: 2},
+								state.Piece{ID: 10, Position: 0},
+							),
+						},
+					}
 				case 4:
-					props.Game.Board.Move(state.Position{2, 3}, 4)
-					props.Game.Board.Move(state.Position{2, 5}, 7)
+					props.Game.Board = state.Board{
+						PlayerPieces: [2]state.PiecesByPosition{
+							state.NewPiecesByPosition(
+								state.Piece{ID: 1, Position: 9},
+								state.Piece{ID: 2, Position: 7},
+								state.Piece{ID: 3, Position: 5},
+								state.Piece{ID: 4, Position: 3},
+								state.Piece{ID: 5, Position: 1},
+							),
+							state.NewPiecesByPosition(
+								state.Piece{ID: 6, Position: 8},
+								state.Piece{ID: 7, Position: 11},
+								state.Piece{ID: 8, Position: 12},
+								state.Piece{ID: 9, Position: 2},
+								state.Piece{ID: 10, Position: 0},
+							),
+						},
+					}
 				}
 				return props
 			},
@@ -64,16 +130,16 @@ func BoardTale() *fairy.Tale {
 			},
 		),
 		fairy.NewSelectControl(
-			"Throw",
-			func(props *state.State, throw int) *state.State {
-				props.Game.Sticks = state.SticksFromThrow(throw, throw != 0)
+			"Steps",
+			func(props *state.State, steps int) *state.State {
+				props.Game.Sticks = state.SticksFromSteps(steps, steps != 0)
 				return props
 			},
 			func(props *state.State) int {
 				if !props.Game.Sticks.HasThrown {
 					return 0
 				}
-				return props.Game.Sticks.Value()
+				return props.Game.Sticks.Steps()
 			},
 			[]fairy.SelectOption[int]{
 				{Label: "Not thrown", Value: 0},
@@ -90,11 +156,7 @@ func BoardTale() *fairy.Tale {
 				if id <= 0 {
 					props.Game.Board.Selected = nil
 				} else {
-					pieces := props.Game.Board.PlayerPieces[0]
-					if id >= 6 {
-						pieces = props.Game.Board.PlayerPieces[1]
-					}
-					props.Game.Board.Selected = pieces.Find(state.ByID(id))
+					props.Game.Board.Selected = props.Game.Board.FindPieceByID(id)
 				}
 				return props
 			},

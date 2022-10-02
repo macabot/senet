@@ -15,27 +15,30 @@ func Board(props *state.State) *hypp.VNode {
 	i := 0
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
-			position := state.Position{row, column}
+			coordinate := state.Coordinate{Row: row, Column: column}
+			position := state.PositionFromCoordinate(coordinate)
 			children[i] = hoc.With(
 				Square(SquareProps{
 					Position:    position,
-					Selected:    props.Game.Board.Selected != nil && *&props.Game.Board.Selected.Position == position,
 					Highlighted: false, // TODO
-					Protected:   board.IsProtected(position),
-					Blocking:    board.IsBlocking(position),
+					// Protected:   board.IsProtected(position),
+					// Blocking:    board.IsBlocking(position),
 				}),
-				hoc.Key(fmt.Sprintf("square-%d-%d", position[0], position[1])),
+				hoc.Key(fmt.Sprintf("square-%d", position)),
 			)
 			i++
 		}
 	}
-	for player, pieces := range board.PlayerPieces {
+	selected := props.Game.Board.Selected
+	for player, piecesByPos := range board.PlayerPieces {
+		pieces := piecesByPos.OrderedByID()
 		for _, piece := range pieces {
 			children[i] = hoc.With(
 				Piece(PieceProps{
 					Piece:     piece,
 					Player:    player,
-					CanSelect: props.Game.Board.Selected == nil && player == props.Game.You && props.Game.Sticks.HasThrown,
+					CanSelect: selected == nil && player == props.Game.You && props.Game.Sticks.HasThrown,
+					Selected:  selected != nil && selected.Position == piece.Position,
 				}),
 				hoc.Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)

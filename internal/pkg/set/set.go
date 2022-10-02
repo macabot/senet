@@ -3,9 +3,9 @@ package set
 type Set[T comparable] map[T]struct{}
 
 func New[T comparable](v ...T) Set[T] {
-	s := map[T]struct{}{}
+	s := Set[T]{}
 	for _, x := range v {
-		s[x] = struct{}{}
+		s.Add(x)
 	}
 	return s
 }
@@ -32,4 +32,10 @@ func (s Set[T]) Equal(other Set[T]) bool {
 		}
 	}
 	return true
+}
+
+func (s Set[T]) AddSet(other Set[T]) {
+	for x := range other {
+		s.Add(x)
+	}
 }

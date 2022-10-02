@@ -10,7 +10,7 @@ func PieceTale() *fairy.Tale {
 	return fairy.NewTale(
 		"Piece",
 		component.PieceProps{
-			Piece:     &state.Piece{ID: 1, Position: state.Position{0, 0}},
+			Piece:     state.Piece{ID: 1, Position: 0},
 			Player:    0,
 			CanSelect: true,
 			Moving:    false,

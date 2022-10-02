@@ -5,7 +5,7 @@ type Sticks struct {
 	HasThrown bool
 }
 
-func (s Sticks) Value() int {
+func (s Sticks) Steps() int {
 	sum := 0
 	for _, up := range s.Up {
 		if up {
@@ -18,13 +18,13 @@ func (s Sticks) Value() int {
 	return sum
 }
 
-func SticksFromThrow(throw int, hasThrown bool) Sticks {
+func SticksFromSteps(steps int, hasThrown bool) Sticks {
 	return Sticks{
 		Up: [4]bool{
-			throw >= 1 && throw < 6,
-			throw >= 2 && throw < 6,
-			throw >= 3 && throw < 6,
-			throw >= 4 && throw < 6,
+			steps >= 1 && steps < 6,
+			steps >= 2 && steps < 6,
+			steps >= 3 && steps < 6,
+			steps >= 4 && steps < 6,
 		},
 		HasThrown: hasThrown,
 	}

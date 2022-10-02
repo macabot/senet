@@ -1,52 +1,41 @@
 package state
 
 import (
+	"sort"
+
 	"github.com/macabot/senet/internal/pkg/set"
-	"github.com/macabot/senet/internal/pkg/stack"
 )
 
-type Position [2]int // [Row, Column]
+type Position int
 
-func (p Position) Move(steps int) Position {
-	var sign int
-	if steps >= 0 {
-		sign = 1
-	} else {
-		sign = -1
-	}
-	position := p
-	for ; steps*sign > 0; steps -= sign {
-		position = position.step(sign)
-	}
-	return position
+type Coordinate struct {
+	Row    int
+	Column int
 }
 
-// step returns the next Position if sign=1 or the previous position
-// if sign=-1.
-// The behaviour is undefined if sign has a value other than 1 or -1.
-func (p Position) step(sign int) Position {
-	row, column := p[0], p[1]
+func (p Position) Coordinate() Coordinate {
+	row := 2 - (int(p) / 10)
+	column := int(p) % 10
 	if row%2 == 0 {
-		column -= sign
-	} else {
-		column += sign
+		column = 9 - column
 	}
-	if column < 0 {
-		row -= sign
-		column = 0
-	} else if column > 9 {
-		row -= sign
-		column = 9
+	return Coordinate{
+		Row:    row,
+		Column: column,
 	}
-	return Position{row, column}
 }
 
-func (p Position) Next() Position {
-	return p.step(1)
-}
+func PositionFromCoordinate(coordinate Coordinate) Position {
+	row := coordinate.Row
+	column := coordinate.Column
 
-func (p Position) Previous() Position {
-	return p.step(-1)
+	p := (2 - row) * 10
+	if row%2 == 0 {
+		column = 9 - column
+	}
+	p += column
+
+	return Position(p)
 }
 
 type Icon int
@@ -61,13 +50,14 @@ const (
 type SpecialPosition struct {
 	Icon     Icon
 	Protects bool
+	Portal   bool
 }
 
 var SpecialPositions = map[Position]SpecialPosition{
-	{0, 1}: {Icon: Two, Protects: true},
-	{0, 2}: {Icon: Three, Protects: true},
-	{0, 3}: {Icon: Cross, Protects: false},
-	{0, 4}: {Icon: Ankh, Protects: true},
+	28: {Icon: Two, Protects: true, Portal: false},
+	27: {Icon: Three, Protects: true, Portal: false},
+	26: {Icon: Cross, Protects: false, Portal: true},
+	25: {Icon: Ankh, Protects: true, Portal: false},
 }
 
 type Piece struct {
@@ -75,192 +65,127 @@ type Piece struct {
 	Position Position
 }
 
-type Pieces []*Piece
+type PiecesByPosition map[Position]Piece
 
-func (p Pieces) Has(match Match) bool {
-	return p.Find(match) != nil
+func NewPiecesByPosition(pieces ...Piece) PiecesByPosition {
+	m := map[Position]Piece{}
+	for _, piece := range pieces {
+		m[piece.Position] = piece
+	}
+	return m
 }
 
-type Match func(piece *Piece) bool
-
-func ByID(id int) Match {
-	return func(piece *Piece) bool {
-		return piece.ID == id
-	}
+func (p PiecesByPosition) Has(pos Position) bool {
+	_, ok := p[pos]
+	return ok
 }
 
-func ByPosition(position Position) Match {
-	return func(piece *Piece) bool {
-		return piece.Position == position
+func (p PiecesByPosition) OrderedByID() []Piece {
+	pieces := make([]Piece, len(p))
+	i := 0
+	for _, piece := range p {
+		pieces[i] = piece
+		i++
 	}
+	sort.Sort(byID(pieces))
+	return pieces
 }
 
-func (p Pieces) FindIndex(match Match) int {
-	for i, piece := range p {
-		if match(piece) {
-			return i
-		}
-	}
-	return -1
+type byID []Piece
+
+func (s byID) Len() int {
+	return len(s)
 }
 
-func (p Pieces) Find(match Match) *Piece {
-	index := p.FindIndex(match)
-	if index == -1 {
-		return nil
-	}
-	return p[index]
+func (s byID) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
 }
 
-func (p *Pieces) Add(piece *Piece) {
-	index := 0
-	for i, otherPiece := range *p {
-		if piece.ID > otherPiece.ID {
-			break
-		}
-		index = i
-	}
-	*p = append((*p)[:index+1], (*p)[index:]...)
-	(*p)[index] = piece
-}
-
-func (p *Pieces) Delete(match Match) {
-	index := p.FindIndex(match)
-	if index == -1 {
-		return
-	}
-	*p = append((*p)[:index], (*p)[index+1:]...)
+func (s byID) Less(i, j int) bool {
+	return s[i].ID < s[j].ID
 }
 
 type Board struct {
-	PlayerPieces [2]Pieces
+	PlayerPieces [2]PiecesByPosition
 	Selected     *Piece
 }
 
 func NewBoard() Board {
 	return Board{
-		PlayerPieces: [2]Pieces{
-			{
-				{ID: 1, Position: Position{2, 0}},
-				{ID: 2, Position: Position{2, 2}},
-				{ID: 3, Position: Position{2, 4}},
-				{ID: 4, Position: Position{2, 6}},
-				{ID: 5, Position: Position{2, 8}},
-			},
-			{
-				{ID: 6, Position: Position{2, 1}},
-				{ID: 7, Position: Position{2, 3}},
-				{ID: 8, Position: Position{2, 5}},
-				{ID: 9, Position: Position{2, 7}},
-				{ID: 10, Position: Position{2, 9}},
-			},
+		PlayerPieces: [2]PiecesByPosition{
+			NewPiecesByPosition(
+				Piece{ID: 1, Position: 9},
+				Piece{ID: 2, Position: 7},
+				Piece{ID: 3, Position: 5},
+				Piece{ID: 4, Position: 3},
+				Piece{ID: 5, Position: 1},
+			),
+			NewPiecesByPosition(
+				Piece{ID: 6, Position: 8},
+				Piece{ID: 7, Position: 6},
+				Piece{ID: 8, Position: 4},
+				Piece{ID: 9, Position: 2},
+				Piece{ID: 10, Position: 0},
+			),
 		},
 	}
 }
 
-func (b Board) Neighbours(position Position) set.Set[Position] {
+// NeighourSquares returns the positions of the neighbouring squares.
+// The squares are layed out as followes:
+//     29 28 27 26 25 24 23 22 21 20
+//     10 11 12 13 14 15 16 17 18 19
+//      9  8  7  6  5  4  3  2  1  0
+//
+// For example, position 12 has neighbours 27 (north), 13 (east), 7 (south) and
+// 11 (west).
+// Note that some position can have fewer than four positions. For example,
+// postion 0 has two neighbours: 19 (north) and 1 (west).
+func (b Board) NeighbourSquares(position Position) set.Set[Position] {
 	neighbours := set.Set[Position]{}
-	if position[0] > 0 {
-		neighbours.Add(Position{position[0] - 1, position[1]})
+	if position < 20 {
+		neighbours.Add(position + 20 - (position % 10))
 	}
-	if position[0] < 2 {
-		neighbours.Add(Position{position[0] + 1, position[1]})
+	if position >= 10 {
+		neighbours.Add(position - 10 + (9 - (position % 10)))
 	}
-	if position[1] > 0 {
-		neighbours.Add(Position{position[0], position[1] - 1})
+	if position > 0 {
+		neighbours.Add(position - 1)
 	}
-	if position[1] < 9 {
-		neighbours.Add(Position{position[0], position[1] + 1})
+	if position < 30 {
+		neighbours.Add(position + 1)
 	}
 	return neighbours
 }
 
-func (b Board) piecesForPosition(position Position) Pieces {
-	match := ByPosition(position)
-	if b.PlayerPieces[0].Has(match) {
-		return b.PlayerPieces[0]
-	} else if b.PlayerPieces[1].Has(match) {
-		return b.PlayerPieces[1]
-	} else {
-		return nil
-	}
-}
-
-func (b Board) IsProtected(position Position) bool {
-	if special, ok := SpecialPositions[position]; ok && special.Protects {
-		return true
-	}
-	pieces := b.piecesForPosition(position)
-	if pieces == nil {
-		return false
-	}
-	neighbours := b.Neighbours(position)
-	for neighbour := range neighbours {
-		if pieces.Has(ByPosition(neighbour)) {
-			return true
-		}
-	}
-	return false
-}
-
-func (b Board) IsBlocking(position Position) bool {
-	pieces := b.piecesForPosition(position)
-	if pieces == nil {
-		return false
-	}
-	toSee := stack.NewStack(position)
-	seen := set.Set[Position]{}
-	for toSee.Len() > 0 {
-		current := toSee.Pop()
-		seen.Add(current)
-		neighbours := b.Neighbours(current)
-		for neighbour := range neighbours {
-			if seen.Has(neighbour) {
-				continue
-			}
-			if pieces.Has(ByPosition(neighbour)) {
-				toSee.Push(neighbour)
+func (b Board) FindGroups(piecesByPosition PiecesByPosition) map[Position]set.Set[Position] {
+	groups := map[Position]set.Set[Position]{}
+	for pos, piece := range piecesByPosition {
+		neighbourSquares := b.NeighbourSquares(piece.Position)
+		posGroup := set.New(pos)
+		for neighbourPos := range neighbourSquares {
+			if neighbourGroup, ok := groups[neighbourPos]; ok {
+				posGroup.AddSet(neighbourGroup)
+				groups[pos] = posGroup
 			}
 		}
+		groups[pos] = posGroup
 	}
-	return len(seen) >= 3
+
+	return groups
 }
 
-// Move moves a piece at the given position the given number of steps.
-// If no piece is on this position, nothing happens.
-// If the piece is moved unto the cross, then the piece is moved instead to the
-// first open square starting at [2,9].
-// If the piece is moved on top of one of her own pieces, then nothing happens.
-// If the piece is moved on top an opponent's piece, then the pieces swap
-// places.
-func (b *Board) Move(from Position, steps int) {
-	var pieces Pieces
-	var otherPieces Pieces
-	var piece *Piece
-	fromMatch := ByPosition(from)
-	if piece = b.PlayerPieces[0].Find(fromMatch); piece != nil {
-		pieces = b.PlayerPieces[0]
-		otherPieces = b.PlayerPieces[1]
-	} else if piece = b.PlayerPieces[1].Find(fromMatch); piece != nil {
-		pieces = b.PlayerPieces[1]
-		otherPieces = b.PlayerPieces[0]
+func (b Board) FindPieceByID(id int) *Piece {
+	var piecesByPos PiecesByPosition
+	if id <= 5 {
+		piecesByPos = b.PlayerPieces[0]
 	} else {
-		return
+		piecesByPos = b.PlayerPieces[1]
 	}
-
-	to := from.Move(steps)
-	toMatch := ByPosition(to)
-	if pieces.Has(toMatch) {
-		return
-	}
-	if to == (Position{0, 3}) {
-		for to = (Position{2, 9}); b.PlayerPieces[0].Has(toMatch) || b.PlayerPieces[1].Has(toMatch); to = to.Next() {
-			// no-op
+	for _, piece := range piecesByPos {
+		if piece.ID == id {
+			return &piece
 		}
 	}
-	piece.Position = to
-
-	if otherPiece := otherPieces.Find(toMatch); otherPiece != nil {
-		otherPiece.Position = from
-	}
+	return nil
 }

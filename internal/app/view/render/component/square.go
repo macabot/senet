@@ -10,7 +10,6 @@ import (
 
 type SquareProps struct {
 	Position    state.Position
-	Selected    bool
 	Highlighted bool
 	Protected   bool
 	Blocking    bool
@@ -28,19 +27,22 @@ func Square(props SquareProps) *hypp.VNode {
 	if special, ok := state.SpecialPositions[props.Position]; ok {
 		text = hypp.Text(iconToLabel[special.Icon])
 	}
+	coordinate := props.Position.Coordinate()
+	if text != nil {
+		fmt.Println("special", props.Position, coordinate)
+	}
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
 				"square":                                    true,
-				fmt.Sprintf("row-%d", props.Position[0]):    true,
-				fmt.Sprintf("column-%d", props.Position[1]): true,
+				fmt.Sprintf("row-%d", coordinate.Row):       true,
+				fmt.Sprintf("column-%d", coordinate.Column): true,
 			},
 		},
 		html.Button(
 			hypp.HProps{
 				"class": map[string]bool{
 					"inner-square": true,
-					"selected":     props.Selected,
 					"highlighted":  props.Highlighted,
 					"protected":    props.Protected,
 					"blocking":     props.Blocking,

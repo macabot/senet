@@ -113,6 +113,15 @@ html {
   );
 }
 
+.piece.player-0.selected {
+  background: rgb(204,255,253);
+  background: radial-gradient(
+    ellipse at 10% 20%,
+    rgba(204,255,253,1) 0%,
+    rgba(0,255,248,1) 100%
+  );
+}
+
 .piece.player-0:not(:disabled) {
   animation: player-0-pulse 2s infinite;
 }
@@ -123,6 +132,15 @@ html {
     ellipse at 10% 20%,
     rgba(248, 206, 204, 1) 0%,
     rgba(110, 47, 59, 1) 100%
+  );
+}
+
+.piece.player-1.selected {
+  background: rgb(248,206,204);
+  background: radial-gradient(
+    ellipse at 10% 20%,
+    rgba(248,206,204,1) 0%,
+    rgba(255,0,49,1) 100%
   );
 }
 
