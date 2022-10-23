@@ -13,6 +13,15 @@ func Board(props *state.State) *hypp.VNode {
 	board := props.Game.Board
 	children := make([]*hypp.VNode, 30+len(board.PlayerPieces[0])+len(board.PlayerPieces[1]))
 	i := 0
+	selected := props.Game.Board.Selected
+	var validDestination state.Position
+	hasValidDestination := false
+	var invalidDestination state.Position
+	hasInvalidDestination := false
+	if selected != nil {
+		validDestination, hasValidDestination = props.Game.ValidMoves[selected.Position]
+		invalidDestination, hasInvalidDestination = props.Game.InvalidMoves[selected.Position]
+	}
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
 			coordinate := state.Coordinate{Row: row, Column: column}
@@ -23,13 +32,14 @@ func Board(props *state.State) *hypp.VNode {
 					Highlighted: false, // TODO
 					// Protected:   board.IsProtected(position),
 					// Blocking:    board.IsBlocking(position),
+					ValidDestination:   hasValidDestination && validDestination == position,
+					InvalidDestination: hasInvalidDestination && invalidDestination == position,
 				}),
 				hoc.Key(fmt.Sprintf("square-%d", position)),
 			)
 			i++
 		}
 	}
-	selected := props.Game.Board.Selected
 	for player, piecesByPos := range board.PlayerPieces {
 		pieces := piecesByPos.OrderedByID()
 		for _, piece := range pieces {

@@ -180,5 +180,12 @@ func BoardTale() *fairy.Tale {
 				{Label: "10", Value: 10},
 			},
 		),
+		fairy.NewButtonControl(
+			"Calc Valid Moves",
+			func(props *state.State) *state.State {
+				props.Game.CalcValidMoves(props.Game.You)
+				return props
+			},
+		),
 	)
 }

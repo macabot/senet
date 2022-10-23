@@ -10,16 +10,18 @@ const (
 )
 
 type Game struct {
-	Board      Board
-	Sticks     Sticks
-	You        int
-	Turn       int
-	Status     Status
-	ValidMoves map[Position]Position
+	Board        Board
+	Sticks       Sticks
+	You          int
+	Turn         int
+	Status       Status
+	ValidMoves   map[Position]Position
+	InvalidMoves map[Position]Position
 }
 
 func (g *Game) CalcValidMoves(player int) {
 	g.ValidMoves = map[Position]Position{}
+	g.InvalidMoves = map[Position]Position{}
 
 	piecesByPos := g.Board.PlayerPieces[player]
 	otherPiecesByPos := g.Board.PlayerPieces[(player+1)%2]
@@ -30,9 +32,11 @@ func (g *Game) CalcValidMoves(player int) {
 		for pos := range piecesByPos {
 			toPos := pos + Position(steps)
 			if toPos >= 30 || toPos < 0 {
+				g.InvalidMoves[pos] = toPos
 				continue
 			}
 			if _, ok := piecesByPos[toPos]; ok {
+				g.InvalidMoves[pos] = toPos
 				continue
 			}
 			isBlocked := false
@@ -43,13 +47,16 @@ func (g *Game) CalcValidMoves(player int) {
 				}
 			}
 			if isBlocked {
+				g.InvalidMoves[pos] = toPos
 				continue
 			}
 			if group, ok := otherGroups[toPos]; ok {
 				if len(group) >= protectedSize {
+					g.InvalidMoves[pos] = toPos
 					continue
 				}
 				if special, ok := SpecialPositions[toPos]; ok && special.Protects {
+					g.InvalidMoves[pos] = toPos
 					continue
 				}
 			}

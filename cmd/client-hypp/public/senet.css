@@ -41,6 +41,14 @@ html {
   font-size: 3rem;
 }
 
+.inner-square.valid-destination {
+  background-color: #90ee90;
+}
+
+.inner-square.invalid-destination {
+  background-color: #ff7575;
+}
+
 .piece-wrapper {
   width: 10%;
   aspect-ratio: 1 / 1;
