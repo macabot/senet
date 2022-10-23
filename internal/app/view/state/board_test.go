@@ -22,6 +22,16 @@ func TestBoardNeighbourSquares(t *testing.T) {
 	assert.Equal(
 		t,
 		set.New[state.Position](
+			23,
+			3,
+			17,
+			15,
+		),
+		state.Board{}.NeighbourSquares(16),
+	)
+	assert.Equal(
+		t,
+		set.New[state.Position](
 			0,
 			20,
 			18,

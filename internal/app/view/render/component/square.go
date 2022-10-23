@@ -28,9 +28,6 @@ func Square(props SquareProps) *hypp.VNode {
 		text = hypp.Text(iconToLabel[special.Icon])
 	}
 	coordinate := props.Position.Coordinate()
-	if text != nil {
-		fmt.Println("special", props.Position, coordinate)
-	}
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{

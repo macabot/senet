@@ -139,15 +139,15 @@ func NewBoard() Board {
 //
 // For example, position 12 has neighbours 27 (north), 13 (east), 7 (south) and
 // 11 (west).
-// Note that some position can have fewer than four positions. For example,
+// Note that some position can have fewer than four neighbours. For example,
 // postion 0 has two neighbours: 19 (north) and 1 (west).
 func (b Board) NeighbourSquares(position Position) set.Set[Position] {
 	neighbours := set.Set[Position]{}
 	if position < 20 {
-		neighbours.Add(position + 20 - (position % 10))
+		neighbours.Add(position + 19 - 2*(position%10))
 	}
 	if position >= 10 {
-		neighbours.Add(position - 10 + (9 - (position % 10)))
+		neighbours.Add(position - 1 - 2*(position%10))
 	}
 	if position > 0 {
 		neighbours.Add(position - 1)
