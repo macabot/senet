@@ -110,8 +110,8 @@ type Board struct {
 	Selected     *Piece
 }
 
-func NewBoard() Board {
-	return Board{
+func NewBoard() *Board {
+	return &Board{
 		PlayerPieces: [2]PiecesByPosition{
 			NewPiecesByPosition(
 				Piece{ID: 1, Position: 9},

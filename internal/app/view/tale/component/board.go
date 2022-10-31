@@ -11,9 +11,7 @@ func BoardTale() *fairy.Tale {
 	return fairy.NewTale(
 		"Board",
 		&state.State{
-			Game: state.Game{
-				Board: state.NewBoard(),
-			},
+			Game: state.NewGame(),
 		},
 		component.Board,
 	).WithControls(
@@ -21,12 +19,11 @@ func BoardTale() *fairy.Tale {
 			"Configuration",
 			func(props *state.State, option int) *state.State {
 				configuration = option
-				props.Game.Board = state.NewBoard()
 				switch option {
 				case 0:
-					props.Game.Board = state.NewBoard()
+					props.Game.SetBoard(state.NewBoard())
 				case 1:
-					props.Game.Board = state.Board{
+					props.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								state.Piece{ID: 1, Position: 9},
@@ -43,9 +40,9 @@ func BoardTale() *fairy.Tale {
 								state.Piece{ID: 10, Position: 0},
 							),
 						},
-					}
+					})
 				case 2:
-					props.Game.Board = state.Board{
+					props.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								state.Piece{ID: 1, Position: 9},
@@ -62,9 +59,9 @@ func BoardTale() *fairy.Tale {
 								state.Piece{ID: 10, Position: 0},
 							),
 						},
-					}
+					})
 				case 3:
-					props.Game.Board = state.Board{
+					props.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								state.Piece{ID: 1, Position: 9},
@@ -81,9 +78,9 @@ func BoardTale() *fairy.Tale {
 								state.Piece{ID: 10, Position: 0},
 							),
 						},
-					}
+					})
 				case 4:
-					props.Game.Board = state.Board{
+					props.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								state.Piece{ID: 1, Position: 9},
@@ -100,7 +97,7 @@ func BoardTale() *fairy.Tale {
 								state.Piece{ID: 10, Position: 0},
 							),
 						},
-					}
+					})
 				}
 				return props
 			},
@@ -115,14 +112,24 @@ func BoardTale() *fairy.Tale {
 				{Label: "P2 - Blocking", Value: 4},
 			},
 		),
+		fairy.NewCheckboxControl(
+			"Has turn",
+			func(props *state.State, hasTurn bool) *state.State {
+				props.Game.SetHasTurn(hasTurn)
+				return props
+			},
+			func(props *state.State) bool {
+				return props.Game.HasTurn()
+			},
+		),
 		fairy.NewSelectControl(
-			"Player",
-			func(props *state.State, you int) *state.State {
-				props.Game.You = you
+			"Turn",
+			func(props *state.State, turn int) *state.State {
+				props.Game.SetTurn(turn)
 				return props
 			},
 			func(props *state.State) int {
-				return props.Game.You
+				return props.Game.Turn()
 			},
 			[]fairy.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
@@ -132,14 +139,14 @@ func BoardTale() *fairy.Tale {
 		fairy.NewSelectControl(
 			"Steps",
 			func(props *state.State, steps int) *state.State {
-				props.Game.Sticks = state.SticksFromSteps(steps, steps != 0)
+				props.Game.SetSticks(state.SticksFromSteps(steps, steps != 0))
 				return props
 			},
 			func(props *state.State) int {
-				if !props.Game.Sticks.HasThrown {
+				if !props.Game.Sticks().HasThrown {
 					return 0
 				}
-				return props.Game.Sticks.Steps()
+				return props.Game.Sticks().Steps()
 			},
 			[]fairy.SelectOption[int]{
 				{Label: "Not thrown", Value: 0},
@@ -154,17 +161,17 @@ func BoardTale() *fairy.Tale {
 			"Selected",
 			func(props *state.State, id int) *state.State {
 				if id <= 0 {
-					props.Game.Board.Selected = nil
+					props.Game.Board().Selected = nil
 				} else {
-					props.Game.Board.Selected = props.Game.Board.FindPieceByID(id)
+					props.Game.Board().Selected = props.Game.Board().FindPieceByID(id)
 				}
 				return props
 			},
 			func(props *state.State) int {
-				if props.Game.Board.Selected == nil {
+				if props.Game.Board().Selected == nil {
 					return 0
 				}
-				return props.Game.Board.Selected.ID
+				return props.Game.Board().Selected.ID
 			},
 			[]fairy.SelectOption[int]{
 				{Label: "Not Selected", Value: 0},
@@ -178,13 +185,6 @@ func BoardTale() *fairy.Tale {
 				{Label: "8", Value: 8},
 				{Label: "9", Value: 9},
 				{Label: "10", Value: 10},
-			},
-		),
-		fairy.NewButtonControl(
-			"Calc Valid Moves",
-			func(props *state.State) *state.State {
-				props.Game.CalcValidMoves(props.Game.You)
-				return props
 			},
 		),
 	)

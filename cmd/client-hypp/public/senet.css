@@ -43,6 +43,7 @@ html {
 
 .inner-square.valid-destination {
   background-color: #90ee90;
+  cursor: pointer;
 }
 
 .inner-square.invalid-destination {

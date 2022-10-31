@@ -10,17 +10,17 @@ import (
 )
 
 func Board(props *state.State) *hypp.VNode {
-	board := props.Game.Board
+	board := props.Game.Board()
 	children := make([]*hypp.VNode, 30+len(board.PlayerPieces[0])+len(board.PlayerPieces[1]))
 	i := 0
-	selected := props.Game.Board.Selected
+	selected := board.Selected
 	var validDestination state.Position
 	hasValidDestination := false
 	var invalidDestination state.Position
 	hasInvalidDestination := false
 	if selected != nil {
-		validDestination, hasValidDestination = props.Game.ValidMoves[selected.Position]
-		invalidDestination, hasInvalidDestination = props.Game.InvalidMoves[selected.Position]
+		validDestination, hasValidDestination = props.Game.ValidMoves()[selected.Position]
+		invalidDestination, hasInvalidDestination = props.Game.InvalidMoves()[selected.Position]
 	}
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
@@ -28,10 +28,7 @@ func Board(props *state.State) *hypp.VNode {
 			position := state.PositionFromCoordinate(coordinate)
 			children[i] = hoc.With(
 				Square(SquareProps{
-					Position:    position,
-					Highlighted: false, // TODO
-					// Protected:   board.IsProtected(position),
-					// Blocking:    board.IsBlocking(position),
+					Position:           position,
 					ValidDestination:   hasValidDestination && validDestination == position,
 					InvalidDestination: hasInvalidDestination && invalidDestination == position,
 				}),
@@ -47,7 +44,7 @@ func Board(props *state.State) *hypp.VNode {
 				Piece(PieceProps{
 					Piece:     piece,
 					Player:    player,
-					CanSelect: selected == nil && player == props.Game.You && props.Game.Sticks.HasThrown,
+					CanSelect: props.Game.CanSelect(player),
 					Selected:  selected != nil && selected.Position == piece.Position,
 				}),
 				hoc.Key(fmt.Sprintf("piece-%d", piece.ID)),
