@@ -161,17 +161,17 @@ func BoardTale() *fairy.Tale {
 			"Selected",
 			func(props *state.State, id int) *state.State {
 				if id <= 0 {
-					props.Game.Board().Selected = nil
+					props.Game.SetSelected(nil)
 				} else {
-					props.Game.Board().Selected = props.Game.Board().FindPieceByID(id)
+					props.Game.SetSelected(props.Game.Board().FindPieceByID(id))
 				}
 				return props
 			},
 			func(props *state.State) int {
-				if props.Game.Board().Selected == nil {
+				if props.Game.Selected() == nil {
 					return 0
 				}
-				return props.Game.Board().Selected.ID
+				return props.Game.Selected().ID
 			},
 			[]fairy.SelectOption[int]{
 				{Label: "Not Selected", Value: 0},

@@ -11,6 +11,7 @@ const (
 
 type Game struct {
 	board        *Board
+	selected     *Piece
 	sticks       Sticks
 	turn         int
 	hasTurn      bool
@@ -31,6 +32,15 @@ func (g Game) Board() *Board {
 
 func (g *Game) SetBoard(board *Board) {
 	g.board = board
+	g.CalcValidMoves()
+}
+
+func (g Game) Selected() *Piece {
+	return g.selected
+}
+
+func (g *Game) SetSelected(selected *Piece) {
+	g.selected = selected
 	g.CalcValidMoves()
 }
 

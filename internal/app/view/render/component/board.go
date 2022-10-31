@@ -13,7 +13,7 @@ func Board(props *state.State) *hypp.VNode {
 	board := props.Game.Board()
 	children := make([]*hypp.VNode, 30+len(board.PlayerPieces[0])+len(board.PlayerPieces[1]))
 	i := 0
-	selected := board.Selected
+	selected := props.Game.Selected()
 	var validDestination state.Position
 	hasValidDestination := false
 	var invalidDestination state.Position

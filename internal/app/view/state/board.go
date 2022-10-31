@@ -107,7 +107,6 @@ func (s byID) Less(i, j int) bool {
 
 type Board struct {
 	PlayerPieces [2]PiecesByPosition
-	Selected     *Piece
 }
 
 func NewBoard() *Board {
