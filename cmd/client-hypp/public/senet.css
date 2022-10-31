@@ -131,7 +131,7 @@ html {
   );
 }
 
-.piece.player-0:not(:disabled) {
+.piece.draw-attention.player-0 {
   animation: player-0-pulse 2s infinite;
 }
 
@@ -153,7 +153,7 @@ html {
   );
 }
 
-.piece.player-1:not(:disabled) {
+.piece.draw-attention.player-1 {
   animation: player-1-pulse 2s infinite;
 }
 

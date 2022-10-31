@@ -42,10 +42,11 @@ func Board(props *state.State) *hypp.VNode {
 		for _, piece := range pieces {
 			children[i] = hoc.With(
 				Piece(PieceProps{
-					Piece:     piece,
-					Player:    player,
-					CanSelect: props.Game.CanSelect(player),
-					Selected:  selected != nil && selected.Position == piece.Position,
+					Piece:         piece,
+					Player:        player,
+					CanSelect:     props.Game.CanSelect(player),
+					DrawAttention: selected == nil && props.Game.CanSelect(player),
+					Selected:      selected != nil && selected.Position == piece.Position,
 				}),
 				hoc.Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)

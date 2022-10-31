@@ -9,11 +9,12 @@ import (
 )
 
 type PieceProps struct {
-	Piece     state.Piece
-	Player    int
-	CanSelect bool
-	Moving    bool
-	Selected  bool
+	Piece         state.Piece
+	Player        int
+	CanSelect     bool
+	DrawAttention bool
+	Moving        bool
+	Selected      bool
 }
 
 func Piece(props PieceProps) *hypp.VNode {
@@ -33,6 +34,7 @@ func Piece(props PieceProps) *hypp.VNode {
 					fmt.Sprintf("player-%d", props.Player): true,
 					"moving":                               props.Moving,
 					"selected":                             props.Selected,
+					"draw-attention":                       props.DrawAttention,
 				},
 				"disabled": !props.CanSelect,
 			},
