@@ -28,6 +28,7 @@ func throwButton(disabled bool) *hypp.VNode {
 		hypp.HProps{
 			"class":    "throw-button",
 			"disabled": disabled,
+			"type":     "button",
 		},
 	)
 }

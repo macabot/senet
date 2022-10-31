@@ -47,6 +47,7 @@ func Square(props SquareProps) *hypp.VNode {
 					"invalid-destination": props.InvalidDestination,
 				},
 				"disabled": !props.ValidDestination,
+				"type":     "button",
 			},
 			text,
 		),

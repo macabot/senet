@@ -37,6 +37,7 @@ func Piece(props PieceProps) *hypp.VNode {
 					"draw-attention":                       props.DrawAttention,
 				},
 				"disabled": !props.CanSelect,
+				"type":     "button",
 			},
 		),
 	)
