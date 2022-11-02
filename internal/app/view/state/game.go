@@ -1,5 +1,7 @@
 package state
 
+import "github.com/macabot/senet/internal/pkg/set"
+
 type Status int
 
 const (
@@ -17,7 +19,7 @@ type Game struct {
 	hasTurn      bool
 	status       Status
 	validMoves   map[Position]Position
-	invalidMoves map[Position]Position
+	invalidMoves map[Position]set.Set[Position]
 }
 
 func NewGame() *Game {
@@ -74,8 +76,15 @@ func (g Game) ValidMoves() map[Position]Position {
 	return g.validMoves
 }
 
-func (g Game) InvalidMoves() map[Position]Position {
+func (g Game) InvalidMoves() map[Position]set.Set[Position] {
 	return g.invalidMoves
+}
+
+func (g *Game) addInvalidMove(from, to Position) {
+	if _, ok := g.invalidMoves[from]; !ok {
+		g.invalidMoves[from] = set.New[Position]()
+	}
+	g.invalidMoves[from].Add(to)
 }
 
 func (g Game) CanSelect(player int) bool {
@@ -84,7 +93,7 @@ func (g Game) CanSelect(player int) bool {
 
 func (g *Game) CalcValidMoves() {
 	g.validMoves = map[Position]Position{}
-	g.invalidMoves = map[Position]Position{}
+	g.invalidMoves = map[Position]set.Set[Position]{}
 
 	piecesByPos := g.board.PlayerPieces[g.turn]
 	otherPiecesByPos := g.board.PlayerPieces[(g.turn+1)%2]
@@ -95,11 +104,11 @@ func (g *Game) CalcValidMoves() {
 		for pos := range piecesByPos {
 			toPos := pos + Position(steps)
 			if toPos >= 30 || toPos < 0 {
-				g.invalidMoves[pos] = toPos
+				g.addInvalidMove(pos, toPos)
 				continue
 			}
 			if _, ok := piecesByPos[toPos]; ok {
-				g.invalidMoves[pos] = toPos
+				g.addInvalidMove(pos, toPos)
 				continue
 			}
 			isBlocked := false
@@ -110,16 +119,16 @@ func (g *Game) CalcValidMoves() {
 				}
 			}
 			if isBlocked {
-				g.invalidMoves[pos] = toPos
+				g.addInvalidMove(pos, toPos)
 				continue
 			}
 			if group, ok := otherGroups[toPos]; ok {
 				if len(group) >= protectedSize {
-					g.invalidMoves[pos] = toPos
+					g.addInvalidMove(pos, toPos)
 					continue
 				}
 				if special, ok := SpecialPositions[toPos]; ok && special.Protects {
-					g.invalidMoves[pos] = toPos
+					g.addInvalidMove(pos, toPos)
 					continue
 				}
 			}

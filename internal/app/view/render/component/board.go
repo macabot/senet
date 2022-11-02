@@ -7,6 +7,7 @@ import (
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/view/render/hoc"
 	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/pkg/set"
 )
 
 func Board(props *state.State) *hypp.VNode {
@@ -16,11 +17,10 @@ func Board(props *state.State) *hypp.VNode {
 	selected := props.Game.Selected()
 	var validDestination state.Position
 	hasValidDestination := false
-	var invalidDestination state.Position
-	hasInvalidDestination := false
+	var invalidDestinations set.Set[state.Position]
 	if selected != nil {
 		validDestination, hasValidDestination = props.Game.ValidMoves()[selected.Position]
-		invalidDestination, hasInvalidDestination = props.Game.InvalidMoves()[selected.Position]
+		invalidDestinations = props.Game.InvalidMoves()[selected.Position]
 	}
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
@@ -30,7 +30,7 @@ func Board(props *state.State) *hypp.VNode {
 				Square(SquareProps{
 					Position:           position,
 					ValidDestination:   hasValidDestination && validDestination == position,
-					InvalidDestination: hasInvalidDestination && invalidDestination == position,
+					InvalidDestination: invalidDestinations.Has(position),
 				}),
 				hoc.Key(fmt.Sprintf("square-%d", position)),
 			)
