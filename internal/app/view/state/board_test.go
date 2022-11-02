@@ -51,19 +51,13 @@ func TestBoardNeighbourSquares(t *testing.T) {
 func TestBoardFindGroups(t *testing.T) {
 	assert.Equal(
 		t,
-		state.Board{}.FindGroups(state.PiecesByPosition{
-			1:  state.Piece{ID: 5, Position: 1},
-			3:  state.Piece{ID: 4, Position: 3},
-			5:  state.Piece{ID: 3, Position: 5},
-			9:  state.Piece{ID: 1, Position: 9},
-			10: state.Piece{ID: 2, Position: 10},
-		}),
 		map[state.Position]set.Set[state.Position]{
-			1:  set.New[state.Position](1),
-			3:  set.New[state.Position](3),
-			5:  set.New[state.Position](5),
 			9:  set.New[state.Position](9, 10),
 			10: set.New[state.Position](9, 10),
 		},
+		state.Board{}.FindGroups(state.PiecesByPosition{
+			9:  state.Piece{ID: 1, Position: 9},
+			10: state.Piece{ID: 2, Position: 10},
+		}),
 	)
 }

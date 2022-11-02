@@ -168,7 +168,9 @@ func (b Board) FindGroups(piecesByPosition PiecesByPosition) map[Position]set.Se
 				groups[pos] = posGroup
 			}
 		}
-		groups[pos] = posGroup
+		for pos := range posGroup {
+			groups[pos] = posGroup
+		}
 	}
 
 	return groups
