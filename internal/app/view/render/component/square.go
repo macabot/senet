@@ -14,6 +14,7 @@ type SquareProps struct {
 	Blocking           bool
 	ValidDestination   bool
 	InvalidDestination bool
+	Selected           bool
 }
 
 var iconToLabel = map[state.Icon]string{
@@ -45,6 +46,7 @@ func Square(props SquareProps) *hypp.VNode {
 					"blocking":            props.Blocking,
 					"valid-destination":   props.ValidDestination,
 					"invalid-destination": props.InvalidDestination,
+					"selected":            props.Selected,
 				},
 				"disabled": !props.ValidDestination,
 				"type":     "button",

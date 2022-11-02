@@ -50,6 +50,10 @@ html {
   background-color: #ff7575;
 }
 
+.inner-square.selected {
+  background-color: #f0f8ff;
+}
+
 .piece-wrapper {
   width: 10%;
   aspect-ratio: 1 / 1;
