@@ -5,6 +5,7 @@ import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/view/tale/component"
+	"github.com/macabot/senet/internal/app/view/tale/page"
 )
 
 func main() {
@@ -16,6 +17,10 @@ func main() {
 				component.PieceTale(),
 				component.StickTale(),
 				component.SticksTale(),
+			),
+			fairy.NewBranch(
+				"Pages",
+				page.GamePageTale(),
 			),
 		),
 		[]*hypp.VNode{

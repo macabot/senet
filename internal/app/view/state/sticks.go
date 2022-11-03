@@ -1,13 +1,26 @@
 package state
 
 type Sticks struct {
-	Up        [4]bool
+	Flips     [4]int
 	HasThrown bool
+}
+
+func (s Sticks) up() [4]bool {
+	return [4]bool{
+		s.Flips[0]%2 != 0,
+		s.Flips[1]%2 != 0,
+		s.Flips[2]%2 != 0,
+		s.Flips[3]%2 != 0,
+	}
+}
+
+func (s *Sticks) setFlipsFromUp(up [4]bool) {
+
 }
 
 func (s Sticks) Steps() int {
 	sum := 0
-	for _, up := range s.Up {
+	for _, up := range s.up() {
 		if up {
 			sum++
 		}
@@ -19,13 +32,21 @@ func (s Sticks) Steps() int {
 }
 
 func SticksFromSteps(steps int, hasThrown bool) Sticks {
-	return Sticks{
-		Up: [4]bool{
-			steps >= 1 && steps < 6,
-			steps >= 2 && steps < 6,
-			steps >= 3 && steps < 6,
-			steps >= 4 && steps < 6,
-		},
+	sticks := Sticks{
+		Flips:     [4]int{},
 		HasThrown: hasThrown,
 	}
+	if steps >= 1 && steps < 6 {
+		sticks.Flips[0] = 1
+	}
+	if steps >= 2 && steps < 6 {
+		sticks.Flips[1] = 1
+	}
+	if steps >= 3 && steps < 6 {
+		sticks.Flips[2] = 1
+	}
+	if steps >= 4 && steps < 6 {
+		sticks.Flips[3] = 1
+	}
+	return sticks
 }
