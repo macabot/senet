@@ -13,5 +13,16 @@ func GamePageTale() *fairy.Tale {
 			Game: state.NewGame(),
 		},
 		page.GamePage,
+	).WithControls(
+		fairy.NewCheckboxControl(
+			"Has thrown",
+			func(props *state.State, hasThrown bool) *state.State {
+				props.Game.SetSticks(state.SticksFromSteps(6, hasThrown))
+				return props
+			},
+			func(props *state.State) bool {
+				return props.Game.Sticks().HasThrown
+			},
+		),
 	)
 }

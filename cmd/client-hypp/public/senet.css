@@ -392,3 +392,29 @@ html {
 .delay-20 {
   transition-delay: 60ms;
 }
+
+.game-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.game-page > :nth-child(1) {
+  /* flex-basis: max-content; */
+  flex: 0 0 max-content;
+}
+
+.game-page.focus-sticks > :nth-child(1) {
+  /* flex-basis: auto; */
+  flex: 0 100 auto;
+}
+
+.game-page > :nth-child(2) {
+  /* flex-basis: auto; */
+  flex: 0 100 auto;
+}
+
+.game-page.focus-sticks > :nth-child(2) {
+  /* flex-basis: max-content; */
+  flex: 0 0 max-content;
+}

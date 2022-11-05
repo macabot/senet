@@ -10,7 +10,10 @@ import (
 func GamePage(props *state.State) *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
-			"class": "game-page",
+			"class": map[string]bool{
+				"game-page":    true,
+				"focus-sticks": !props.Game.Sticks().HasThrown,
+			},
 		},
 		component.Board(props),
 		component.Sticks(props.Game.Sticks()),
