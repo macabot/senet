@@ -54,7 +54,7 @@ func Board(props *state.State) *hypp.VNode {
 			i++
 		}
 	}
-	return html.Main(
+	return html.Section(
 		hypp.HProps{
 			"class": "board",
 		},
