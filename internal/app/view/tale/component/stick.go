@@ -5,7 +5,7 @@ import (
 	"github.com/macabot/senet/internal/app/view/render/component"
 )
 
-func StickTale() *fairy.Tale {
+func StickTale() *fairy.Tale[int] {
 	return fairy.NewTale(
 		"Stick",
 		0,

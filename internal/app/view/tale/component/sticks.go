@@ -23,7 +23,7 @@ func flipStick(flips int) int {
 	return flips
 }
 
-func SticksTale() *fairy.Tale {
+func SticksTale() *fairy.Tale[state.Sticks] {
 	return fairy.NewTale(
 		"Sticks",
 		state.Sticks{

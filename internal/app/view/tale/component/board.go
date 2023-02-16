@@ -6,7 +6,7 @@ import (
 	"github.com/macabot/senet/internal/app/view/state"
 )
 
-func BoardTale() *fairy.Tale {
+func BoardTale() *fairy.Tale[*state.State] {
 	configuration := 0
 	return fairy.NewTale(
 		"Board",

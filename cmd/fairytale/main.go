@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/fairy"
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
@@ -10,7 +9,7 @@ import (
 )
 
 func main() {
-	fairytale.Run(
+	fairy.Run(
 		fairy.NewTree(
 			fairy.NewBranch(
 				"Components",

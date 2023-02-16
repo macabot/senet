@@ -6,7 +6,7 @@ import (
 	"github.com/macabot/senet/internal/app/view/state"
 )
 
-func PieceTale() *fairy.Tale {
+func PieceTale() *fairy.Tale[component.PieceProps] {
 	return fairy.NewTale(
 		"Piece",
 		component.PieceProps{
