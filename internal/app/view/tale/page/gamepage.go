@@ -1,20 +1,21 @@
 package page
 
 import (
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
 	"github.com/macabot/senet/internal/app/view/render/page"
 	"github.com/macabot/senet/internal/app/view/state"
 )
 
-func GamePageTale() *fairy.Tale[*state.State] {
-	return fairy.NewTale(
+func GamePageTale() *fairytale.Tale {
+	return fairytale.New(
 		"GamePage",
 		&state.State{
 			Game: state.NewGame(),
 		},
 		page.GamePage,
 	).WithControls(
-		fairy.NewCheckboxControl(
+		control.NewCheckbox(
 			"Has thrown",
 			func(props *state.State, hasThrown bool) *state.State {
 				props.Game.SetSticks(state.SticksFromSteps(6, hasThrown))

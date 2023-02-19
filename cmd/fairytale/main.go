@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/book"
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/view/tale/component"
@@ -9,16 +10,16 @@ import (
 )
 
 func main() {
-	fairy.Run(
-		fairy.NewTree(
-			fairy.NewBranch(
+	book.Open(
+		fairytale.NewTree(
+			fairytale.NewBranch(
 				"Components",
 				component.BoardTale(),
 				component.PieceTale(),
 				component.StickTale(),
 				component.SticksTale(),
 			),
-			fairy.NewBranch(
+			fairytale.NewBranch(
 				"Pages",
 				page.GamePageTale(),
 			),

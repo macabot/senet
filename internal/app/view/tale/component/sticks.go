@@ -3,7 +3,8 @@ package component
 import (
 	"math/rand"
 
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
 	"github.com/macabot/senet/internal/app/view/render/component"
 	"github.com/macabot/senet/internal/app/view/state"
 )
@@ -23,8 +24,8 @@ func flipStick(flips int) int {
 	return flips
 }
 
-func SticksTale() *fairy.Tale[state.Sticks] {
-	return fairy.NewTale(
+func SticksTale() *fairytale.Tale {
+	return fairytale.New(
 		"Sticks",
 		state.Sticks{
 			Flips:     [4]int{0, 0, 0, 0},
@@ -32,7 +33,7 @@ func SticksTale() *fairy.Tale[state.Sticks] {
 		},
 		component.Sticks,
 	).WithControls(
-		fairy.NewButtonControl(
+		control.NewButton(
 			"Throw",
 			func(props state.Sticks) state.Sticks {
 				return state.Sticks{
@@ -46,7 +47,7 @@ func SticksTale() *fairy.Tale[state.Sticks] {
 				}
 			},
 		),
-		fairy.NewCheckboxControl(
+		control.NewCheckbox(
 			"Has thrown",
 			func(props state.Sticks, hasThrown bool) state.Sticks {
 				props.HasThrown = hasThrown

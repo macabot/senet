@@ -1,13 +1,14 @@
 package component
 
 import (
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
 	"github.com/macabot/senet/internal/app/view/render/component"
 	"github.com/macabot/senet/internal/app/view/state"
 )
 
-func PieceTale() *fairy.Tale[component.PieceProps] {
-	return fairy.NewTale(
+func PieceTale() *fairytale.Tale {
+	return fairytale.New(
 		"Piece",
 		component.PieceProps{
 			Piece:     state.Piece{ID: 1, Position: 0},
@@ -17,7 +18,7 @@ func PieceTale() *fairy.Tale[component.PieceProps] {
 		},
 		component.Piece,
 	).WithControls(
-		fairy.NewSelectControl(
+		control.NewSelect(
 			"Player",
 			func(props component.PieceProps, player int) component.PieceProps {
 				props.Player = player
@@ -26,12 +27,12 @@ func PieceTale() *fairy.Tale[component.PieceProps] {
 			func(props component.PieceProps) int {
 				return props.Player
 			},
-			[]fairy.SelectOption[int]{
+			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
 				{Label: "Player 2", Value: 1},
 			},
 		),
-		fairy.NewCheckboxControl(
+		control.NewCheckbox(
 			"CanSelect",
 			func(props component.PieceProps, canSelect bool) component.PieceProps {
 				props.CanSelect = canSelect
@@ -41,7 +42,7 @@ func PieceTale() *fairy.Tale[component.PieceProps] {
 				return props.CanSelect
 			},
 		),
-		fairy.NewCheckboxControl(
+		control.NewCheckbox(
 			"Moving",
 			func(props component.PieceProps, moving bool) component.PieceProps {
 				props.Moving = moving

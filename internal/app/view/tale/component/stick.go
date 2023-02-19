@@ -1,17 +1,18 @@
 package component
 
 import (
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
 	"github.com/macabot/senet/internal/app/view/render/component"
 )
 
-func StickTale() *fairy.Tale[int] {
-	return fairy.NewTale(
+func StickTale() *fairytale.Tale {
+	return fairytale.New(
 		"Stick",
 		0,
 		component.Stick,
 	).WithControls(
-		fairy.NewNumberInputControl(
+		control.NewNumberInput(
 			"Flips",
 			func(_ int, flips int) int {
 				return flips
