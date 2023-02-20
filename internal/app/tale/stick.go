@@ -6,7 +6,7 @@ import (
 	"github.com/macabot/senet/internal/app/component"
 )
 
-func StickTale() *fairytale.Tale {
+func Stick() *fairytale.Tale {
 	return fairytale.New(
 		"Stick",
 		0,

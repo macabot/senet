@@ -24,7 +24,7 @@ func flipStick(flips int) int {
 	return flips
 }
 
-func SticksTale() *fairytale.Tale {
+func Sticks() *fairytale.Tale {
 	return fairytale.New(
 		"Sticks",
 		state.Sticks{

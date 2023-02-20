@@ -20,14 +20,14 @@ func main() {
 		},
 		fairytale.NewBundle(
 			"Components",
-			tale.BoardTale(),
-			tale.PieceTale(),
-			tale.StickTale(),
-			tale.SticksTale(),
+			tale.Board(),
+			tale.Piece(),
+			tale.Stick(),
+			tale.Sticks(),
 		),
 		fairytale.NewBundle(
 			"Pages",
-			tale.GamePageTale(),
+			tale.GamePage(),
 		),
 	)
 }

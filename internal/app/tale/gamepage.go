@@ -7,7 +7,7 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func GamePageTale() *fairytale.Tale {
+func GamePage() *fairytale.Tale {
 	return fairytale.New(
 		"GamePage",
 		&state.State{
