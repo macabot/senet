@@ -1,10 +1,10 @@
-package component
+package tale
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
-	"github.com/macabot/senet/internal/app/view/render/component"
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/state"
 )
 
 func BoardTale() *fairytale.Tale {

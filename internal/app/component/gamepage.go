@@ -1,10 +1,9 @@
-package page
+package component
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/view/render/component"
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/app/state"
 )
 
 func GamePage(props *state.State) *hypp.VNode {
@@ -15,7 +14,7 @@ func GamePage(props *state.State) *hypp.VNode {
 				"focus-sticks": !props.Game.Sticks().HasThrown,
 			},
 		},
-		component.Board(props),
-		component.Sticks(props.Game.Sticks()),
+		Board(props),
+		Sticks(props.Game.Sticks()),
 	)
 }

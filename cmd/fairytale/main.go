@@ -5,8 +5,7 @@ import (
 	"github.com/macabot/fairytale/app"
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/view/tale/component"
-	"github.com/macabot/senet/internal/app/view/tale/page"
+	"github.com/macabot/senet/internal/app/tale"
 )
 
 func main() {
@@ -21,14 +20,14 @@ func main() {
 		},
 		fairytale.NewBundle(
 			"Components",
-			component.BoardTale(),
-			component.PieceTale(),
-			component.StickTale(),
-			component.SticksTale(),
+			tale.BoardTale(),
+			tale.PieceTale(),
+			tale.StickTale(),
+			tale.SticksTale(),
 		),
 		fairytale.NewBundle(
 			"Pages",
-			page.GamePageTale(),
+			tale.GamePageTale(),
 		),
 	)
 }

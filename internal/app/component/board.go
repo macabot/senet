@@ -5,8 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/view/render/hoc"
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/set"
 )
 
@@ -26,14 +25,14 @@ func Board(props *state.State) *hypp.VNode {
 		for column := 0; column < 10; column++ {
 			coordinate := state.Coordinate{Row: row, Column: column}
 			position := state.PositionFromCoordinate(coordinate)
-			children[i] = hoc.With(
+			children[i] = With(
 				Square(SquareProps{
 					Position:           position,
 					ValidDestination:   hasValidDestination && validDestination == position,
 					InvalidDestination: invalidDestinations.Has(position),
 					Selected:           selected != nil && selected.Position == position,
 				}),
-				hoc.Key(fmt.Sprintf("square-%d", position)),
+				Key(fmt.Sprintf("square-%d", position)),
 			)
 			i++
 		}
@@ -41,7 +40,7 @@ func Board(props *state.State) *hypp.VNode {
 	for player, piecesByPos := range board.PlayerPieces {
 		pieces := piecesByPos.OrderedByID()
 		for _, piece := range pieces {
-			children[i] = hoc.With(
+			children[i] = With(
 				Piece(PieceProps{
 					Piece:         piece,
 					Player:        player,
@@ -49,7 +48,7 @@ func Board(props *state.State) *hypp.VNode {
 					DrawAttention: selected == nil && props.Game.CanSelect(player),
 					Selected:      selected != nil && selected.Position == piece.Position,
 				}),
-				hoc.Key(fmt.Sprintf("piece-%d", piece.ID)),
+				Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)
 			i++
 		}
