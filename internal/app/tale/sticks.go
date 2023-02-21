@@ -1,28 +1,11 @@
 package tale
 
 import (
-	"math/rand"
-
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
 )
-
-const minFlips = 3
-
-func flipStick(flips int) int {
-	sign := 1
-	if rand.Float32() < 0.5 {
-		sign = -1
-	}
-	flips += minFlips * sign
-	up := rand.Float32() < 0.5
-	if (flips%2 == 0) == up {
-		flips += sign
-	}
-	return flips
-}
 
 func Sticks() *fairytale.Tale {
 	return fairytale.New(
@@ -35,16 +18,8 @@ func Sticks() *fairytale.Tale {
 	).WithControls(
 		control.NewButton(
 			"Throw",
-			func(props state.Sticks) state.Sticks {
-				return state.Sticks{
-					Flips: [4]int{
-						flipStick(props.Flips[0]),
-						flipStick(props.Flips[1]),
-						flipStick(props.Flips[2]),
-						flipStick(props.Flips[3]),
-					},
-					HasThrown: true,
-				}
+			func(sticks state.Sticks) state.Sticks {
+				return sticks.Throw()
 			},
 		),
 		control.NewCheckbox(

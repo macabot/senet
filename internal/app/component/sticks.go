@@ -3,6 +3,7 @@ package component
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -25,6 +26,7 @@ func throwButton(disabled bool) *hypp.VNode {
 			"class":    "throw-button",
 			"disabled": disabled,
 			"type":     "button",
+			"onclick":  hypp.Action[*state.State](dispatch.ThrowSticks),
 		},
 	)
 }
