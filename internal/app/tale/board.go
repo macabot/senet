@@ -7,7 +7,7 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Board() *fairytale.Tale {
+func Board() *fairytale.Tale[*state.State] {
 	configuration := 0
 	return fairytale.New(
 		"Board",

@@ -3,54 +3,64 @@ package tale
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
+	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Piece() *fairytale.Tale {
+func Piece() *fairytale.Tale[*state.State] {
+	s := &state.State{
+		Game: state.NewGame(),
+	}
+	s.Game.SetHasTurn(true)
 	return fairytale.New(
 		"Piece",
-		component.PieceProps{
-			Piece:     state.Piece{ID: 1, Position: 0},
-			Player:    0,
-			CanSelect: true,
-			Moving:    false,
+		s,
+		func(s *state.State) *hypp.VNode {
+			player := s.Game.Turn()
+			props := component.PieceProps{
+				Piece:     s.Game.Board().PlayerPieces[0][0],
+				Player:    player,
+				CanSelect: s.Game.CanSelect(player),
+				Moving:    false, // TODO
+			}
+			return component.Piece(props)
 		},
-		component.Piece,
 	).WithControls(
 		control.NewSelect(
 			"Player",
-			func(props component.PieceProps, player int) component.PieceProps {
-				props.Player = player
-				return props
+			func(s *state.State, player int) *state.State {
+				s.Game.SetTurn(player)
+				return s
 			},
-			func(props component.PieceProps) int {
-				return props.Player
+			func(s *state.State) int {
+				return s.Game.Turn()
 			},
 			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
 				{Label: "Player 2", Value: 1},
 			},
 		),
-		control.NewCheckbox(
-			"CanSelect",
-			func(props component.PieceProps, canSelect bool) component.PieceProps {
-				props.CanSelect = canSelect
-				return props
-			},
-			func(props component.PieceProps) bool {
-				return props.CanSelect
-			},
-		),
-		control.NewCheckbox(
-			"Moving",
-			func(props component.PieceProps, moving bool) component.PieceProps {
-				props.Moving = moving
-				return props
-			},
-			func(props component.PieceProps) bool {
-				return props.Moving
-			},
-		),
+		// control.NewCheckbox(
+		// 	"CanSelect",
+		// 	func(s *state.State, canSelect bool) component.PieceProps {
+		// 		s.Game.CanSelect()
+		// 		props.CanSelect = canSelect
+		// 		return props
+		// 	},
+		// 	func(props component.PieceProps) bool {
+		// 		return props.CanSelect
+		// 	},
+		// ),
+		// control.NewCheckbox(
+		// 	"Moving",
+		// 	func(props component.PieceProps, moving bool) component.PieceProps {
+		// 		props.Moving = moving
+		// 		return props
+		// 	},
+		// 	func(props component.PieceProps) bool {
+		// 		return props.Moving
+		// 	},
+		// ),
 	)
 }

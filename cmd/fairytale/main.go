@@ -5,11 +5,12 @@ import (
 	"github.com/macabot/fairytale/app"
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/app/tale"
 )
 
 func main() {
-	app.Run(
+	app.Run[*state.State](
 		&app.Options{
 			Assets: []*hypp.VNode{
 				html.Link(hypp.HProps{
@@ -18,14 +19,14 @@ func main() {
 				}),
 			},
 		},
-		fairytale.NewBundle(
+		fairytale.NewBundle[*state.State](
 			"Components",
 			tale.Board(),
 			tale.Piece(),
 			tale.Stick(),
 			tale.Sticks(),
 		),
-		fairytale.NewBundle(
+		fairytale.NewBundle[*state.State](
 			"Pages",
 			tale.GamePage(),
 		),
