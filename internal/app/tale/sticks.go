@@ -13,26 +13,26 @@ func Sticks() *fairytale.Tale[*state.State] {
 		"Sticks",
 		&state.State{Game: state.NewGame()},
 		func(s *state.State) *hypp.VNode {
-			return component.Sticks(s.Game.Sticks())
+			return component.Sticks(s.Game.Sticks)
 		},
 	).WithControls(
 		control.NewButton(
 			"Throw",
 			func(s *state.State) *state.State {
-				s.Game.SetSticks(s.Game.Sticks().Throw())
+				s.Game.SetSticks(s.Game.Sticks.Throw())
 				return s
 			},
 		),
 		control.NewCheckbox(
 			"Has thrown",
 			func(s *state.State, hasThrown bool) *state.State {
-				sticks := s.Game.Sticks()
+				sticks := s.Game.Sticks
 				sticks.HasThrown = hasThrown
 				s.Game.SetSticks(sticks)
 				return s
 			},
 			func(s *state.State) bool {
-				return s.Game.Sticks().HasThrown
+				return s.Game.Sticks.HasThrown
 			},
 		),
 	)

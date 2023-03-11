@@ -13,7 +13,7 @@ func Stick() *fairytale.Tale[*state.State] {
 		"Stick",
 		&state.State{Game: state.NewGame()},
 		func(s *state.State) *hypp.VNode {
-			return component.Stick(s.Game.Sticks().Flips[0])
+			return component.Stick(s.Game.Sticks.Flips[0])
 		},
 	).WithControls(
 		control.NewNumberInput(
@@ -23,7 +23,7 @@ func Stick() *fairytale.Tale[*state.State] {
 				return s
 			},
 			func(s *state.State) int {
-				return s.Game.Sticks().Flips[0]
+				return s.Game.Sticks.Flips[0]
 			},
 		),
 	)

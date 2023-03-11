@@ -120,7 +120,7 @@ func Board() *fairytale.Tale[*state.State] {
 				return props
 			},
 			func(props *state.State) bool {
-				return props.Game.HasTurn()
+				return props.Game.HasTurn
 			},
 		),
 		control.NewSelect(
@@ -130,7 +130,7 @@ func Board() *fairytale.Tale[*state.State] {
 				return props
 			},
 			func(props *state.State) int {
-				return props.Game.Turn()
+				return props.Game.Turn
 			},
 			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
@@ -144,10 +144,10 @@ func Board() *fairytale.Tale[*state.State] {
 				return props
 			},
 			func(props *state.State) int {
-				if !props.Game.Sticks().HasThrown {
+				if !props.Game.Sticks.HasThrown {
 					return 0
 				}
-				return props.Game.Sticks().Steps()
+				return props.Game.Sticks.Steps()
 			},
 			[]control.SelectOption[int]{
 				{Label: "Not thrown", Value: 0},
@@ -164,15 +164,15 @@ func Board() *fairytale.Tale[*state.State] {
 				if id <= 0 {
 					props.Game.SetSelected(nil)
 				} else {
-					props.Game.SetSelected(props.Game.Board().FindPieceByID(id))
+					props.Game.SetSelected(props.Game.Board.FindPieceByID(id))
 				}
 				return props
 			},
 			func(props *state.State) int {
-				if props.Game.Selected() == nil {
+				if props.Game.Selected == nil {
 					return 0
 				}
-				return props.Game.Selected().ID
+				return props.Game.Selected.ID
 			},
 			[]control.SelectOption[int]{
 				{Label: "Not Selected", Value: 0},

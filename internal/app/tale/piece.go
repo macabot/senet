@@ -17,9 +17,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		"Piece",
 		s,
 		func(s *state.State) *hypp.VNode {
-			player := s.Game.Turn()
+			player := s.Game.Turn
 			props := component.PieceProps{
-				Piece:     s.Game.Board().PlayerPieces[0][0],
+				Piece:     s.Game.Board.PlayerPieces[0][0],
 				Player:    player,
 				CanSelect: s.Game.CanSelect(player),
 				Moving:    false, // TODO
@@ -34,7 +34,7 @@ func Piece() *fairytale.Tale[*state.State] {
 				return s
 			},
 			func(s *state.State) int {
-				return s.Game.Turn()
+				return s.Game.Turn
 			},
 			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},

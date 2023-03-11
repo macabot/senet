@@ -10,16 +10,16 @@ import (
 )
 
 func Board(props *state.State) *hypp.VNode {
-	board := props.Game.Board()
+	board := props.Game.Board
 	children := make([]*hypp.VNode, 30+len(board.PlayerPieces[0])+len(board.PlayerPieces[1]))
 	i := 0
-	selected := props.Game.Selected()
+	selected := props.Game.Selected
 	var validDestination state.Position
 	hasValidDestination := false
 	var invalidDestinations set.Set[state.Position]
 	if selected != nil {
-		validDestination, hasValidDestination = props.Game.ValidMoves()[selected.Position]
-		invalidDestinations = props.Game.InvalidMoves()[selected.Position]
+		validDestination, hasValidDestination = props.Game.ValidMoves[selected.Position]
+		invalidDestinations = props.Game.InvalidMoves[selected.Position]
 	}
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {

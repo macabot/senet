@@ -7,6 +7,6 @@ import (
 
 func ThrowSticks(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
-	newState.Game.SetSticks(s.Game.Sticks().Throw())
+	newState.Game.SetSticks(s.Game.Sticks.Throw())
 	return newState
 }
