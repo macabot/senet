@@ -56,6 +56,11 @@ func (s Sticks) Steps() int {
 	return sum
 }
 
+func (s Sticks) CanGoAgain() bool {
+	steps := s.Steps()
+	return steps == 1 || steps == 4 || steps == 6
+}
+
 func SticksFromSteps(steps int, hasThrown bool) Sticks {
 	sticks := Sticks{
 		Flips:     [4]int{},
