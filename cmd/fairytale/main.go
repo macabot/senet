@@ -1,33 +1,34 @@
 package main
 
 import (
-	"github.com/macabot/fairytale/fairy"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/app"
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/view/tale/component"
-	"github.com/macabot/senet/internal/app/view/tale/page"
+	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/app/tale"
 )
 
 func main() {
-	fairy.Run(
-		fairy.NewTree(
-			fairy.NewBranch(
-				"Components",
-				component.BoardTale(),
-				component.PieceTale(),
-				component.StickTale(),
-				component.SticksTale(),
-			),
-			fairy.NewBranch(
-				"Pages",
-				page.GamePageTale(),
-			),
-		),
-		[]*hypp.VNode{
-			html.Link(hypp.HProps{
-				"rel":  "stylesheet",
-				"href": "http://localhost:8001/senet.css",
-			}),
+	app.Run[*state.State](
+		&app.Options{
+			Assets: []*hypp.VNode{
+				html.Link(hypp.HProps{
+					"rel":  "stylesheet",
+					"href": "http://localhost:8001/senet.css",
+				}),
+			},
 		},
+		fairytale.NewBundle[*state.State](
+			"Components",
+			tale.Board(),
+			tale.Piece(),
+			tale.Stick(),
+			tale.Sticks(),
+		),
+		fairytale.NewBundle[*state.State](
+			"Pages",
+			tale.GamePage(),
+		),
 	)
 }

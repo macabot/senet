@@ -5,7 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/app/state"
 )
 
 type SquareProps struct {

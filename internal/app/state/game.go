@@ -12,93 +12,65 @@ const (
 )
 
 type Game struct {
-	board        *Board
-	selected     *Piece
-	sticks       Sticks
-	turn         int
-	hasTurn      bool
-	status       Status
-	validMoves   map[Position]Position
-	invalidMoves map[Position]set.Set[Position]
+	Board        *Board
+	Selected     *Piece
+	Sticks       Sticks
+	Turn         int
+	HasTurn      bool
+	Status       Status
+	ValidMoves   map[Position]Position
+	InvalidMoves map[Position]set.Set[Position]
 }
 
 func NewGame() *Game {
 	return &Game{
-		board: NewBoard(),
+		Board: NewBoard(),
 	}
-}
-
-func (g Game) Board() *Board {
-	return g.board
 }
 
 func (g *Game) SetBoard(board *Board) {
-	g.board = board
+	g.Board = board
 	g.CalcValidMoves()
-}
-
-func (g Game) Selected() *Piece {
-	return g.selected
 }
 
 func (g *Game) SetSelected(selected *Piece) {
-	g.selected = selected
+	g.Selected = selected
 	g.CalcValidMoves()
-}
-
-func (g Game) Sticks() Sticks {
-	return g.sticks
 }
 
 func (g *Game) SetSticks(sticks Sticks) {
-	g.sticks = sticks
+	g.Sticks = sticks
 	g.CalcValidMoves()
-}
-
-func (g Game) Turn() int {
-	return g.turn
 }
 
 func (g *Game) SetTurn(turn int) {
-	g.turn = turn
+	g.Turn = turn
 	g.CalcValidMoves()
 }
 
-func (g Game) HasTurn() bool {
-	return g.hasTurn
-}
-
 func (g *Game) SetHasTurn(hasTurn bool) {
-	g.hasTurn = hasTurn
-}
-
-func (g Game) ValidMoves() map[Position]Position {
-	return g.validMoves
-}
-
-func (g Game) InvalidMoves() map[Position]set.Set[Position] {
-	return g.invalidMoves
+	g.HasTurn = hasTurn
 }
 
 func (g *Game) addInvalidMove(from, to Position) {
-	if _, ok := g.invalidMoves[from]; !ok {
-		g.invalidMoves[from] = set.New[Position]()
+	if _, ok := g.InvalidMoves[from]; !ok {
+		g.InvalidMoves[from] = set.New[Position]()
 	}
-	g.invalidMoves[from].Add(to)
+	g.InvalidMoves[from].Add(to)
 }
 
 func (g Game) CanSelect(player int) bool {
-	return g.hasTurn && g.sticks.HasThrown && player == g.turn
+	return g.HasTurn && g.Sticks.HasThrown && player == g.Turn
 }
 
 func (g *Game) CalcValidMoves() {
-	g.validMoves = map[Position]Position{}
-	g.invalidMoves = map[Position]set.Set[Position]{}
+	g.ValidMoves = map[Position]Position{}
+	g.InvalidMoves = map[Position]set.Set[Position]{}
 
-	piecesByPos := g.board.PlayerPieces[g.turn]
-	otherPiecesByPos := g.board.PlayerPieces[(g.turn+1)%2]
+	piecesByPos := g.Board.PlayerPieces[g.Turn]
+	otherPiecesByPos := g.Board.PlayerPieces[(g.Turn+1)%2]
 
-	otherGroups := g.board.FindGroups(otherPiecesByPos)
+	otherGroups := g.Board.FindGroups(otherPiecesByPos)
 
 	findMoves := func(steps int, protectedSize int) {
 		for pos := range piecesByPos {
@@ -133,12 +105,12 @@ func (g *Game) CalcValidMoves() {
 				}
 			}
 
-			g.validMoves[pos] = toPos
+			g.ValidMoves[pos] = toPos
 
 			if special, ok := SpecialPositions[toPos]; ok && special.Portal {
 				for portalPos := Position(0); portalPos < 30; portalPos++ {
 					if !piecesByPos.Has(portalPos) && !otherPiecesByPos.Has(Position(portalPos)) {
-						g.validMoves[toPos] = portalPos
+						g.ValidMoves[toPos] = portalPos
 						break
 					}
 				}
@@ -146,31 +118,31 @@ func (g *Game) CalcValidMoves() {
 		}
 	}
 
-	steps := g.sticks.Steps()
+	steps := g.Sticks.Steps()
 	findMoves(steps, 2)
-	if len(g.validMoves) == 0 {
+	if len(g.ValidMoves) == 0 {
 		findMoves(-steps, 1)
 	}
 }
 
 func (g Game) CanMove(player int, from Position) bool {
-	piecesByPos := g.board.PlayerPieces[player]
+	piecesByPos := g.Board.PlayerPieces[player]
 	if _, ok := piecesByPos[from]; !ok {
 		return false
 	}
-	if _, ok := g.validMoves[from]; !ok {
+	if _, ok := g.ValidMoves[from]; !ok {
 		return false
 	}
 	return true
 }
 
 func (g *Game) Move(player int, from Position) {
-	piecesByPos := g.board.PlayerPieces[player]
+	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
 	if !ok {
 		return
 	}
-	to, ok := g.validMoves[from]
+	to, ok := g.ValidMoves[from]
 	if !ok {
 		return
 	}

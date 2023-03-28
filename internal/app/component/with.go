@@ -1,4 +1,4 @@
-package hoc
+package component
 
 import (
 	"github.com/macabot/hypp"

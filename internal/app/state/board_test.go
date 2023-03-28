@@ -3,7 +3,7 @@ package state_test
 import (
 	"testing"
 
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/set"
 	"github.com/stretchr/testify/assert"
 )

@@ -1,5 +1,7 @@
 package state
 
+import "math/rand"
+
 type Sticks struct {
 	Flips     [4]int
 	HasThrown bool
@@ -14,8 +16,31 @@ func (s Sticks) up() [4]bool {
 	}
 }
 
-func (s *Sticks) setFlipsFromUp(up [4]bool) {
+const minFlips = 3
 
+func flipStick(flips int) int {
+	sign := 1
+	if rand.Float32() < 0.5 {
+		sign = -1
+	}
+	flips += minFlips * sign
+	up := rand.Float32() < 0.5
+	if (flips%2 == 0) == up {
+		flips += sign
+	}
+	return flips
+}
+
+func (s Sticks) Throw() Sticks {
+	return Sticks{
+		Flips: [4]int{
+			flipStick(s.Flips[0]),
+			flipStick(s.Flips[1]),
+			flipStick(s.Flips[2]),
+			flipStick(s.Flips[3]),
+		},
+		HasThrown: true,
+	}
 }
 
 func (s Sticks) Steps() int {
@@ -29,6 +54,11 @@ func (s Sticks) Steps() int {
 		sum = 6
 	}
 	return sum
+}
+
+func (s Sticks) CanGoAgain() bool {
+	steps := s.Steps()
+	return steps == 1 || steps == 4 || steps == 6
 }
 
 func SticksFromSteps(steps int, hasThrown bool) Sticks {

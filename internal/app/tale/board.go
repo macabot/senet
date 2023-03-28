@@ -1,21 +1,22 @@
-package component
+package tale
 
 import (
-	"github.com/macabot/fairytale/fairy"
-	"github.com/macabot/senet/internal/app/view/render/component"
-	"github.com/macabot/senet/internal/app/view/state"
+	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
+	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/state"
 )
 
-func BoardTale() *fairy.Tale {
+func Board() *fairytale.Tale[*state.State] {
 	configuration := 0
-	return fairy.NewTale(
+	return fairytale.New(
 		"Board",
 		&state.State{
 			Game: state.NewGame(),
 		},
 		component.Board,
 	).WithControls(
-		fairy.NewSelectControl(
+		control.NewSelect(
 			"Configuration",
 			func(props *state.State, option int) *state.State {
 				configuration = option
@@ -104,7 +105,7 @@ func BoardTale() *fairy.Tale {
 			func(_ *state.State) int {
 				return configuration
 			},
-			[]fairy.SelectOption[int]{
+			[]control.SelectOption[int]{
 				{Label: "New game", Value: 0},
 				{Label: "P1- Protecting", Value: 1},
 				{Label: "P2 - Protecting", Value: 2},
@@ -112,43 +113,43 @@ func BoardTale() *fairy.Tale {
 				{Label: "P2 - Blocking", Value: 4},
 			},
 		),
-		fairy.NewCheckboxControl(
+		control.NewCheckbox(
 			"Has turn",
 			func(props *state.State, hasTurn bool) *state.State {
 				props.Game.SetHasTurn(hasTurn)
 				return props
 			},
 			func(props *state.State) bool {
-				return props.Game.HasTurn()
+				return props.Game.HasTurn
 			},
 		),
-		fairy.NewSelectControl(
+		control.NewSelect(
 			"Turn",
 			func(props *state.State, turn int) *state.State {
 				props.Game.SetTurn(turn)
 				return props
 			},
 			func(props *state.State) int {
-				return props.Game.Turn()
+				return props.Game.Turn
 			},
-			[]fairy.SelectOption[int]{
+			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
 				{Label: "Player 2", Value: 1},
 			},
 		),
-		fairy.NewSelectControl(
+		control.NewSelect(
 			"Steps",
 			func(props *state.State, steps int) *state.State {
 				props.Game.SetSticks(state.SticksFromSteps(steps, steps != 0))
 				return props
 			},
 			func(props *state.State) int {
-				if !props.Game.Sticks().HasThrown {
+				if !props.Game.Sticks.HasThrown {
 					return 0
 				}
-				return props.Game.Sticks().Steps()
+				return props.Game.Sticks.Steps()
 			},
-			[]fairy.SelectOption[int]{
+			[]control.SelectOption[int]{
 				{Label: "Not thrown", Value: 0},
 				{Label: "1", Value: 1},
 				{Label: "2", Value: 2},
@@ -157,23 +158,23 @@ func BoardTale() *fairy.Tale {
 				{Label: "6", Value: 6},
 			},
 		),
-		fairy.NewSelectControl(
+		control.NewSelect(
 			"Selected",
 			func(props *state.State, id int) *state.State {
 				if id <= 0 {
 					props.Game.SetSelected(nil)
 				} else {
-					props.Game.SetSelected(props.Game.Board().FindPieceByID(id))
+					props.Game.SetSelected(props.Game.Board.FindPieceByID(id))
 				}
 				return props
 			},
 			func(props *state.State) int {
-				if props.Game.Selected() == nil {
+				if props.Game.Selected == nil {
 					return 0
 				}
-				return props.Game.Selected().ID
+				return props.Game.Selected.ID
 			},
-			[]fairy.SelectOption[int]{
+			[]control.SelectOption[int]{
 				{Label: "Not Selected", Value: 0},
 				{Label: "1", Value: 1},
 				{Label: "2", Value: 2},
