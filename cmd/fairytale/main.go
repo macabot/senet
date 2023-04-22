@@ -15,7 +15,7 @@ func main() {
 			Assets: []*hypp.VNode{
 				html.Link(hypp.HProps{
 					"rel":  "stylesheet",
-					"href": "http://localhost:8001/senet.css",
+					"href": "/senet.css",
 				}),
 			},
 		},
