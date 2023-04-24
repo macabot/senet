@@ -1,26 +1,22 @@
 # senet
 
 ## Setup
-The setup requires 3 terminals.
 
-Terminal 1: Run a file server for the static assets.
-This example uses Python.
+The setup requires 2 terminals.
+
+**Terminal 1**: Install [air](https://github.com/cosmtrek/air) and run it in the root directory:
+
 ```shell
-cd cmd/client-hypp/public
-python3 -m http.server 8001
+air
 ```
 
-Terminal 2: Build the WASM file.
-Run this command every time you make a change to the application.
+`air` will watch the Go files and rebuild the fairytale WASM file whenever you make any changes.
+
+**Terminal 2**: Install the [fairytale cli](https://github.com/macabot/fairytale#cli) and run it in the root directory:
+
 ```shell
-cd cmd/fairytale
-GOOS=js GOARCH=wasm go build -o main.wasm main.go
+fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets cmd/client-hypp/public
 ```
 
-Terminal 3: Serve the fairytale app.
-```shell
-cd cmd/fairytale
-fairytale serve :8000 main.wasm
-```
-
-You can visit the app on http://localhost:8000/.
+`fairytale` will watch the WASM file and assets. Whenever any changes are made it will reload the web page.
+You can visit the fairytale app on http://localhost:8000/.

@@ -20,3 +20,6 @@ wasm_exec.js
 
 # IDE directories
 .history
+
+# air
+tmp
