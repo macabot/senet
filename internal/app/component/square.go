@@ -17,17 +17,21 @@ type SquareProps struct {
 	Selected           bool
 }
 
-var iconToLabel = map[state.Icon]string{
-	state.Two:   "II",
-	state.Three: "III",
-	state.Cross: "☓",
-	state.Ankh:  "☥",
+func iconToLabel(icon state.Icon) *hypp.VNode {
+	switch icon {
+	case state.Shield:
+		return shield()
+	case state.Cross:
+		return hypp.Text("☓")
+	default:
+		panic(fmt.Errorf("invalid icon %v", icon))
+	}
 }
 
 func Square(props SquareProps) *hypp.VNode {
-	var text *hypp.VNode
+	var label *hypp.VNode
 	if special, ok := state.SpecialPositions[props.Position]; ok {
-		text = hypp.Text(iconToLabel[special.Icon])
+		label = iconToLabel(special.Icon)
 	}
 	coordinate := props.Position.Coordinate()
 	return html.Div(
@@ -51,7 +55,7 @@ func Square(props SquareProps) *hypp.VNode {
 				"disabled": !props.ValidDestination,
 				"type":     "button",
 			},
-			text,
+			label,
 		),
 	)
 }

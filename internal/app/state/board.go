@@ -41,10 +41,8 @@ func PositionFromCoordinate(coordinate Coordinate) Position {
 type Icon int
 
 const (
-	Two Icon = iota
-	Three
+	Shield Icon = iota
 	Cross
-	Ankh
 )
 
 type SpecialPosition struct {
@@ -54,10 +52,10 @@ type SpecialPosition struct {
 }
 
 var SpecialPositions = map[Position]SpecialPosition{
-	28: {Icon: Two, Protects: true, Portal: false},
-	27: {Icon: Three, Protects: true, Portal: false},
+	28: {Icon: Shield, Protects: true, Portal: false},
+	27: {Icon: Shield, Protects: true, Portal: false},
 	26: {Icon: Cross, Protects: false, Portal: true},
-	25: {Icon: Ankh, Protects: true, Portal: false},
+	25: {Icon: Shield, Protects: true, Portal: false},
 }
 
 type Piece struct {

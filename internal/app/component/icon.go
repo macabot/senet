@@ -1,0 +1,21 @@
+package component
+
+import (
+	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/tag/svg"
+)
+
+func shield() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"height":  48,
+			"width":   48,
+			"viewBox": "0 96 960 960",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480 975q-140-35-230-162.5T160 533V295l320-120 320 120v238q0 152-90 279.5T480 975Zm0-62q115-38 187.5-143.5T740 533V337l-260-98-260 98v196q0 131 72.5 236.5T480 913Zm0-337Z",
+			},
+		),
+	)
+}
