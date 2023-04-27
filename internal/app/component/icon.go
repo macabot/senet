@@ -5,11 +5,12 @@ import (
 	"github.com/macabot/hypp/tag/svg"
 )
 
+// https://fonts.google.com/icons?selected=Material+Symbols+Outlined:shield:FILL@0;wght@400;GRAD@0;opsz@48
 func shield() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"height":  48,
-			"width":   48,
+			"height":  "auto",
+			"width":   "80%",
 			"viewBox": "0 96 960 960",
 		},
 		svg.Path(

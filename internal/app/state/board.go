@@ -63,6 +63,14 @@ type Piece struct {
 	Position Position
 }
 
+type PieceAbility int
+
+const (
+	NormalPiece PieceAbility = iota
+	ProtectedPiece
+	BlockingPiece
+)
+
 type PiecesByPosition map[Position]Piece
 
 func NewPiecesByPosition(pieces ...Piece) PiecesByPosition {

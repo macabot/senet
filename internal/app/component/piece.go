@@ -15,10 +15,18 @@ type PieceProps struct {
 	DrawAttention bool
 	Moving        bool
 	Selected      bool
+	PieceAbility  state.PieceAbility
 }
 
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
+	var label *hypp.VNode
+	switch props.PieceAbility {
+	case state.BlockingPiece:
+		// TODO
+	case state.ProtectedPiece:
+		label = shield()
+	}
 	return html.Div(
 		hypp.HProps{
 			"class": []string{
@@ -39,6 +47,7 @@ func Piece(props PieceProps) *hypp.VNode {
 				"disabled": !props.CanSelect,
 				"type":     "button",
 			},
+			label,
 		),
 	)
 }
