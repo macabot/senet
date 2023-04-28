@@ -23,7 +23,7 @@ func Piece(props PieceProps) *hypp.VNode {
 	var label *hypp.VNode
 	switch props.PieceAbility {
 	case state.BlockingPiece:
-		// TODO
+		label = frontHand()
 	case state.ProtectedPiece:
 		label = shield()
 	}
