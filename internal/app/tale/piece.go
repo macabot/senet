@@ -39,6 +39,46 @@ func Piece() *fairytale.Tale[*state.State] {
 				{Label: "Player 2", Value: 1},
 			},
 		),
+		control.NewCheckbox(
+			"Can select",
+			func(_ *state.State, canSelect bool) *state.State {
+				props.CanSelect = canSelect
+				return nil
+			},
+			func(_ *state.State) bool {
+				return props.CanSelect
+			},
+		),
+		control.NewCheckbox(
+			"Draw attention",
+			func(_ *state.State, drawAttention bool) *state.State {
+				props.DrawAttention = drawAttention
+				return nil
+			},
+			func(_ *state.State) bool {
+				return props.DrawAttention
+			},
+		),
+		control.NewCheckbox(
+			"Moving",
+			func(_ *state.State, moving bool) *state.State {
+				props.Moving = moving
+				return nil
+			},
+			func(_ *state.State) bool {
+				return props.Moving
+			},
+		),
+		control.NewCheckbox(
+			"Selected",
+			func(_ *state.State, selected bool) *state.State {
+				props.Selected = selected
+				return nil
+			},
+			func(_ *state.State) bool {
+				return props.Selected
+			},
+		),
 		control.NewSelect(
 			"Ability",
 			func(_ *state.State, ability state.PieceAbility) *state.State {
