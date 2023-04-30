@@ -10,13 +10,12 @@ import (
 
 func Piece() *fairytale.Tale[*state.State] {
 	props := component.PieceProps{
-		Piece:         state.Piece{ID: 1, Position: 9},
+		Piece:         &state.Piece{ID: 1, Position: 9},
 		Player:        0,
 		CanSelect:     false,
 		DrawAttention: false,
 		Moving:        false,
 		Selected:      false,
-		PieceAbility:  state.NormalPiece,
 	}
 	return fairytale.New(
 		"Piece",
@@ -82,11 +81,11 @@ func Piece() *fairytale.Tale[*state.State] {
 		control.NewSelect(
 			"Ability",
 			func(_ *state.State, ability state.PieceAbility) *state.State {
-				props.PieceAbility = ability
+				props.Piece.Ability = ability
 				return nil
 			},
 			func(_ *state.State) int {
-				return int(props.PieceAbility)
+				return int(props.Piece.Ability)
 			},
 			[]control.SelectOption[state.PieceAbility]{
 				{Label: "Normal", Value: state.NormalPiece},

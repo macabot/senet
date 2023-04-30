@@ -9,19 +9,18 @@ import (
 )
 
 type PieceProps struct {
-	Piece         state.Piece
+	Piece         *state.Piece
 	Player        int
 	CanSelect     bool
 	DrawAttention bool
 	Moving        bool
 	Selected      bool
-	PieceAbility  state.PieceAbility
 }
 
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
 	var label *hypp.VNode
-	switch props.PieceAbility {
+	switch props.Piece.Ability {
 	case state.BlockingPiece:
 		label = frontHand()
 	case state.ProtectedPiece:

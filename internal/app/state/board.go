@@ -58,11 +58,6 @@ var SpecialPositions = map[Position]SpecialPosition{
 	25: {Icon: Shield, Protects: true, Portal: false},
 }
 
-type Piece struct {
-	ID       int
-	Position Position
-}
-
 type PieceAbility int
 
 const (
@@ -71,10 +66,24 @@ const (
 	BlockingPiece
 )
 
-type PiecesByPosition map[Position]Piece
+func (a PieceAbility) IsProtected() bool {
+	return a == ProtectedPiece || a == BlockingPiece
+}
 
-func NewPiecesByPosition(pieces ...Piece) PiecesByPosition {
-	m := map[Position]Piece{}
+func (a PieceAbility) IsBlocking() bool {
+	return a == BlockingPiece
+}
+
+type Piece struct {
+	ID       int
+	Position Position
+	Ability  PieceAbility
+}
+
+type PiecesByPosition map[Position]*Piece
+
+func NewPiecesByPosition(pieces ...*Piece) PiecesByPosition {
+	m := map[Position]*Piece{}
 	for _, piece := range pieces {
 		m[piece.Position] = piece
 	}
@@ -86,8 +95,8 @@ func (p PiecesByPosition) Has(pos Position) bool {
 	return ok
 }
 
-func (p PiecesByPosition) OrderedByID() []Piece {
-	pieces := make([]Piece, len(p))
+func (p PiecesByPosition) OrderedByID() []*Piece {
+	pieces := make([]*Piece, len(p))
 	i := 0
 	for _, piece := range p {
 		pieces[i] = piece
@@ -97,7 +106,7 @@ func (p PiecesByPosition) OrderedByID() []Piece {
 	return pieces
 }
 
-type byID []Piece
+type byID []*Piece
 
 func (s byID) Len() int {
 	return len(s)
@@ -119,18 +128,18 @@ func NewBoard() *Board {
 	return &Board{
 		PlayerPieces: [2]PiecesByPosition{
 			NewPiecesByPosition(
-				Piece{ID: 1, Position: 9},
-				Piece{ID: 2, Position: 7},
-				Piece{ID: 3, Position: 5},
-				Piece{ID: 4, Position: 3},
-				Piece{ID: 5, Position: 1},
+				&Piece{ID: 1, Position: 9},
+				&Piece{ID: 2, Position: 7},
+				&Piece{ID: 3, Position: 5},
+				&Piece{ID: 4, Position: 3},
+				&Piece{ID: 5, Position: 1},
 			),
 			NewPiecesByPosition(
-				Piece{ID: 6, Position: 8},
-				Piece{ID: 7, Position: 6},
-				Piece{ID: 8, Position: 4},
-				Piece{ID: 9, Position: 2},
-				Piece{ID: 10, Position: 0},
+				&Piece{ID: 6, Position: 8},
+				&Piece{ID: 7, Position: 6},
+				&Piece{ID: 8, Position: 4},
+				&Piece{ID: 9, Position: 2},
+				&Piece{ID: 10, Position: 0},
 			),
 		},
 	}
@@ -191,8 +200,28 @@ func (b Board) FindPieceByID(id int) *Piece {
 	}
 	for _, piece := range piecesByPos {
 		if piece.ID == id {
-			return &piece
+			return piece
 		}
 	}
 	return nil
+}
+
+// UpdatePieceAbilities updates the abilities of the pieces given the layout of the board.
+func (b *Board) UpdatePieceAbilities() {
+	update := func(piecesByPosition PiecesByPosition) {
+		groups := b.FindGroups(piecesByPosition)
+		for pos := range piecesByPosition {
+			piece := piecesByPosition[pos]
+			if len(groups[pos]) >= 3 {
+				piece.Ability = BlockingPiece
+			} else if len(groups[pos]) == 2 {
+				piece.Ability = ProtectedPiece
+			} else {
+				piece.Ability = NormalPiece
+			}
+		}
+	}
+	for _, piecesByPosition := range b.PlayerPieces {
+		update(piecesByPosition)
+	}
 }

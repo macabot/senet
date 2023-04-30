@@ -23,9 +23,11 @@ type Game struct {
 }
 
 func NewGame() *Game {
-	return &Game{
+	g := &Game{
 		Board: NewBoard(),
 	}
+	g.CalcValidMoves()
+	return g
 }
 
 func (g *Game) SetBoard(board *Board) {
@@ -64,6 +66,7 @@ func (g Game) CanSelect(player int) bool {
 }
 
 func (g *Game) CalcValidMoves() {
+	g.Board.UpdatePieceAbilities()
 	g.ValidMoves = map[Position]Position{}
 	g.InvalidMoves = map[Position]set.Set[Position]{}
 

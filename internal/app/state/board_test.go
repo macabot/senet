@@ -56,8 +56,50 @@ func TestBoardFindGroups(t *testing.T) {
 			10: set.New[state.Position](9, 10),
 		},
 		state.Board{}.FindGroups(state.PiecesByPosition{
-			9:  state.Piece{ID: 1, Position: 9},
-			10: state.Piece{ID: 2, Position: 10},
+			9:  &state.Piece{ID: 1, Position: 9},
+			10: &state.Piece{ID: 2, Position: 10},
 		}),
 	)
+}
+
+func TestUpdatePieceAbilitiesSetProtected(t *testing.T) {
+	board := state.Board{
+		PlayerPieces: [2]state.PiecesByPosition{
+			state.NewPiecesByPosition(
+				&state.Piece{ID: 1, Position: 7},
+				&state.Piece{ID: 2, Position: 12},
+			),
+		},
+	}
+	board.UpdatePieceAbilities()
+	assert.True(t, board.PlayerPieces[0][7].Ability.IsProtected())
+	assert.True(t, board.PlayerPieces[0][12].Ability.IsProtected())
+}
+
+func TestUpdatePieceAbilitiesSetBlocking(t *testing.T) {
+	board := state.Board{
+		PlayerPieces: [2]state.PiecesByPosition{
+			state.NewPiecesByPosition(
+				&state.Piece{ID: 1, Position: 7},
+				&state.Piece{ID: 2, Position: 12},
+				&state.Piece{ID: 3, Position: 27},
+			),
+		},
+	}
+	board.UpdatePieceAbilities()
+	assert.True(t, board.PlayerPieces[0][7].Ability.IsBlocking())
+	assert.True(t, board.PlayerPieces[0][12].Ability.IsBlocking())
+	assert.True(t, board.PlayerPieces[0][27].Ability.IsBlocking())
+}
+
+func TestUpdatePieceAbilitiesSetNormal(t *testing.T) {
+	board := state.Board{
+		PlayerPieces: [2]state.PiecesByPosition{
+			state.NewPiecesByPosition(
+				&state.Piece{ID: 1, Position: 7, Ability: state.ProtectedPiece},
+			),
+		},
+	}
+	board.UpdatePieceAbilities()
+	assert.Equal(t, state.NormalPiece, board.PlayerPieces[0][7].Ability)
 }
