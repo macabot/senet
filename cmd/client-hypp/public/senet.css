@@ -320,13 +320,16 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  display: none;
+  display: flex;
+  visibility: hidden;
   align-items: center;
   justify-content: center;
 }
 
 .steps-wrapper:not(.disabled) {
-  display: flex;
+  animation: 200ms fadeIn;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
 }
 
 .steps {
@@ -440,4 +443,14 @@ body {
 
 .game-page:not(.focus-sticks) .sticks, .game-page.focus-sticks .board {
   width: min(100vw, calc((100vh - (100vw * 3 / 10)) * 10 / 3));
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    visibility: visible;
+    opacity: 1;
+  }
 }
