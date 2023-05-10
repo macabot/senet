@@ -1,6 +1,7 @@
 package state
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/macabot/senet/internal/pkg/set"
@@ -65,6 +66,19 @@ const (
 	ProtectedPiece
 	BlockingPiece
 )
+
+func (a PieceAbility) String() string {
+	switch a {
+	case NormalPiece:
+		return "Normal"
+	case ProtectedPiece:
+		return "Protected"
+	case BlockingPiece:
+		return "Blocking"
+	default:
+		panic(fmt.Errorf("invalid PieceAbility %d", a))
+	}
+}
 
 func (a PieceAbility) IsProtected() bool {
 	return a == ProtectedPiece || a == BlockingPiece

@@ -1,9 +1,13 @@
 package tale
 
 import (
+	"time"
+
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
+	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -18,13 +22,13 @@ func Board() *fairytale.Tale[*state.State] {
 	).WithControls(
 		control.NewSelect(
 			"Configuration",
-			func(props *state.State, option int) *state.State {
+			func(s *state.State, option int) hypp.Dispatchable {
 				configuration = option
 				switch option {
 				case 0:
-					props.Game.SetBoard(state.NewBoard())
+					s.Game.SetBoard(state.NewBoard())
 				case 1:
-					props.Game.SetBoard(&state.Board{
+					s.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								&state.Piece{ID: 1, Position: 9},
@@ -43,7 +47,7 @@ func Board() *fairytale.Tale[*state.State] {
 						},
 					})
 				case 2:
-					props.Game.SetBoard(&state.Board{
+					s.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								&state.Piece{ID: 1, Position: 9},
@@ -62,7 +66,7 @@ func Board() *fairytale.Tale[*state.State] {
 						},
 					})
 				case 3:
-					props.Game.SetBoard(&state.Board{
+					s.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								&state.Piece{ID: 1, Position: 9},
@@ -81,7 +85,7 @@ func Board() *fairytale.Tale[*state.State] {
 						},
 					})
 				case 4:
-					props.Game.SetBoard(&state.Board{
+					s.Game.SetBoard(&state.Board{
 						PlayerPieces: [2]state.PiecesByPosition{
 							state.NewPiecesByPosition(
 								&state.Piece{ID: 1, Position: 9},
@@ -100,7 +104,17 @@ func Board() *fairytale.Tale[*state.State] {
 						},
 					})
 				}
-				return props
+				return hypp.StateAndEffects[*state.State]{
+					State: s,
+					Effects: []hypp.Effect{
+						// TODO until the piece abilities are updated, the state will be wrong. E.g. A piece that should be blocking could be passed until the piece's ability is updated.
+						// Instead it would be better to directly update the piece abilities and delay showing the abilities using CSS.
+						dispatch.DelayedAction(
+							dispatch.UpdatePieceAbilities,
+							time.Second,
+						),
+					},
+				}
 			},
 			func(_ *state.State) int {
 				return configuration
@@ -115,22 +129,22 @@ func Board() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Has turn",
-			func(props *state.State, hasTurn bool) *state.State {
-				props.Game.SetHasTurn(hasTurn)
-				return props
+			func(s *state.State, hasTurn bool) *state.State {
+				s.Game.SetHasTurn(hasTurn)
+				return s
 			},
-			func(props *state.State) bool {
-				return props.Game.HasTurn
+			func(s *state.State) bool {
+				return s.Game.HasTurn
 			},
 		),
 		control.NewSelect(
 			"Turn",
-			func(props *state.State, turn int) *state.State {
-				props.Game.SetTurn(turn)
-				return props
+			func(s *state.State, turn int) hypp.Dispatchable {
+				s.Game.SetTurn(turn)
+				return s
 			},
-			func(props *state.State) int {
-				return props.Game.Turn
+			func(s *state.State) int {
+				return s.Game.Turn
 			},
 			[]control.SelectOption[int]{
 				{Label: "Player 1", Value: 0},
@@ -139,15 +153,15 @@ func Board() *fairytale.Tale[*state.State] {
 		),
 		control.NewSelect(
 			"Steps",
-			func(props *state.State, steps int) *state.State {
-				props.Game.SetSticks(state.SticksFromSteps(steps, steps != 0))
-				return props
+			func(s *state.State, steps int) hypp.Dispatchable {
+				s.Game.SetSticks(state.SticksFromSteps(steps, steps != 0))
+				return s
 			},
-			func(props *state.State) int {
-				if !props.Game.Sticks.HasThrown {
+			func(s *state.State) int {
+				if !s.Game.Sticks.HasThrown {
 					return 0
 				}
-				return props.Game.Sticks.Steps()
+				return s.Game.Sticks.Steps()
 			},
 			[]control.SelectOption[int]{
 				{Label: "Not thrown", Value: 0},
@@ -160,19 +174,19 @@ func Board() *fairytale.Tale[*state.State] {
 		),
 		control.NewSelect(
 			"Selected",
-			func(props *state.State, id int) *state.State {
+			func(s *state.State, id int) hypp.Dispatchable {
 				if id <= 0 {
-					props.Game.SetSelected(nil)
+					s.Game.SetSelected(nil)
 				} else {
-					props.Game.SetSelected(props.Game.Board.FindPieceByID(id))
+					s.Game.SetSelected(s.Game.Board.FindPieceByID(id))
 				}
-				return props
+				return s
 			},
-			func(props *state.State) int {
-				if props.Game.Selected == nil {
+			func(s *state.State) int {
+				if s.Game.Selected == nil {
 					return 0
 				}
-				return props.Game.Selected.ID
+				return s.Game.Selected.ID
 			},
 			[]control.SelectOption[int]{
 				{Label: "Not Selected", Value: 0},

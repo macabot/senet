@@ -26,9 +26,9 @@ func Piece() *fairytale.Tale[*state.State] {
 	).WithControls(
 		control.NewSelect(
 			"Player",
-			func(_ *state.State, player int) *state.State {
+			func(s *state.State, player int) hypp.Dispatchable {
 				props.Player = player
-				return nil
+				return s
 			},
 			func(_ *state.State) int {
 				return props.Player
@@ -40,9 +40,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Can select",
-			func(_ *state.State, canSelect bool) *state.State {
+			func(s *state.State, canSelect bool) *state.State {
 				props.CanSelect = canSelect
-				return nil
+				return s
 			},
 			func(_ *state.State) bool {
 				return props.CanSelect
@@ -50,9 +50,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Draw attention",
-			func(_ *state.State, drawAttention bool) *state.State {
+			func(s *state.State, drawAttention bool) *state.State {
 				props.DrawAttention = drawAttention
-				return nil
+				return s
 			},
 			func(_ *state.State) bool {
 				return props.DrawAttention
@@ -60,9 +60,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Moving",
-			func(_ *state.State, moving bool) *state.State {
+			func(s *state.State, moving bool) *state.State {
 				props.Moving = moving
-				return nil
+				return s
 			},
 			func(_ *state.State) bool {
 				return props.Moving
@@ -70,9 +70,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Selected",
-			func(_ *state.State, selected bool) *state.State {
+			func(s *state.State, selected bool) *state.State {
 				props.Selected = selected
-				return nil
+				return s
 			},
 			func(_ *state.State) bool {
 				return props.Selected
@@ -80,9 +80,9 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewSelect(
 			"Ability",
-			func(_ *state.State, ability state.PieceAbility) *state.State {
+			func(s *state.State, ability state.PieceAbility) hypp.Dispatchable {
 				props.Piece.Ability = ability
-				return nil
+				return s
 			},
 			func(_ *state.State) int {
 				return int(props.Piece.Ability)
