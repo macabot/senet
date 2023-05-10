@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBoardNeighbourSquares(t *testing.T) {
+func TestBoardNeighborSquares(t *testing.T) {
 	assert.Equal(
 		t,
 		set.New[state.Position](
@@ -17,7 +17,7 @@ func TestBoardNeighbourSquares(t *testing.T) {
 			15,
 			13,
 		),
-		state.Board{}.NeighbourSquares(14),
+		state.Board{}.NeighborSquares(14),
 	)
 	assert.Equal(
 		t,
@@ -27,7 +27,7 @@ func TestBoardNeighbourSquares(t *testing.T) {
 			17,
 			15,
 		),
-		state.Board{}.NeighbourSquares(16),
+		state.Board{}.NeighborSquares(16),
 	)
 	assert.Equal(
 		t,
@@ -36,7 +36,7 @@ func TestBoardNeighbourSquares(t *testing.T) {
 			20,
 			18,
 		),
-		state.Board{}.NeighbourSquares(19),
+		state.Board{}.NeighborSquares(19),
 	)
 	assert.Equal(
 		t,
@@ -44,7 +44,7 @@ func TestBoardNeighbourSquares(t *testing.T) {
 			19,
 			21,
 		),
-		state.Board{}.NeighbourSquares(20),
+		state.Board{}.NeighborSquares(20),
 	)
 }
 

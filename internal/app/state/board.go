@@ -159,41 +159,41 @@ func NewBoard() *Board {
 	}
 }
 
-// NeighourSquares returns the positions of the neighbouring squares.
-// The squares are layed out as followes:
+// NeighborSquares returns the positions of the neighboring squares.
+// The squares are layed out as follows:
 //     29 28 27 26 25 24 23 22 21 20
 //     10 11 12 13 14 15 16 17 18 19
 //      9  8  7  6  5  4  3  2  1  0
 //
-// For example, position 12 has neighbours 27 (north), 13 (east), 7 (south) and
+// For example, position 12 has neighbors 27 (north), 13 (east), 7 (south) and
 // 11 (west).
-// Note that some position can have fewer than four neighbours. For example,
-// postion 0 has two neighbours: 19 (north) and 1 (west).
-func (b Board) NeighbourSquares(position Position) set.Set[Position] {
-	neighbours := set.Set[Position]{}
+// Note that some position can have fewer than four neighbors. For example,
+// position 0 has two neighbors: 19 (north) and 1 (west).
+func (b Board) NeighborSquares(position Position) set.Set[Position] {
+	neighbors := set.Set[Position]{}
 	if position < 20 {
-		neighbours.Add(position + 19 - 2*(position%10))
+		neighbors.Add(position + 19 - 2*(position%10))
 	}
 	if position >= 10 {
-		neighbours.Add(position - 1 - 2*(position%10))
+		neighbors.Add(position - 1 - 2*(position%10))
 	}
 	if position > 0 {
-		neighbours.Add(position - 1)
+		neighbors.Add(position - 1)
 	}
 	if position < 30 {
-		neighbours.Add(position + 1)
+		neighbors.Add(position + 1)
 	}
-	return neighbours
+	return neighbors
 }
 
 func (b Board) FindGroups(piecesByPosition PiecesByPosition) map[Position]set.Set[Position] {
 	groups := map[Position]set.Set[Position]{}
 	for pos, piece := range piecesByPosition {
-		neighbourSquares := b.NeighbourSquares(piece.Position)
+		neighborSquares := b.NeighborSquares(piece.Position)
 		posGroup := set.New(pos)
-		for neighbourPos := range neighbourSquares {
-			if neighbourGroup, ok := groups[neighbourPos]; ok {
-				posGroup.AddSet(neighbourGroup)
+		for neighborPos := range neighborSquares {
+			if neighborGroup, ok := groups[neighborPos]; ok {
+				posGroup.AddSet(neighborGroup)
 				groups[pos] = posGroup
 			}
 		}
