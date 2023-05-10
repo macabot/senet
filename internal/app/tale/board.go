@@ -1,13 +1,10 @@
 package tale
 
 import (
-	"time"
-
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
-	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -104,17 +101,7 @@ func Board() *fairytale.Tale[*state.State] {
 						},
 					})
 				}
-				return hypp.StateAndEffects[*state.State]{
-					State: s,
-					Effects: []hypp.Effect{
-						// TODO until the piece abilities are updated, the state will be wrong. E.g. A piece that should be blocking could be passed until the piece's ability is updated.
-						// Instead it would be better to directly update the piece abilities and delay showing the abilities using CSS.
-						dispatch.DelayedAction(
-							dispatch.UpdatePieceAbilities,
-							time.Second,
-						),
-					},
-				}
+				return s
 			},
 			func(_ *state.State) int {
 				return configuration

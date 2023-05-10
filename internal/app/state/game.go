@@ -66,6 +66,7 @@ func (g Game) CanSelect(player int) bool {
 }
 
 func (g *Game) CalcValidMoves() {
+	g.Board.UpdatePieceAbilities()
 	g.ValidMoves = map[Position]Position{}
 	g.InvalidMoves = map[Position]set.Set[Position]{}
 

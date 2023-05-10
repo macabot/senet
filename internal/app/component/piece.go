@@ -19,13 +19,6 @@ type PieceProps struct {
 
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
-	var label *hypp.VNode
-	switch props.Piece.Ability {
-	case state.BlockingPiece:
-		label = frontHand()
-	case state.ProtectedPiece:
-		label = shield()
-	}
 	return html.Div(
 		hypp.HProps{
 			"class": []string{
@@ -42,11 +35,14 @@ func Piece(props PieceProps) *hypp.VNode {
 					"moving":                               props.Moving,
 					"selected":                             props.Selected,
 					"draw-attention":                       props.DrawAttention,
+					"protected":                            props.Piece.Ability == state.ProtectedPiece,
+					"blocking":                             props.Piece.Ability == state.BlockingPiece,
 				},
 				"disabled": !props.CanSelect,
 				"type":     "button",
 			},
-			label,
+			blockingIcon(),
+			protectedIcon(),
 		),
 	)
 }

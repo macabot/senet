@@ -5,13 +5,14 @@ import (
 	"github.com/macabot/hypp/tag/svg"
 )
 
-// shield is based on https://fonts.google.com/icons?selected=Material+Symbols+Outlined:shield:FILL@0;wght@400;GRAD@0;opsz@48
-func shield() *hypp.VNode {
+// protectedIcon is based on https://fonts.google.com/icons?selected=Material+Symbols+Outlined:protectedIcon:FILL@0;wght@400;GRAD@0;opsz@48
+func protectedIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
 			"height":  "auto",
 			"viewBox": "0 96 960 960",
+			"class":   "icon protected",
 		},
 		svg.Path(
 			hypp.HProps{
@@ -21,13 +22,14 @@ func shield() *hypp.VNode {
 	)
 }
 
-// frontHand is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Afront_hand%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func frontHand() *hypp.VNode {
+// blockingIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Afront_hand%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func blockingIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
 			"height":  "auto",
 			"viewBox": "0 96 960 960",
+			"class":   "icon blocking",
 		},
 		svg.Path(
 			hypp.HProps{

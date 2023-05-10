@@ -20,7 +20,7 @@ type SquareProps struct {
 func iconToLabel(icon state.Icon) *hypp.VNode {
 	switch icon {
 	case state.Shield:
-		return shield()
+		return protectedIcon()
 	case state.Cross:
 		return hypp.Text("☓")
 	default:

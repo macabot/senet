@@ -130,6 +130,7 @@ body {
   border: none;
   border-radius: 50%;
   box-shadow: 0 0 5px #000000;
+  position: relative;
 }
 
 .piece:not(:disabled) {
@@ -227,6 +228,25 @@ body {
 .piece.moving {
   animation-name: moving;
   animation-duration: 1s;
+}
+
+.piece .icon {
+  visibility: hidden;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.piece.protected .icon.protected {
+  animation: 200ms fadeIn;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
+}
+.piece.blocking .icon.blocking {
+  animation: 200ms fadeIn;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
 }
 
 /* Based on https://www.w3schools.com/howto/howto_css_flip_card.asp */
