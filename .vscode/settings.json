@@ -18,5 +18,9 @@
                 "CStyleComment",
             ],
         }
+    ],
+    "cSpell.words": [
+        "hypp",
+        "senet"
     ]
 }
