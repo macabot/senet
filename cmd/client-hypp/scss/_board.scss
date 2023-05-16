@@ -1,0 +1,11 @@
+.board {
+  width: 100%;
+  aspect-ratio: 10 / 3;
+  background-color: #fdd978;
+  border: 5px solid #fdd978;
+  border-radius: 2.5% / 8.2%;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  position: relative;
+}

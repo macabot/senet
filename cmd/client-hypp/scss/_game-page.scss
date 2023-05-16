@@ -1,0 +1,14 @@
+.game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-page > * {
+  transition: all 1s;
+}
+
+.game-page:not(.focus-sticks) .sticks,
+.game-page.focus-sticks .board {
+  width: min(100vw, calc((100vh - (100vw * 3 / 10)) * 10 / 3));
+}
