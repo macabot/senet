@@ -5,6 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -19,14 +20,18 @@ type PieceProps struct {
 
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
-	return html.Div(
-		hypp.HProps{
-			"class": []string{
-				"piece-wrapper",
-				fmt.Sprintf("row-%d", coordinate.Row),
-				fmt.Sprintf("column-%d", coordinate.Column),
-			},
+	hProps := hypp.HProps{
+		"class": []string{
+			"piece-wrapper",
+			fmt.Sprintf("row-%d", coordinate.Row),
+			fmt.Sprintf("column-%d", coordinate.Column),
 		},
+	}
+	if props.CanSelect {
+		hProps["onclick"] = dispatch.SelectPieceAction(props.Piece.ID)
+	}
+	return html.Div(
+		hProps,
 		html.Button(
 			hypp.HProps{
 				"class": map[string]bool{

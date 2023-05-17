@@ -17,6 +17,7 @@ func Piece() *fairytale.Tale[*state.State] {
 		Moving:        false,
 		Selected:      false,
 	}
+	// FIXME will fail when clicking on piece, due to SelectPieceAction
 	return fairytale.New(
 		"Piece",
 		nil,
