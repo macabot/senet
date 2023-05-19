@@ -7,6 +7,11 @@ type State struct {
 	Game *Game
 }
 
-func (s State) Clone() *State {
-	return &s
+func (s *State) Clone() *State {
+	if s == nil {
+		return nil
+	}
+	return &State{
+		Game: s.Game.Clone(),
+	}
 }

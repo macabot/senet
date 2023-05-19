@@ -7,7 +7,7 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Sticks(sticks state.Sticks) *hypp.VNode {
+func Sticks(sticks *state.Sticks) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": "sticks",
@@ -32,7 +32,7 @@ func throwButton(disabled bool) *hypp.VNode {
 	)
 }
 
-func steps(sticks state.Sticks) *hypp.VNode {
+func steps(sticks *state.Sticks) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{

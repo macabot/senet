@@ -1,10 +1,26 @@
 package state
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 type Sticks struct {
 	Flips     [4]int
 	HasThrown bool
+}
+
+func (s *Sticks) Clone() *Sticks {
+	if s == nil {
+		return nil
+	}
+	return &Sticks{
+		Flips:     [4]int{s.Flips[0], s.Flips[1], s.Flips[2], s.Flips[3]},
+		HasThrown: s.HasThrown,
+	}
+}
+
+func NewSticks() *Sticks {
+	return &Sticks{}
 }
 
 func (s Sticks) up() [4]bool {
@@ -31,8 +47,8 @@ func flipStick(flips int) int {
 	return flips
 }
 
-func (s Sticks) Throw() Sticks {
-	return Sticks{
+func (s Sticks) Throw() *Sticks {
+	return &Sticks{
 		Flips: [4]int{
 			flipStick(s.Flips[0]),
 			flipStick(s.Flips[1]),
@@ -61,8 +77,8 @@ func (s Sticks) CanGoAgain() bool {
 	return steps == 1 || steps == 4 || steps == 6
 }
 
-func SticksFromSteps(steps int, hasThrown bool) Sticks {
-	sticks := Sticks{
+func SticksFromSteps(steps int, hasThrown bool) *Sticks {
+	sticks := &Sticks{
 		Flips:     [4]int{},
 		HasThrown: hasThrown,
 	}

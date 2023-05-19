@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/macabot/senet/internal/pkg/clone"
 	"github.com/macabot/senet/internal/pkg/set"
 )
 
@@ -94,6 +95,14 @@ type Piece struct {
 	Ability  PieceAbility
 }
 
+func (p *Piece) Clone() *Piece {
+	if p == nil {
+		return nil
+	}
+	c := *p
+	return &c
+}
+
 type PiecesByPosition map[Position]*Piece
 
 func NewPiecesByPosition(pieces ...*Piece) PiecesByPosition {
@@ -136,6 +145,18 @@ func (s byID) Less(i, j int) bool {
 
 type Board struct {
 	PlayerPieces [2]PiecesByPosition
+}
+
+func (b *Board) Clone() *Board {
+	if b == nil {
+		return nil
+	}
+	return &Board{
+		PlayerPieces: [2]PiecesByPosition{
+			clone.Map(b.PlayerPieces[0]),
+			clone.Map(b.PlayerPieces[1]),
+		},
+	}
 }
 
 func NewBoard() *Board {

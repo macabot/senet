@@ -19,7 +19,7 @@ func Stick() *fairytale.Tale[*state.State] {
 		control.NewNumberInput(
 			"Flips",
 			func(s *state.State, flips int) *state.State {
-				s.Game.SetSticks(state.Sticks{Flips: [4]int{flips, 0, 0, 0}})
+				s.Game.SetSticks(&state.Sticks{Flips: [4]int{flips, 0, 0, 0}})
 				return s
 			},
 			func(s *state.State) int {

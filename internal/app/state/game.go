@@ -1,6 +1,9 @@
 package state
 
-import "github.com/macabot/senet/internal/pkg/set"
+import (
+	"github.com/macabot/senet/internal/pkg/set"
+	"golang.org/x/exp/maps"
+)
 
 type Status int
 
@@ -14,7 +17,7 @@ const (
 type Game struct {
 	Board        *Board
 	Selected     *Piece
-	Sticks       Sticks
+	Sticks       *Sticks
 	Turn         int
 	HasTurn      bool
 	Status       Status
@@ -22,9 +25,26 @@ type Game struct {
 	InvalidMoves map[Position]set.Set[Position]
 }
 
+func (g *Game) Clone() *Game {
+	if g == nil {
+		return nil
+	}
+	return &Game{
+		Board:        g.Board.Clone(),
+		Selected:     g.Selected.Clone(),
+		Sticks:       g.Sticks.Clone(),
+		Turn:         g.Turn,
+		HasTurn:      g.HasTurn,
+		Status:       g.Status,
+		ValidMoves:   maps.Clone(g.ValidMoves),
+		InvalidMoves: maps.Clone(g.InvalidMoves),
+	}
+}
+
 func NewGame() *Game {
 	g := &Game{
-		Board: NewBoard(),
+		Board:  NewBoard(),
+		Sticks: NewSticks(),
 	}
 	g.CalcValidMoves()
 	return g
@@ -40,7 +60,7 @@ func (g *Game) SetSelected(selected *Piece) {
 	g.CalcValidMoves()
 }
 
-func (g *Game) SetSticks(sticks Sticks) {
+func (g *Game) SetSticks(sticks *Sticks) {
 	g.Sticks = sticks
 	g.CalcValidMoves()
 }
