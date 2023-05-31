@@ -45,8 +45,8 @@ func Board(props *state.State) *hypp.VNode {
 					Piece:         piece,
 					Player:        player,
 					CanSelect:     props.Game.CanSelect(player),
-					DrawAttention: selected == nil && props.Game.CanSelect(player),
-					Selected:      selected != nil && selected.Position == piece.Position,
+					DrawAttention: props.Game.DrawsAttention(player),
+					Selected:      props.Game.IsSelected(piece),
 				}),
 				Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)
