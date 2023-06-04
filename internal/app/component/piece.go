@@ -12,7 +12,7 @@ import (
 type PieceProps struct {
 	Piece         *state.Piece
 	Player        int
-	CanSelect     bool
+	CanClick      bool
 	DrawAttention bool
 	Moving        bool
 	Selected      bool
@@ -27,7 +27,7 @@ func Piece(props PieceProps) *hypp.VNode {
 			fmt.Sprintf("column-%d", coordinate.Column),
 		},
 	}
-	if props.CanSelect {
+	if props.CanClick {
 		hProps["onclick"] = dispatch.SelectPieceAction(props.Piece.ID)
 	}
 	return html.Div(
@@ -43,7 +43,7 @@ func Piece(props PieceProps) *hypp.VNode {
 					"protected":                            props.Piece.Ability == state.ProtectedPiece,
 					"blocking":                             props.Piece.Ability == state.BlockingPiece,
 				},
-				"disabled": !props.CanSelect,
+				"disabled": !props.CanClick,
 				"type":     "button",
 			},
 			blockingIcon(),

@@ -19,7 +19,7 @@ func Piece() *fairytale.Tale[*state.State] {
 			props := component.PieceProps{
 				Piece:         piece,
 				Player:        s.Game.Turn,
-				CanSelect:     s.Game.CanSelect(s.Game.Turn),
+				CanClick:      s.Game.CanClick(s.Game.Turn, piece),
 				DrawAttention: s.Game.DrawsAttention(s.Game.Turn),
 				Selected:      s.Game.IsSelected(piece),
 			}
@@ -43,17 +43,21 @@ func Piece() *fairytale.Tale[*state.State] {
 		control.NewCheckbox(
 			"Can select",
 			func(s *state.State, canSelect bool) *state.State {
-				if canSelect {
+				piece := s.Game.Board.FindPieceByID(1)
+				canSelectPiece := s.Game.CanClick(s.Game.Turn, piece)
+				if canSelect == canSelectPiece {
+					return s
+				}
+
+				if !canSelect {
 					s.Game.Selected = nil
-				} else {
-					s.Game.Selected = s.Game.Board.FindPieceByID(1)
 				}
 				s.Game.HasTurn = canSelect
 				s.Game.Sticks.HasThrown = canSelect
 				return s
 			},
 			func(s *state.State) bool {
-				return s.Game.CanSelect(s.Game.Turn)
+				return s.Game.CanClick(s.Game.Turn, s.Game.Board.FindPieceByID(1))
 			},
 		),
 		control.NewCheckbox(

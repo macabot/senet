@@ -81,13 +81,15 @@ func (g *Game) addInvalidMove(from, to Position) {
 	g.InvalidMoves[from].Add(to)
 }
 
-// TODO CanSelect is currently the same as DrawsAttention. Refactor such that CanSelect becomes CanClick. Piece can also be clicked if it is already selected.
-func (g Game) CanSelect(player int) bool {
-	return g.Selected == nil && g.HasTurn && g.Sticks.HasThrown && player == g.Turn
+func (g Game) CanClick(player int, piece *Piece) bool {
+	return g.DrawsAttention(player) || g.IsSelected(piece)
 }
 
 func (g Game) DrawsAttention(player int) bool {
-	return g.Selected == nil && g.CanSelect(player)
+	return g.Selected == nil &&
+		g.HasTurn &&
+		g.Sticks.HasThrown &&
+		player == g.Turn
 }
 
 func (g Game) IsSelected(piece *Piece) bool {

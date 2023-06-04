@@ -44,7 +44,7 @@ func Board(props *state.State) *hypp.VNode {
 				Piece(PieceProps{
 					Piece:         piece,
 					Player:        player,
-					CanSelect:     props.Game.CanSelect(player),
+					CanClick:      props.Game.CanClick(player, piece),
 					DrawAttention: props.Game.DrawsAttention(player),
 					Selected:      props.Game.IsSelected(piece),
 				}),
