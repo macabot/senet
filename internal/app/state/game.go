@@ -23,6 +23,7 @@ type Game struct {
 	Status       Status
 	ValidMoves   map[Position]Position
 	InvalidMoves map[Position]set.Set[Position]
+	HasMoved     bool
 }
 
 func (g *Game) Clone() *Game {
@@ -47,6 +48,7 @@ func NewGame() *Game {
 		Sticks: NewSticks(),
 	}
 	g.CalcValidMoves()
+	g.HasMoved = false
 	return g
 }
 
@@ -97,6 +99,7 @@ func (g Game) IsSelected(piece *Piece) bool {
 }
 
 func (g *Game) CalcValidMoves() {
+	g.HasMoved = true
 	g.Board.UpdatePieceAbilities()
 	g.ValidMoves = map[Position]Position{}
 	g.InvalidMoves = map[Position]set.Set[Position]{}

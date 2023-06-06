@@ -55,7 +55,10 @@ func Board(props *state.State) *hypp.VNode {
 	}
 	return html.Section(
 		hypp.HProps{
-			"class": "board",
+			"class": map[string]bool{
+				"board":        true,
+				"no-animation": !props.Game.HasMoved,
+			},
 		},
 		children...,
 	)
