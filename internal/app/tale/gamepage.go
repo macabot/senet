@@ -8,10 +8,12 @@ import (
 )
 
 func GamePage() *fairytale.Tale[*state.State] {
+	game := state.NewGame()
+	game.HasTurn = true
 	return fairytale.New(
 		"GamePage",
 		&state.State{
-			Game: state.NewGame(),
+			Game: game,
 		},
 		component.GamePage,
 	).WithControls(

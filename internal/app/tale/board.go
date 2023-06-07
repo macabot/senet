@@ -117,7 +117,7 @@ func Board() *fairytale.Tale[*state.State] {
 		control.NewCheckbox(
 			"Has turn",
 			func(s *state.State, hasTurn bool) *state.State {
-				s.Game.SetHasTurn(hasTurn)
+				s.Game.HasTurn = hasTurn
 				return s
 			},
 			func(s *state.State) bool {

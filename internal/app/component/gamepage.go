@@ -15,6 +15,9 @@ func GamePage(props *state.State) *hypp.VNode {
 			},
 		},
 		Board(props),
-		Sticks(props.Game.Sticks),
+		Sticks(SticksProps{
+			Sticks:        props.Game.Sticks,
+			DrawAttention: props.Game.SticksDrawAttention(),
+		}),
 	)
 }

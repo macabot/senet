@@ -9,11 +9,16 @@ import (
 )
 
 func Sticks() *fairytale.Tale[*state.State] {
+	game := state.NewGame()
+	game.HasTurn = true
 	return fairytale.New(
 		"Sticks",
-		&state.State{Game: state.NewGame()},
+		&state.State{Game: game},
 		func(s *state.State) *hypp.VNode {
-			return component.Sticks(s.Game.Sticks)
+			return component.Sticks(component.SticksProps{
+				Sticks:        s.Game.Sticks,
+				DrawAttention: s.Game.SticksDrawAttention(),
+			})
 		},
 	).WithControls(
 		control.NewButton(

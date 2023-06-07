@@ -7,17 +7,22 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Sticks(sticks *state.Sticks) *hypp.VNode {
+type SticksProps struct {
+	Sticks        *state.Sticks
+	DrawAttention bool
+}
+
+func Sticks(props SticksProps) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": "sticks",
 		},
-		Stick(sticks.Flips[0]),
-		Stick(sticks.Flips[1]),
-		Stick(sticks.Flips[2]),
-		Stick(sticks.Flips[3]),
-		throwButton(sticks.HasThrown),
-		steps(sticks),
+		Stick(props.Sticks.Flips[0]),
+		Stick(props.Sticks.Flips[1]),
+		Stick(props.Sticks.Flips[2]),
+		Stick(props.Sticks.Flips[3]),
+		throwButton(!props.DrawAttention),
+		steps(props.Sticks),
 	)
 }
 

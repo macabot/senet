@@ -72,10 +72,6 @@ func (g *Game) SetTurn(turn int) {
 	g.CalcValidMoves()
 }
 
-func (g *Game) SetHasTurn(hasTurn bool) {
-	g.HasTurn = hasTurn
-}
-
 func (g *Game) addInvalidMove(from, to Position) {
 	if _, ok := g.InvalidMoves[from]; !ok {
 		g.InvalidMoves[from] = set.New[Position]()
@@ -83,19 +79,23 @@ func (g *Game) addInvalidMove(from, to Position) {
 	g.InvalidMoves[from].Add(to)
 }
 
-func (g Game) CanClick(player int, piece *Piece) bool {
-	return g.DrawsAttention(player) || g.IsSelected(piece)
+func (g Game) CanClickOnPiece(player int, piece *Piece) bool {
+	return g.PiecesDrawAttention(player) || g.PieceIsSelected(piece)
 }
 
-func (g Game) DrawsAttention(player int) bool {
+func (g Game) PiecesDrawAttention(player int) bool {
 	return g.Selected == nil &&
 		g.HasTurn &&
 		g.Sticks.HasThrown &&
 		player == g.Turn
 }
 
-func (g Game) IsSelected(piece *Piece) bool {
+func (g Game) PieceIsSelected(piece *Piece) bool {
 	return g.Selected != nil && g.Selected.Position == piece.Position
+}
+
+func (g Game) SticksDrawAttention() bool {
+	return !g.Sticks.HasThrown && g.HasTurn
 }
 
 func (g *Game) CalcValidMoves() {
