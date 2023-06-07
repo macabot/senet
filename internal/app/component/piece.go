@@ -14,7 +14,6 @@ type PieceProps struct {
 	Player        int
 	CanClick      bool
 	DrawAttention bool
-	Moving        bool
 	Selected      bool
 }
 
@@ -37,7 +36,6 @@ func Piece(props PieceProps) *hypp.VNode {
 				"class": map[string]bool{
 					"piece":                                true,
 					fmt.Sprintf("player-%d", props.Player): true,
-					"moving":                               props.Moving,
 					"selected":                             props.Selected,
 					"draw-attention":                       props.DrawAttention,
 					"protected":                            props.Piece.Ability == state.ProtectedPiece,
