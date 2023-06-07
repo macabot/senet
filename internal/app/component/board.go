@@ -41,13 +41,14 @@ func Board(props *state.State) *hypp.VNode {
 		pieces := piecesByPos.OrderedByID()
 		drawAttention := props.Game.PiecesDrawAttention(player)
 		for _, piece := range pieces {
+			isSelected := props.Game.PieceIsSelected(piece)
 			children[i] = With(
 				Piece(PieceProps{
 					Piece:         piece,
 					Player:        player,
 					CanClick:      props.Game.CanClickOnPiece(player, piece),
-					DrawAttention: drawAttention,
-					Selected:      props.Game.PieceIsSelected(piece),
+					DrawAttention: drawAttention && !isSelected,
+					Selected:      isSelected,
 				}),
 				Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)

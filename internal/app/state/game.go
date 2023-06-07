@@ -84,8 +84,7 @@ func (g Game) CanClickOnPiece(player int, piece *Piece) bool {
 }
 
 func (g Game) PiecesDrawAttention(player int) bool {
-	return g.Selected == nil &&
-		g.HasTurn &&
+	return g.HasTurn &&
 		g.Sticks.HasThrown &&
 		player == g.Turn
 }
