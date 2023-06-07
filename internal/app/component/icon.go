@@ -38,3 +38,20 @@ func blockingIcon() *hypp.VNode {
 		),
 	)
 }
+
+// returnToStartIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aclose%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func returnToStartIcon() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"width":   "80%",
+			"height":  "auto",
+			"viewBox": "0 -960 960 960",
+			"class":   "icon return-to-start",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z",
+			},
+		),
+	)
+}

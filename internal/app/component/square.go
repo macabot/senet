@@ -22,7 +22,7 @@ func iconToLabel(icon state.Icon) *hypp.VNode {
 	case state.Shield:
 		return protectedIcon()
 	case state.Cross:
-		return hypp.Text("☓")
+		return returnToStartIcon()
 	default:
 		panic(fmt.Errorf("invalid icon %v", icon))
 	}
