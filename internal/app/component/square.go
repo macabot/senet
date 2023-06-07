@@ -19,9 +19,9 @@ type SquareProps struct {
 
 func iconToLabel(icon state.Icon) *hypp.VNode {
 	switch icon {
-	case state.Shield:
+	case state.Protected:
 		return protectedIcon()
-	case state.Cross:
+	case state.ReturnToStart:
 		return returnToStartIcon()
 	default:
 		panic(fmt.Errorf("invalid icon %v", icon))

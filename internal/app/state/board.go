@@ -43,21 +43,21 @@ func PositionFromCoordinate(coordinate Coordinate) Position {
 type Icon int
 
 const (
-	Shield Icon = iota
-	Cross
+	Protected Icon = iota
+	ReturnToStart
 )
 
 type SpecialPosition struct {
-	Icon     Icon
-	Protects bool
-	Portal   bool
+	Icon          Icon
+	Protects      bool
+	ReturnToStart bool
 }
 
 var SpecialPositions = map[Position]SpecialPosition{
-	28: {Icon: Shield, Protects: true, Portal: false},
-	27: {Icon: Shield, Protects: true, Portal: false},
-	26: {Icon: Cross, Protects: false, Portal: true},
-	25: {Icon: Shield, Protects: true, Portal: false},
+	28: {Icon: Protected, Protects: true, ReturnToStart: false},
+	27: {Icon: Protected, Protects: true, ReturnToStart: false},
+	26: {Icon: ReturnToStart, Protects: false, ReturnToStart: true},
+	25: {Icon: Protected, Protects: true, ReturnToStart: false},
 }
 
 type PieceAbility int

@@ -144,7 +144,7 @@ func (g *Game) CalcValidMoves() {
 
 			g.ValidMoves[pos] = toPos
 
-			if special, ok := SpecialPositions[toPos]; ok && special.Portal {
+			if special, ok := SpecialPositions[toPos]; ok && special.ReturnToStart {
 				for portalPos := Position(0); portalPos < 30; portalPos++ {
 					if !piecesByPos.Has(portalPos) && !otherPiecesByPos.Has(Position(portalPos)) {
 						g.ValidMoves[toPos] = portalPos
