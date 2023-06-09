@@ -118,8 +118,8 @@
   animation: player-1-pulse-odd 2s infinite;
 }
 
-@mixin mover($type, $i) {
-  @keyframes moving-#{$type}-#{$i} {
+@mixin mover($row, $column) {
+  @keyframes moving-row-#{$row}-column-#{$column} {
     0% {
       transform: scale(1);
       z-index: auto;
@@ -140,19 +140,13 @@
   }
 }
 
-@for $i from 0 to 3 {
-  @include mover("row", $i);
+@for $row from 0 to 3 {
+  @for $column from 0 to 10 {
+    @include mover($row, $column);
 
-  .piece-wrapper.row-#{$i} {
-    animation-name: moving-row-#{$i};
-  }
-}
-
-@for $i from 0 to 10 {
-  @include mover("column", $i);
-
-  .piece-wrapper.column-#{$i} {
-    animation-name: moving-column-#{$i};
+    .piece-wrapper.row-#{$row}.column-#{$column} {
+      animation-name: moving-row-#{$row}-column-#{$column};
+    }
   }
 }
 
