@@ -15,15 +15,16 @@ const (
 )
 
 type Game struct {
-	Board        *Board
-	Selected     *Piece
-	Sticks       *Sticks
-	Turn         int
-	HasTurn      bool
-	Status       Status
-	ValidMoves   map[Position]Position
-	InvalidMoves map[Position]set.Set[Position]
-	HasMoved     bool
+	Board                 *Board
+	Selected              *Piece
+	SelectedChangeCounter int
+	Sticks                *Sticks
+	Turn                  int
+	HasTurn               bool
+	Status                Status
+	ValidMoves            map[Position]Position
+	InvalidMoves          map[Position]set.Set[Position]
+	HasMoved              bool
 }
 
 func (g *Game) Clone() *Game {
@@ -31,14 +32,15 @@ func (g *Game) Clone() *Game {
 		return nil
 	}
 	return &Game{
-		Board:        g.Board.Clone(),
-		Selected:     g.Selected.Clone(),
-		Sticks:       g.Sticks.Clone(),
-		Turn:         g.Turn,
-		HasTurn:      g.HasTurn,
-		Status:       g.Status,
-		ValidMoves:   maps.Clone(g.ValidMoves),
-		InvalidMoves: maps.Clone(g.InvalidMoves),
+		Board:                 g.Board.Clone(),
+		Selected:              g.Selected.Clone(),
+		SelectedChangeCounter: g.SelectedChangeCounter,
+		Sticks:                g.Sticks.Clone(),
+		Turn:                  g.Turn,
+		HasTurn:               g.HasTurn,
+		Status:                g.Status,
+		ValidMoves:            maps.Clone(g.ValidMoves),
+		InvalidMoves:          maps.Clone(g.InvalidMoves),
 	}
 }
 
@@ -58,6 +60,11 @@ func (g *Game) SetBoard(board *Board) {
 }
 
 func (g *Game) SetSelected(selected *Piece) {
+	nilToNil := selected == nil && g.Selected == nil
+	sameID := selected != nil && g.Selected != nil && selected.ID == g.Selected.ID
+	if !nilToNil && !sameID {
+		g.SelectedChangeCounter++
+	}
 	g.Selected = selected
 	g.CalcValidMoves()
 }

@@ -3,6 +3,7 @@ package tale
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
+	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -27,6 +28,20 @@ func GamePage() *fairytale.Tale[*state.State] {
 			},
 			func(props *state.State) bool {
 				return props.Game.Sticks.HasThrown
+			},
+		),
+		control.NewSelect(
+			"Turn",
+			func(s *state.State, turn int) hypp.Dispatchable {
+				s.Game.SetTurn(turn)
+				return s
+			},
+			func(s *state.State) int {
+				return s.Game.Turn
+			},
+			[]control.SelectOption[int]{
+				{Label: "Player 1", Value: 0},
+				{Label: "Player 2", Value: 1},
 			},
 		),
 	)

@@ -26,15 +26,6 @@
   cursor: pointer;
 }
 
-.piece.player-0 {
-  background: rgb(204, 255, 253);
-  background: radial-gradient(
-    ellipse at 10% 20%,
-    rgba(204, 255, 253, 1) 0%,
-    rgba(86, 122, 121, 1) 100%
-  );
-}
-
 .piece.selected {
   animation: piece-selected 2s infinite;
 }
@@ -51,8 +42,42 @@
   }
 }
 
-.piece.draw-attention.player-0 {
-  animation: player-0-pulse 2s infinite;
+.piece.player-0 {
+  background: rgb(204, 255, 253);
+  background: radial-gradient(
+    ellipse at 10% 20%,
+    rgba(204, 255, 253, 1) 0%,
+    rgba(86, 122, 121, 1) 100%
+  );
+}
+
+@mixin player-0-pulser($suffix) {
+  @keyframes player-0-pulse-#{$suffix} {
+    0% {
+      transform: scale(0.98);
+      box-shadow: 0 0 0 0 rgba(204, 255, 253, 0.7);
+    }
+
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(204, 255, 253, 0);
+    }
+
+    100% {
+      transform: scale(0.98);
+      box-shadow: 0 0 0 0 rgba(204, 255, 253, 0);
+    }
+  }
+}
+
+@include player-0-pulser("even");
+@include player-0-pulser("odd");
+
+.selected-change-even .piece.draw-attention.player-0 {
+  animation: player-0-pulse-even 2s infinite;
+}
+.selected-change-odd .piece.draw-attention.player-0 {
+  animation: player-0-pulse-odd 2s infinite;
 }
 
 .piece.player-1 {
@@ -64,42 +89,33 @@
   );
 }
 
-.piece.draw-attention.player-1 {
-  animation: player-1-pulse 2s infinite;
-}
+@mixin player-1-pulser($suffix) {
+  @keyframes player-1-pulse-#{$suffix} {
+    0% {
+      transform: scale(0.98);
+      box-shadow: 0 0 0 0 rgba(248, 206, 204, 0.7);
+    }
 
-@keyframes player-0-pulse {
-  0% {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 0 rgba(204, 255, 253, 0.7);
-  }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(248, 206, 204, 0);
+    }
 
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(204, 255, 253, 0);
-  }
-
-  100% {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 0 rgba(204, 255, 253, 0);
+    100% {
+      transform: scale(0.98);
+      box-shadow: 0 0 0 0 rgba(248, 206, 204, 0);
+    }
   }
 }
 
-@keyframes player-1-pulse {
-  0% {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 0 rgba(248, 206, 204, 0.7);
-  }
+@include player-1-pulser("even");
+@include player-1-pulser("odd");
 
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(248, 206, 204, 0);
-  }
-
-  100% {
-    transform: scale(0.98);
-    box-shadow: 0 0 0 0 rgba(248, 206, 204, 0);
-  }
+.selected-change-even .piece.draw-attention.player-1 {
+  animation: player-1-pulse-even 2s infinite;
+}
+.selected-change-odd .piece.draw-attention.player-1 {
+  animation: player-1-pulse-odd 2s infinite;
 }
 
 @mixin mover($type, $i) {

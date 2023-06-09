@@ -58,8 +58,10 @@ func Board(props *state.State) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": map[string]bool{
-				"board":        true,
-				"no-animation": !props.Game.HasMoved,
+				"board":                true,
+				"no-animation":         !props.Game.HasMoved,
+				"selected-change-even": props.Game.SelectedChangeCounter%2 == 0,
+				"selected-change-odd":  props.Game.SelectedChangeCounter%2 != 0,
 			},
 		},
 		children...,
