@@ -192,4 +192,10 @@ func (g *Game) Move(player int, from Position) {
 	piece.Position = to
 	delete(piecesByPos, from)
 	piecesByPos[to] = piece
+
+	if !g.Sticks.CanGoAgain() {
+		g.Turn = (g.Turn + 1) % 2
+	}
+	g.Sticks.HasThrown = false
+	g.CalcValidMoves()
 }

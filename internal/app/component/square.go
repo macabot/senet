@@ -5,6 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -34,14 +35,18 @@ func Square(props SquareProps) *hypp.VNode {
 		label = iconToLabel(special.Icon)
 	}
 	coordinate := props.Position.Coordinate()
-	return html.Div(
-		hypp.HProps{
-			"class": map[string]bool{
-				"square":                                    true,
-				fmt.Sprintf("row-%d", coordinate.Row):       true,
-				fmt.Sprintf("column-%d", coordinate.Column): true,
-			},
+	hProps := hypp.HProps{
+		"class": map[string]bool{
+			"square":                                    true,
+			fmt.Sprintf("row-%d", coordinate.Row):       true,
+			fmt.Sprintf("column-%d", coordinate.Column): true,
 		},
+	}
+	if props.ValidDestination {
+		hProps["onclick"] = dispatch.MoveToSquareAction(props.Position)
+	}
+	return html.Div(
+		hProps,
 		html.Button(
 			hypp.HProps{
 				"class": map[string]bool{
