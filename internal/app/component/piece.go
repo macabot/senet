@@ -20,10 +20,11 @@ type PieceProps struct {
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
 	hProps := hypp.HProps{
-		"class": []string{
-			"piece-wrapper",
-			fmt.Sprintf("row-%d", coordinate.Row),
-			fmt.Sprintf("column-%d", coordinate.Column),
+		"class": map[string]bool{
+			"piece-wrapper":                             true,
+			fmt.Sprintf("row-%d", coordinate.Row):       true,
+			fmt.Sprintf("column-%d", coordinate.Column): true,
+			"can-click": props.CanClick,
 		},
 	}
 	if props.CanClick {

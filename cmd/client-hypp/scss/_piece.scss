@@ -13,6 +13,10 @@
   animation-duration: 0s;
 }
 
+.piece-wrapper:not(.can-click) {
+  pointer-events: none;
+}
+
 .piece {
   width: 80%;
   aspect-ratio: 1 / 1;
