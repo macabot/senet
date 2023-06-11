@@ -179,6 +179,7 @@ func (g Game) CanMove(player int, from Position) bool {
 	return true
 }
 
+// TODO implement moving back to start when moving to X
 func (g *Game) Move(player int, from Position) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
@@ -192,6 +193,15 @@ func (g *Game) Move(player int, from Position) {
 	piece.Position = to
 	delete(piecesByPos, from)
 	piecesByPos[to] = piece
+
+	otherPiecesByPos := g.Board.PlayerPieces[(player+1)%2]
+	if otherPiece, ok := otherPiecesByPos[to]; ok {
+		otherPiece.Position = from
+		delete(otherPiecesByPos, to)
+		otherPiecesByPos[from] = otherPiece
+	}
+
+	g.Selected = nil
 
 	if !g.Sticks.CanGoAgain() {
 		g.Turn = (g.Turn + 1) % 2
