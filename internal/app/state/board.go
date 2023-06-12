@@ -60,6 +60,8 @@ var SpecialPositions = map[Position]SpecialPosition{
 	25: {Icon: Protected, Protects: true, ReturnToStart: false},
 }
 
+var ReturnToStartPosition Position = 26
+
 type PieceAbility int
 
 const (

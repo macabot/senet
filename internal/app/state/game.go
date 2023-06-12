@@ -1,6 +1,8 @@
 package state
 
 import (
+	"fmt"
+
 	"github.com/macabot/senet/internal/pkg/set"
 	"golang.org/x/exp/maps"
 )
@@ -104,6 +106,16 @@ func (g Game) SticksDrawAttention() bool {
 	return !g.Sticks.HasThrown && g.HasTurn
 }
 
+func (g Game) FirstFreePosition() Position {
+	var pos Position
+	piecesByPos := g.Board.PlayerPieces[g.Turn]
+	otherPiecesByPos := g.Board.PlayerPieces[(g.Turn+1)%2]
+	for ; piecesByPos.Has(pos) || otherPiecesByPos.Has(pos); pos++ {
+		// no-op
+	}
+	return pos
+}
+
 func (g *Game) CalcValidMoves() {
 	g.HasMoved = true
 	g.Board.UpdatePieceAbilities()
@@ -117,6 +129,11 @@ func (g *Game) CalcValidMoves() {
 
 	findMoves := func(steps int, protectedSize int) {
 		for pos := range piecesByPos {
+			if pos == ReturnToStartPosition {
+				g.ValidMoves[pos] = g.FirstFreePosition()
+				continue
+			}
+
 			toPos := pos + Position(steps)
 			if toPos >= 30 || toPos < 0 {
 				g.addInvalidMove(pos, toPos)
@@ -179,16 +196,21 @@ func (g Game) CanMove(player int, from Position) bool {
 	return true
 }
 
-// TODO implement moving back to start when moving to X
-func (g *Game) Move(player int, from Position) {
+type NextMove struct {
+	Player int
+	From   Position
+	To     Position
+}
+
+func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
 	if !ok {
-		return
+		return nil, fmt.Errorf("Cannot move. Piece not found on '%d' for player '%d'", from, player)
 	}
-	to, ok := g.ValidMoves[from]
-	if !ok {
-		return
+
+	if validMovesTo, ok := g.ValidMoves[from]; !ok || to != validMovesTo {
+		return nil, fmt.Errorf("Cannot move. Move is not valid from '%d' to '%d' for player '%d'", from, to, player)
 	}
 	piece.Position = to
 	delete(piecesByPos, from)
@@ -208,4 +230,14 @@ func (g *Game) Move(player int, from Position) {
 	}
 	g.Sticks.HasThrown = false
 	g.CalcValidMoves()
+
+	var nextMove *NextMove
+	if SpecialPositions[to].ReturnToStart {
+		nextMove = &NextMove{
+			Player: player,
+			From:   to,
+			To:     g.FirstFreePosition(),
+		}
+	}
+	return nextMove, nil
 }

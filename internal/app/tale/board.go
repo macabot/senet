@@ -10,10 +10,12 @@ import (
 
 func Board() *fairytale.Tale[*state.State] {
 	configuration := 0
+	game := state.NewGame()
+	game.HasTurn = true
 	return fairytale.New(
 		"Board",
 		&state.State{
-			Game: state.NewGame(),
+			Game: game,
 		},
 		component.Board,
 	).WithControls(
@@ -138,6 +140,25 @@ func Board() *fairytale.Tale[*state.State] {
 							),
 						},
 					})
+				case 7:
+					s.Game.SetBoard(&state.Board{
+						PlayerPieces: [2]state.PiecesByPosition{
+							state.NewPiecesByPosition(
+								&state.Piece{ID: 1, Position: 9},
+								&state.Piece{ID: 2, Position: 7},
+								&state.Piece{ID: 3, Position: 25},
+								&state.Piece{ID: 4, Position: 3},
+								&state.Piece{ID: 5, Position: 1},
+							),
+							state.NewPiecesByPosition(
+								&state.Piece{ID: 6, Position: 8},
+								&state.Piece{ID: 7, Position: 6},
+								&state.Piece{ID: 8, Position: 4},
+								&state.Piece{ID: 9, Position: 2},
+								&state.Piece{ID: 10, Position: 0},
+							),
+						},
+					})
 				}
 				return s
 			},
@@ -152,6 +173,7 @@ func Board() *fairytale.Tale[*state.State] {
 				{Label: "P2 - Blocking", Value: 4},
 				{Label: "P1 - 2nd piece up", Value: 5},
 				{Label: "P2 - 2nd piece up", Value: 6},
+				{Label: "P1 - Protected by square", Value: 7},
 			},
 		),
 		control.NewCheckbox(
