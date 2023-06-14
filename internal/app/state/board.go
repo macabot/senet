@@ -247,11 +247,12 @@ func (b Board) FindPieceByID(id int) *Piece {
 func (b *Board) UpdatePieceAbilities() {
 	update := func(piecesByPosition PiecesByPosition) {
 		groups := b.FindGroups(piecesByPosition)
-		for pos := range piecesByPosition {
-			piece := piecesByPosition[pos]
+		for pos, piece := range piecesByPosition {
 			if len(groups[pos]) >= 3 {
 				piece.Ability = BlockingPiece
 			} else if len(groups[pos]) == 2 {
+				piece.Ability = ProtectedPiece
+			} else if SpecialPositions[pos].Protects {
 				piece.Ability = ProtectedPiece
 			} else {
 				piece.Ability = NormalPiece
