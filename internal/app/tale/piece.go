@@ -81,8 +81,8 @@ func Piece() *fairytale.Tale[*state.State] {
 				piece.Ability = ability
 				return s
 			},
-			func(s *state.State) int {
-				return int(s.Game.Board.FindPieceByID(1).Ability)
+			func(s *state.State) state.PieceAbility {
+				return s.Game.Board.FindPieceByID(1).Ability
 			},
 			[]control.SelectOption[state.PieceAbility]{
 				{Label: "Normal", Value: state.NormalPiece},

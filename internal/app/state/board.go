@@ -115,6 +115,20 @@ func NewPiecesByPosition(pieces ...*Piece) PiecesByPosition {
 	return m
 }
 
+func (p PiecesByPosition) Equal(other PiecesByPosition) bool {
+	if len(p) != len(other) {
+		return false
+	}
+	for pos, piece := range p {
+		if otherPiece, ok := other[pos]; !ok {
+			return false
+		} else if otherPiece.ID != piece.ID {
+			return false
+		}
+	}
+	return true
+}
+
 func (p PiecesByPosition) Has(pos Position) bool {
 	_, ok := p[pos]
 	return ok
@@ -159,6 +173,18 @@ func (b *Board) Clone() *Board {
 			clone.Map(b.PlayerPieces[1]),
 		},
 	}
+}
+
+func (b Board) Equal(other *Board) bool {
+	if other == nil {
+		return false
+	}
+	for i, piecesByPosition := range b.PlayerPieces {
+		if !piecesByPosition.Equal(other.PlayerPieces[i]) {
+			return false
+		}
+	}
+	return true
 }
 
 func NewBoard() *Board {
