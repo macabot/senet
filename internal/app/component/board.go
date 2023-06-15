@@ -30,7 +30,6 @@ func Board(props *state.State) *hypp.VNode {
 					Position:           position,
 					ValidDestination:   hasValidDestination && validDestination == position,
 					InvalidDestination: invalidDestinations.Has(position),
-					Selected:           selected != nil && selected.Position == position,
 				}),
 				Key(fmt.Sprintf("square-%d", position)),
 			)
