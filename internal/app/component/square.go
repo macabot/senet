@@ -11,8 +11,6 @@ import (
 
 type SquareProps struct {
 	Position           state.Position
-	Protected          bool
-	Blocking           bool
 	ValidDestination   bool
 	InvalidDestination bool
 }
@@ -50,8 +48,6 @@ func Square(props SquareProps) *hypp.VNode {
 			hypp.HProps{
 				"class": map[string]bool{
 					"inner-square":        true,
-					"protected":           props.Protected,
-					"blocking":            props.Blocking,
 					"valid-destination":   props.ValidDestination,
 					"invalid-destination": props.InvalidDestination,
 				},
