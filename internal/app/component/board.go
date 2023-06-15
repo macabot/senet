@@ -18,9 +18,15 @@ func Board(props *state.State) *hypp.VNode {
 	var validDestination state.Position
 	hasValidDestination := false
 	var invalidDestinations set.Set[state.Position]
+	invalidBoardDestination := false
 	if selected != nil {
 		validDestination, hasValidDestination = props.Game.ValidMoves[selected.Position]
 		invalidDestinations = props.Game.InvalidMoves[selected.Position]
+		for toPos := range invalidDestinations {
+			if toPos >= 30 || toPos < 0 {
+				invalidBoardDestination = true
+			}
+		}
 	}
 	startPosition := props.Game.Board.StartPosition()
 	for row := 0; row < 3; row++ {
@@ -69,6 +75,7 @@ func Board(props *state.State) *hypp.VNode {
 		hypp.HProps{
 			"class": map[string]bool{
 				"board":                true,
+				"invalid-destination":  invalidBoardDestination,
 				"no-animation":         !props.Game.HasMoved,
 				"selected-change-even": props.Game.SelectedChangeCounter%2 == 0,
 				"selected-change-odd":  props.Game.SelectedChangeCounter%2 != 0,
