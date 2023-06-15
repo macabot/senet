@@ -5,14 +5,14 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
 type SquareProps struct {
 	Position           state.Position
-	ValidDestination   bool
 	InvalidDestination bool
+	IsStart            bool
+	OnClick            hypp.Dispatchable
 }
 
 func iconToLabel(icon state.Icon) *hypp.VNode {
@@ -35,18 +35,23 @@ func Square(props SquareProps) *hypp.VNode {
 			fmt.Sprintf("column-%d", coordinate.Column): true,
 		},
 	}
-	if props.ValidDestination {
-		hProps["onclick"] = dispatch.MoveToSquareAction(props.Position)
+	if props.OnClick != nil {
+		hProps["onclick"] = props.OnClick
 	}
-	validDestination := props.ValidDestination
+	validDestination := props.OnClick != nil
 	validReturnToStart := false
 	var label *hypp.VNode
 	if special, ok := state.SpecialPositions[props.Position]; ok {
 		label = iconToLabel(special.Icon)
 		if validDestination && special.ReturnToStart {
-			validDestination = false
 			validReturnToStart = true
 		}
+	}
+	if props.IsStart {
+		label = startIcon()
+	}
+	if validDestination && (validReturnToStart || props.IsStart) {
+		validDestination = false
 	}
 	return html.Div(
 		hProps,
@@ -57,8 +62,9 @@ func Square(props SquareProps) *hypp.VNode {
 					"valid-destination":     validDestination,
 					"invalid-destination":   props.InvalidDestination,
 					"valid-return-to-start": validReturnToStart,
+					"is-start":              props.IsStart,
 				},
-				"disabled": !props.ValidDestination,
+				"disabled": props.OnClick == nil,
 				"type":     "button",
 			},
 			label,

@@ -289,3 +289,11 @@ func (b *Board) UpdatePieceAbilities() {
 		update(piecesByPosition)
 	}
 }
+
+func (b Board) StartPosition() Position {
+	var pos Position = 0
+	for ; b.PlayerPieces[0].Has(pos) || b.PlayerPieces[1].Has(pos); pos++ {
+		// no-op
+	}
+	return pos
+}

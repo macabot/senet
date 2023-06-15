@@ -5,6 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/set"
 )
@@ -21,15 +22,25 @@ func Board(props *state.State) *hypp.VNode {
 		validDestination, hasValidDestination = props.Game.ValidMoves[selected.Position]
 		invalidDestinations = props.Game.InvalidMoves[selected.Position]
 	}
+	startPosition := props.Game.Board.StartPosition()
 	for row := 0; row < 3; row++ {
 		for column := 0; column < 10; column++ {
 			coordinate := state.Coordinate{Row: row, Column: column}
 			position := state.PositionFromCoordinate(coordinate)
+			var onClick hypp.Dispatchable
+			isValidDestination := hasValidDestination && validDestination == position
+			isStart := hasValidDestination && validDestination == state.ReturnToStartPosition && position == startPosition
+			if isStart {
+				onClick = dispatch.MoveToSquareAction(state.ReturnToStartPosition)
+			} else if isValidDestination {
+				onClick = dispatch.MoveToSquareAction(position)
+			}
 			children[i] = With(
 				Square(SquareProps{
 					Position:           position,
-					ValidDestination:   hasValidDestination && validDestination == position,
 					InvalidDestination: invalidDestinations.Has(position),
+					IsStart:            isStart,
+					OnClick:            onClick,
 				}),
 				Key(fmt.Sprintf("square-%d", position)),
 			)
