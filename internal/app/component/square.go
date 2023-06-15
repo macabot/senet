@@ -27,10 +27,6 @@ func iconToLabel(icon state.Icon) *hypp.VNode {
 }
 
 func Square(props SquareProps) *hypp.VNode {
-	var label *hypp.VNode
-	if special, ok := state.SpecialPositions[props.Position]; ok {
-		label = iconToLabel(special.Icon)
-	}
 	coordinate := props.Position.Coordinate()
 	hProps := hypp.HProps{
 		"class": map[string]bool{
@@ -42,14 +38,25 @@ func Square(props SquareProps) *hypp.VNode {
 	if props.ValidDestination {
 		hProps["onclick"] = dispatch.MoveToSquareAction(props.Position)
 	}
+	validDestination := props.ValidDestination
+	validReturnToStart := false
+	var label *hypp.VNode
+	if special, ok := state.SpecialPositions[props.Position]; ok {
+		label = iconToLabel(special.Icon)
+		if validDestination && special.ReturnToStart {
+			validDestination = false
+			validReturnToStart = true
+		}
+	}
 	return html.Div(
 		hProps,
 		html.Button(
 			hypp.HProps{
 				"class": map[string]bool{
-					"inner-square":        true,
-					"valid-destination":   props.ValidDestination,
-					"invalid-destination": props.InvalidDestination,
+					"inner-square":          true,
+					"valid-destination":     validDestination,
+					"invalid-destination":   props.InvalidDestination,
+					"valid-return-to-start": validReturnToStart,
 				},
 				"disabled": !props.ValidDestination,
 				"type":     "button",

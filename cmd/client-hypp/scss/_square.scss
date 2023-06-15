@@ -41,3 +41,24 @@
 .inner-square.invalid-destination {
   background-color: #ff7575;
 }
+
+.inner-square.valid-return-to-start {
+  background-color: rgba(0, 255, 255, 0.1);
+  cursor: pointer;
+
+  svg {
+    animation: valid-return-to-start-pulse 2s infinite;
+  }
+}
+
+@keyframes valid-return-to-start-pulse {
+  0% {
+    filter: drop-shadow(0 0 0 rgb(0 0 0));
+  }
+  70% {
+    filter: drop-shadow(0 0 5px rgb(0 0 0));
+  }
+  100% {
+    filter: drop-shadow(0 0 0 rgb(0 0 0));
+  }
+}
