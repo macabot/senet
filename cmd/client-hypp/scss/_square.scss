@@ -42,8 +42,7 @@
   background-color: #ff7575;
 }
 
-.inner-square.valid-return-to-start,
-.inner-square.is-start {
+.inner-square.valid-return-to-start {
   background-color: rgba(249, 186, 67, 0.7);
   cursor: pointer;
   animation: valid-return-to-start-pulse 2s infinite;
