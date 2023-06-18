@@ -6,6 +6,7 @@ import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
+	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
 type BoardConfiguration struct {
@@ -220,20 +221,7 @@ func Board() *fairytale.Tale[*state.State] {
 				return s.Game.HasTurn
 			},
 		),
-		control.NewSelect(
-			"Turn",
-			func(s *state.State, turn int) hypp.Dispatchable {
-				s.Game.SetTurn(turn)
-				return s
-			},
-			func(s *state.State) int {
-				return s.Game.Turn
-			},
-			[]control.SelectOption[int]{
-				{Label: "Player 1", Value: 0},
-				{Label: "Player 2", Value: 1},
-			},
-		),
+		mycontrol.PlayerTurn(),
 		control.NewSelect(
 			"Steps",
 			func(s *state.State, steps int) hypp.Dispatchable {

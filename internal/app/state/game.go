@@ -17,6 +17,7 @@ const (
 )
 
 type Game struct {
+	Players               [2]*Player
 	Board                 *Board
 	Selected              *Piece
 	SelectedChangeCounter int
@@ -34,6 +35,10 @@ func (g *Game) Clone() *Game {
 		return nil
 	}
 	return &Game{
+		Players: [2]*Player{
+			g.Players[0].Clone(),
+			g.Players[1].Clone(),
+		},
 		Board:                 g.Board.Clone(),
 		Selected:              g.Selected.Clone(),
 		SelectedChangeCounter: g.SelectedChangeCounter,
@@ -48,8 +53,9 @@ func (g *Game) Clone() *Game {
 
 func NewGame() *Game {
 	g := &Game{
-		Board:  NewBoard(),
-		Sticks: NewSticks(),
+		Players: [2]*Player{{}, {}},
+		Board:   NewBoard(),
+		Sticks:  NewSticks(),
 	}
 	g.CalcValidMoves()
 	g.HasMoved = false

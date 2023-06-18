@@ -23,6 +23,7 @@ func main() {
 			"Components",
 			tale.Board(),
 			tale.Piece(),
+			tale.Players(),
 			tale.Stick(),
 			tale.Sticks(),
 		),

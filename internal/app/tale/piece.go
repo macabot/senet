@@ -6,6 +6,7 @@ import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
+	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
 func Piece() *fairytale.Tale[*state.State] {
@@ -26,20 +27,7 @@ func Piece() *fairytale.Tale[*state.State] {
 			return component.Piece(props)
 		},
 	).WithControls(
-		control.NewSelect(
-			"Player",
-			func(s *state.State, player int) hypp.Dispatchable {
-				s.Game.Turn = player
-				return s
-			},
-			func(s *state.State) int {
-				return s.Game.Turn
-			},
-			[]control.SelectOption[int]{
-				{Label: "Player 1", Value: 0},
-				{Label: "Player 2", Value: 1},
-			},
-		),
+		mycontrol.PlayerTurn(),
 		control.NewCheckbox(
 			"Can select",
 			func(s *state.State, canSelect bool) *state.State {
