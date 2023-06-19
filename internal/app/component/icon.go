@@ -77,8 +77,6 @@ func startIcon() *hypp.VNode {
 func zeroPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-0",
 		},
@@ -94,8 +92,6 @@ func zeroPoints() *hypp.VNode {
 func onePoint() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-1",
 		},
@@ -111,8 +107,6 @@ func onePoint() *hypp.VNode {
 func twoPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-2",
 		},
@@ -128,8 +122,6 @@ func twoPoints() *hypp.VNode {
 func threePoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-3",
 		},
@@ -145,8 +137,6 @@ func threePoints() *hypp.VNode {
 func fourPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-4",
 		},
@@ -162,8 +152,6 @@ func fourPoints() *hypp.VNode {
 func fivePoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
-			"width":   "100%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon points points-5",
 		},
