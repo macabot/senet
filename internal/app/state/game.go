@@ -53,7 +53,7 @@ func (g *Game) Clone() *Game {
 
 func NewGame() *Game {
 	g := &Game{
-		Players: [2]*Player{{}, {}},
+		Players: [2]*Player{{Name: "Player 1"}, {Name: "Player 2"}},
 		Board:   NewBoard(),
 		Sticks:  NewSticks(),
 	}

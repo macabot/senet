@@ -41,12 +41,12 @@ func player(playerIndex int, player *state.Player, hasTurn bool) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
-				"player":                         true,
-				fmt.Sprintf("player-%d", player): true,
-				"has-turn":                       hasTurn,
+				"player":                              true,
+				fmt.Sprintf("player-%d", playerIndex): true,
+				"has-turn":                            hasTurn,
 			},
 		},
-		html.Span(nil, hypp.Textf("Player %d", playerIndex+1)),
+		html.Span(nil, hypp.Text(player.Name)),
 		pointsIcon(player.Points),
 	)
 }
