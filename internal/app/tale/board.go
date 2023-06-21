@@ -179,6 +179,27 @@ var boardConfigurations = BoardConfigurations{
 			},
 		},
 	},
+	{
+		Label: "P1 - Remove other piece by moving to top row",
+		Board: &state.Board{
+			PlayerPieces: [2]state.PiecesByPosition{
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 1, Position: 29},
+					&state.Piece{ID: 2, Position: 28},
+					&state.Piece{ID: 3, Position: 27},
+					&state.Piece{ID: 4, Position: 25},
+					&state.Piece{ID: 5, Position: 19},
+				),
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 6, Position: 8},
+					&state.Piece{ID: 7, Position: 6},
+					&state.Piece{ID: 8, Position: 4},
+					&state.Piece{ID: 9, Position: 2},
+					&state.Piece{ID: 10, Position: 0},
+				),
+			},
+		},
+	},
 }
 
 func Board() *fairytale.Tale[*state.State] {

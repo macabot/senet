@@ -112,7 +112,7 @@ func (g Game) SticksDrawAttention() bool {
 	return !g.Sticks.HasThrown && g.HasTurn
 }
 
-func (g Game) FirstFreePosition() Position {
+func (g Game) StartPosition() Position {
 	var pos Position
 	piecesByPos := g.Board.PlayerPieces[g.Turn]
 	otherPiecesByPos := g.Board.PlayerPieces[(g.Turn+1)%2]
@@ -120,6 +120,27 @@ func (g Game) FirstFreePosition() Position {
 		// no-op
 	}
 	return pos
+}
+
+func (g Game) AllOnTopRow(player int) bool {
+	piecesByPos := g.Board.PlayerPieces[player]
+	for pos := range piecesByPos {
+		if pos < 20 {
+			return false
+		}
+	}
+	return true
+}
+
+func (g Game) NextPositionOffBoard(player int) Position {
+	alreadyOffBoard := 0
+	piecesByPos := g.Board.PlayerPieces[player]
+	for pos := range piecesByPos {
+		if pos >= 30 {
+			alreadyOffBoard++
+		}
+	}
+	return Position(30 + alreadyOffBoard)
 }
 
 func (g *Game) CalcValidMoves() {
@@ -136,7 +157,11 @@ func (g *Game) CalcValidMoves() {
 	findMoves := func(steps int, protectedSize int) {
 		for pos := range piecesByPos {
 			if pos == ReturnToStartPosition {
-				g.ValidMoves[pos] = g.FirstFreePosition()
+				g.ValidMoves[pos] = g.StartPosition()
+				continue
+			}
+			if pos == MoveOffBoardPosition && g.AllOnTopRow(g.Turn) {
+				g.ValidMoves[pos] = g.NextPositionOffBoard(g.Turn)
 				continue
 			}
 
@@ -227,19 +252,26 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 
 	g.Selected = nil
 
-	if !g.Sticks.CanGoAgain() {
-		g.Turn = (g.Turn + 1) % 2
-	}
-	g.Sticks.HasThrown = false
-	g.CalcValidMoves()
-
 	var nextMove *NextMove
 	if SpecialPositions[to].ReturnToStart {
 		nextMove = &NextMove{
 			Player: player,
 			From:   to,
-			To:     g.FirstFreePosition(),
+			To:     g.StartPosition(),
+		}
+	} else if to >= 20 && to < 30 && piecesByPos.Has(MoveOffBoardPosition) && g.AllOnTopRow(player) {
+		nextMove = &NextMove{
+			Player: player,
+			From:   MoveOffBoardPosition,
+			To:     g.NextPositionOffBoard(player),
 		}
 	}
+
+	if nextMove == nil && !g.Sticks.CanGoAgain() {
+		g.Turn = (g.Turn + 1) % 2
+	}
+	g.Sticks.HasThrown = false
+	g.CalcValidMoves()
+
 	return nextMove, nil
 }

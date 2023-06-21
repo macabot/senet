@@ -60,7 +60,10 @@ var SpecialPositions = map[Position]SpecialPosition{
 	25: {Icon: Protected, Protects: true, ReturnToStart: false},
 }
 
-var ReturnToStartPosition Position = 26
+var (
+	ReturnToStartPosition Position = 26
+	MoveOffBoardPosition  Position = 29
+)
 
 type PieceAbility int
 
@@ -220,6 +223,9 @@ func NewBoard() *Board {
 // position 0 has two neighbors: 19 (north) and 1 (west).
 func (b Board) NeighborSquares(position Position) set.Set[Position] {
 	neighbors := set.Set[Position]{}
+	if position < 0 || position >= 30 {
+		return neighbors
+	}
 	if position < 20 {
 		neighbors.Add(position + 19 - 2*(position%10))
 	}

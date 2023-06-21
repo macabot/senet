@@ -144,7 +144,8 @@
   }
 }
 
-@for $row from 0 to 3 {
+// Row starts counting from -1 to include pieces that are moved off the board.
+@for $row from -1 to 3 {
   @for $column from 0 to 10 {
     @include mover($row, $column);
 
