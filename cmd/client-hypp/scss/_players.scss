@@ -1,3 +1,17 @@
+@mixin player-points-incrementer($points) {
+  @keyframes player-points-increment-to-#{$points} {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
 .players {
   width: 100%;
   display: flex;
@@ -20,6 +34,16 @@
   .points {
     width: auto;
     height: 100%;
+    z-index: 1;
+  }
+
+  @for $points from 1 through 5 {
+    @include player-points-incrementer($points);
+
+    .points.points-#{$points} {
+      animation: 1s player-points-increment-to-#{$points};
+      animation-fill-mode: forwards;
+    }
   }
 }
 

@@ -1,12 +1,40 @@
 package tale
 
 import (
+	"fmt"
+
 	"github.com/macabot/fairytale"
+	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
-	"github.com/macabot/senet/internal/app/tale/control"
+	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
+
+func playerPoints(player int) *control.Select[*state.State, int] {
+	return control.NewSelect(
+		fmt.Sprintf("Player %d points", player+1),
+		func(s *state.State, points int) hypp.Dispatchable {
+			pieces := make([]*state.Piece, points)
+			for i := 0; i < points; i++ {
+				pieces[i] = &state.Piece{Position: state.Position(30 + i)}
+			}
+			s.Game.Board.PlayerPieces[player] = state.NewPiecesByPosition(pieces...)
+			return s
+		},
+		func(s *state.State) int {
+			return s.Game.Board.Points(player)
+		},
+		[]control.SelectOption[int]{
+			{Label: "0", Value: 0},
+			{Label: "1", Value: 1},
+			{Label: "2", Value: 2},
+			{Label: "3", Value: 3},
+			{Label: "4", Value: 4},
+			{Label: "5", Value: 5},
+		},
+	)
+}
 
 func Players() *fairytale.Tale[*state.State] {
 	return fairytale.New(
@@ -18,6 +46,8 @@ func Players() *fairytale.Tale[*state.State] {
 			return component.Players(component.CreatePlayersProps(s))
 		},
 	).WithControls(
-		control.PlayerTurn(),
+		mycontrol.PlayerTurn(),
+		playerPoints(0),
+		playerPoints(1),
 	)
 }
