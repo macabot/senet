@@ -14,6 +14,7 @@ func GamePage(props *state.State) *hypp.VNode {
 				"focus-sticks": !props.Game.Sticks.HasThrown,
 			},
 		},
+		Players(props.Game.Players, props.Game.Turn),
 		Board(props),
 		Sticks(SticksProps{
 			Sticks:        props.Game.Sticks,

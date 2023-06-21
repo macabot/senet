@@ -11,9 +11,13 @@ import (
 func Players(players [2]*state.Player, turn int) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
-			"class": "players",
+			"class": map[string]bool{
+				"players":                        true,
+				fmt.Sprintf("has-turn-%d", turn): true,
+			},
 		},
 		player(0, players[0], turn == 0),
+		playerTurnArrow(),
 		player(1, players[1], turn == 1),
 	)
 }

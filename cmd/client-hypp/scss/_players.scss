@@ -2,6 +2,8 @@
   width: 100%;
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
+  height: 2rem;
 }
 
 .player {
@@ -10,11 +12,18 @@
   min-width: 30%;
   align-items: center;
   justify-content: space-around;
+  border: 1px solid black;
+  border-radius: 5px;
+  transition: height 500ms;
 
   .points {
     width: auto;
     height: 100%;
   }
+}
+
+.player:not(.has-turn) {
+  height: 1.5rem;
 }
 
 .player.player-0 {
@@ -23,4 +32,14 @@
 
 .player.player-1 {
   background-color: rgb(248, 206, 204);
+}
+
+.player-turn-arrow {
+  height: 100%;
+  width: auto;
+  transition: transform 500ms;
+}
+
+.has-turn-1 .player-turn-arrow {
+  transform: rotate(180deg);
 }
