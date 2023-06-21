@@ -1,13 +1,11 @@
 package state
 
 type Player struct {
-	Name   string
-	Points int
+	Name string
 }
 
 func (p Player) Clone() *Player {
 	return &Player{
-		Name:   p.Name,
-		Points: p.Points,
+		Name: p.Name,
 	}
 }

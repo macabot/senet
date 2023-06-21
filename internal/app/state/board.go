@@ -303,3 +303,13 @@ func (b Board) StartPosition() Position {
 	}
 	return pos
 }
+
+func (b Board) Points(player int) int {
+	points := 0
+	for pos := range b.PlayerPieces[player] {
+		if pos >= 30 {
+			points++
+		}
+	}
+	return points
+}

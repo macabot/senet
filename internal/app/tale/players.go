@@ -15,7 +15,7 @@ func Players() *fairytale.Tale[*state.State] {
 			Game: state.NewGame(),
 		},
 		func(s *state.State) *hypp.VNode {
-			return component.Players(s.Game.Players, s.Game.Turn)
+			return component.Players(component.CreatePlayersProps(s))
 		},
 	).WithControls(
 		control.PlayerTurn(),

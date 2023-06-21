@@ -8,17 +8,43 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Players(players [2]*state.Player, turn int) *hypp.VNode {
+type Player struct {
+	Name   string
+	Points int
+}
+
+type PlayersProps struct {
+	Players [2]Player
+	Turn    int
+}
+
+func CreatePlayersProps(s *state.State) PlayersProps {
+	return PlayersProps{
+		Players: [2]Player{
+			{
+				Name:   s.Game.Players[0].Name,
+				Points: s.Game.Board.Points(0),
+			},
+			{
+				Name:   s.Game.Players[1].Name,
+				Points: s.Game.Board.Points(1),
+			},
+		},
+		Turn: s.Game.Turn,
+	}
+}
+
+func Players(props PlayersProps) *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
 			"class": map[string]bool{
-				"players":                        true,
-				fmt.Sprintf("has-turn-%d", turn): true,
+				"players":                              true,
+				fmt.Sprintf("has-turn-%d", props.Turn): true,
 			},
 		},
-		player(0, players[0], turn == 0),
+		player(0, props.Players[0], props.Turn == 0),
 		playerTurnArrow(),
-		player(1, players[1], turn == 1),
+		player(1, props.Players[1], props.Turn == 1),
 	)
 }
 
@@ -41,7 +67,7 @@ func pointsIcon(points int) *hypp.VNode {
 	}
 }
 
-func player(playerIndex int, player *state.Player, hasTurn bool) *hypp.VNode {
+func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{

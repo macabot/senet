@@ -6,19 +6,19 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func GamePage(props *state.State) *hypp.VNode {
+func GamePage(s *state.State) *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": map[string]bool{
 				"game-page":    true,
-				"focus-sticks": !props.Game.Sticks.HasThrown,
+				"focus-sticks": !s.Game.Sticks.HasThrown,
 			},
 		},
-		Players(props.Game.Players, props.Game.Turn),
-		Board(props),
+		Players(CreatePlayersProps(s)),
+		Board(s),
 		Sticks(SticksProps{
-			Sticks:        props.Game.Sticks,
-			DrawAttention: props.Game.SticksDrawAttention(),
+			Sticks:        s.Game.Sticks,
+			DrawAttention: s.Game.SticksDrawAttention(),
 		}),
 	)
 }
