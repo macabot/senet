@@ -47,18 +47,27 @@
 
 .steps {
   border-radius: 50%;
-  width: 15%;
+  height: 75%;
   aspect-ratio: 1 / 1;
-  background-color: blue;
-  color: white;
+  background: rgb(217, 217, 217);
+  background: linear-gradient(
+    90deg,
+    rgba(217, 217, 217, 1) 0%,
+    rgba(127, 205, 205, 1) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 6rem;
 }
 
-.steps.can-go-again {
-  background-color: green;
+.can-go-again .steps {
+  background: rgb(215, 215, 215);
+  background: linear-gradient(
+    90deg,
+    rgba(215, 215, 215, 1) 0%,
+    rgba(121, 219, 107, 1) 100%
+  );
 }
 
 @keyframes throw-pulse {

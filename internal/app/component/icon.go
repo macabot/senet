@@ -163,6 +163,81 @@ func FivePoints() *hypp.VNode {
 	)
 }
 
+// OneStep is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func OneStep() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon steps steps-1",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480.266-80q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80-397.681 80-480.5q0-82.819 31.5-155.659Q143-709 197.5-763t127.341-85.5Q397.681-880 480.5-880q82.819 0 155.659 31.5Q709-817 763-763t85.5 127Q880-563 880-480.266q0 82.734-31.5 155.5T763-197.684q-54 54.316-127 86Q563-80 480.266-80ZM472-277h60v-406H389v60h83v346Z",
+			},
+		),
+	)
+}
+
+// TwoSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func TwoSteps() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon steps steps-2",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480.266-80q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80-397.681 80-480.5q0-82.819 31.5-155.659Q143-709 197.5-763t127.341-85.5Q397.681-880 480.5-880q82.819 0 155.659 31.5Q709-817 763-763t85.5 127Q880-563 880-480.266q0 82.734-31.5 155.5T763-197.684q-54 54.316-127 86Q563-80 480.266-80ZM365-277h230v-60H425v-115h110q24 0 42-18t18-42v-111q0-24-18-42t-42-18H365v60h170v111H425q-24 0-42 18t-18 42v175Z",
+			},
+		),
+	)
+}
+
+// ThreeSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ThreeSteps() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon steps steps-3",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480.266-80q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80-397.681 80-480.5q0-82.819 31.5-155.659Q143-709 197.5-763t127.341-85.5Q397.681-880 480.5-880q82.819 0 155.659 31.5Q709-817 763-763t85.5 127Q880-563 880-480.266q0 82.734-31.5 155.5T763-197.684q-54 54.316-127 86Q563-80 480.266-80ZM365-277h170q24 0 42-18t18-42v-87q0-27-14.5-42.5T546-482q20 0 34.5-13.5T595-537v-86q0-24-18-42t-42-18H365v60h170v111h-87v60h87v115H365v60Z",
+			},
+		),
+	)
+}
+
+// FourSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FourSteps() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon steps steps-4",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480.266-80q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80-397.681 80-480.5q0-82.819 31.5-155.659Q143-709 197.5-763t127.341-85.5Q397.681-880 480.5-880q82.819 0 155.659 31.5Q709-817 763-763t85.5 127Q880-563 880-480.266q0 82.734-31.5 155.5T763-197.684q-54 54.316-127 86Q563-80 480.266-80ZM535-277h60v-406h-60v171H425v-171h-60v231h170v175Z",
+			},
+		),
+	)
+}
+
+// SixSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_6%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func SixSteps() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon steps steps-6",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M480.266-80q-82.734 0-155.5-31.5t-127.266-86q-54.5-54.5-86-127.341Q80-397.681 80-480.5q0-82.819 31.5-155.659Q143-709 197.5-763t127.341-85.5Q397.681-880 480.5-880q82.819 0 155.659 31.5Q709-817 763-763t85.5 127Q880-563 880-480.266q0 82.734-31.5 155.5T763-197.684q-54 54.316-127 86Q563-80 480.266-80ZM425-277h110q24 0 42-18t18-42v-115q0-24-18-42t-42-18H425v-111h127v-60H425q-24 0-42 18t-18 42v286q0 24 18 42t42 18Zm0-175h110v115H425v-115Z",
+			},
+		),
+	)
+}
+
 // PlayerTurnArrow is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
 func PlayerTurnArrow() *hypp.VNode {
 	return svg.Svg(

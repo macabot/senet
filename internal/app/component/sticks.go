@@ -1,6 +1,8 @@
 package component
 
 import (
+	"fmt"
+
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/dispatch"
@@ -37,22 +39,32 @@ func throwButton(disabled bool) *hypp.VNode {
 	)
 }
 
+func stepsToIcon(steps int) *hypp.VNode {
+	switch steps {
+	case 1:
+		return OneStep()
+	case 2:
+		return TwoSteps()
+	case 3:
+		return ThreeSteps()
+	case 4:
+		return FourSteps()
+	case 6:
+		return SixSteps()
+	default:
+		panic(fmt.Errorf("there exists no icon for %d steps", steps))
+	}
+}
+
 func steps(sticks *state.Sticks) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
 				"steps-wrapper": true,
 				"disabled":      !sticks.HasThrown,
+				"can-go-again":  sticks.CanGoAgain(),
 			},
 		},
-		html.Div(
-			hypp.HProps{
-				"class": map[string]bool{
-					"steps":        true,
-					"can-go-again": sticks.CanGoAgain(),
-				},
-			},
-			hypp.Textf("%d", sticks.Steps()),
-		),
+		stepsToIcon(sticks.Steps()),
 	)
 }
