@@ -19,9 +19,9 @@ type SquareProps struct {
 func iconToLabel(icon state.Icon) *hypp.VNode {
 	switch icon {
 	case state.Protected:
-		return protectedIcon()
+		return ProtectedIcon()
 	case state.ReturnToStart:
-		return returnToStartIcon()
+		return ReturnToStartIcon()
 	default:
 		panic(fmt.Errorf("invalid icon %v", icon))
 	}
@@ -49,7 +49,7 @@ func Square(props SquareProps) *hypp.VNode {
 		}
 	}
 	if props.IsStart {
-		label = startIcon()
+		label = StartIcon()
 	}
 
 	validDestination := props.CanClick

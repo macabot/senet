@@ -45,8 +45,8 @@ func Piece(props PieceProps) *hypp.VNode {
 				"disabled": !props.CanClick,
 				"type":     "button",
 			},
-			blockingIcon(),
-			protectedIcon(),
+			BlockingIcon(),
+			ProtectedIcon(),
 		),
 	)
 }

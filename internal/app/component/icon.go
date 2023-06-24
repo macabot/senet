@@ -5,8 +5,8 @@ import (
 	"github.com/macabot/hypp/tag/svg"
 )
 
-// protectedIcon is based on https://fonts.google.com/icons?selected=Material+Symbols+Outlined:protectedIcon:FILL@0;wght@400;GRAD@0;opsz@48
-func protectedIcon() *hypp.VNode {
+// ProtectedIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Ashield%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ProtectedIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
@@ -22,8 +22,8 @@ func protectedIcon() *hypp.VNode {
 	)
 }
 
-// blockingIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Afront_hand%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func blockingIcon() *hypp.VNode {
+// BlockingIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Afront_hand%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func BlockingIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
@@ -39,8 +39,8 @@ func blockingIcon() *hypp.VNode {
 	)
 }
 
-// returnToStartIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Amove%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func returnToStartIcon() *hypp.VNode {
+// ReturnToStartIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Amove%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ReturnToStartIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
@@ -56,8 +56,8 @@ func returnToStartIcon() *hypp.VNode {
 	)
 }
 
-// startIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Alocation_on%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func startIcon() *hypp.VNode {
+// StartIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Alocation_on%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func StartIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
@@ -73,8 +73,8 @@ func startIcon() *hypp.VNode {
 	)
 }
 
-// zeroPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_0%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func zeroPoints() *hypp.VNode {
+// ZeroPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_0%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ZeroPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -88,8 +88,8 @@ func zeroPoints() *hypp.VNode {
 	)
 }
 
-// onePoint is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func onePoint() *hypp.VNode {
+// OnePoint is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func OnePoint() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -103,8 +103,8 @@ func onePoint() *hypp.VNode {
 	)
 }
 
-// twoPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func twoPoints() *hypp.VNode {
+// TwoPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func TwoPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -118,8 +118,8 @@ func twoPoints() *hypp.VNode {
 	)
 }
 
-// threePoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func threePoints() *hypp.VNode {
+// ThreePoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ThreePoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -133,8 +133,8 @@ func threePoints() *hypp.VNode {
 	)
 }
 
-// fourPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func fourPoints() *hypp.VNode {
+// FourPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FourPoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -148,8 +148,8 @@ func fourPoints() *hypp.VNode {
 	)
 }
 
-// fivePoints is base on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_5%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func fivePoints() *hypp.VNode {
+// FivePoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_5%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FivePoints() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -163,7 +163,8 @@ func fivePoints() *hypp.VNode {
 	)
 }
 
-func playerTurnArrow() *hypp.VNode {
+// PlayerTurnArrow is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func PlayerTurnArrow() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
