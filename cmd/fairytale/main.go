@@ -18,6 +18,10 @@ func main() {
 					"href": "/senet.css",
 				}),
 			},
+			Settings: fairytale.AdminSettings{
+				IFrameSize:  fairytale.Size_iPhone_11_Pro,
+				Orientation: fairytale.Landscape,
+			},
 		},
 		fairytale.NewBundle[*state.State](
 			"Components",
