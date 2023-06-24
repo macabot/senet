@@ -10,5 +10,5 @@
 
 .game-page:not(.focus-sticks) .sticks,
 .game-page.focus-sticks .board {
-  width: min(100vw, calc((100vh - (100vw * 3 / 10)) * 10 / 3));
+  width: min(100vw, calc((100vh - 2rem - (100vw * 3 / 10)) * 10 / 3));
 }
