@@ -14,11 +14,14 @@ func GamePage() *fairytale.Tale[*state.State] {
 		"GamePage",
 		&state.State{
 			Game: game,
+			Page: state.GamePage,
 		},
-		component.GamePage,
+		component.Senet,
 	).WithControls(
 		mycontrol.Configuration(),
 		mycontrol.Steps(),
 		mycontrol.PlayerTurn(),
-	)
+	).WithSettings(fairytale.TaleSettings{
+		Target: fairytale.TaleAsHTML,
+	})
 }

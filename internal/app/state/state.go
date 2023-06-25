@@ -2,9 +2,17 @@ package state
 
 import "github.com/macabot/hypp"
 
+type Page int
+
+const (
+	GamePage Page = iota
+)
+
 type State struct {
 	hypp.EmptyState
-	Game *Game
+	Game    *Game
+	Rotated bool
+	Page    Page
 }
 
 func (s *State) Clone() *State {
@@ -12,6 +20,7 @@ func (s *State) Clone() *State {
 		return nil
 	}
 	return &State{
-		Game: s.Game.Clone(),
+		Game:    s.Game.Clone(),
+		Rotated: s.Rotated,
 	}
 }

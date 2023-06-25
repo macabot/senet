@@ -11,7 +11,7 @@ func GamePage(s *state.State) *hypp.VNode {
 		hypp.HProps{
 			"class": "game-page",
 		},
-		Players(CreatePlayersProps(s)),
+		TopBar(s),
 		Board(s),
 		Sticks(SticksProps{
 			Sticks:        s.Game.Sticks,
