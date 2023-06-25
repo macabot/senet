@@ -1,5 +1,6 @@
 .sticks {
-  width: 100%;
+  max-width: 100vw;
+  max-height: calc(100vw * 3 / 10);
   aspect-ratio: 10 / 3;
   display: grid;
   grid-template-columns: 1fr 1fr;

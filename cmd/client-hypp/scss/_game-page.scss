@@ -2,8 +2,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+  height: 100vh;
 
-.game-page .sticks {
-  width: min(100vw, calc((100vh - 2rem - (100vw * 3 / 10)) * 10 / 3));
+  > * {
+    max-width: 1200px;
+  }
+
+  .board {
+    flex: 1 0 100px;
+  }
+
+  .sticks {
+    flex: 1 1 100px;
+  }
 }
