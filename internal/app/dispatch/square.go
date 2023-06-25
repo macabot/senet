@@ -9,7 +9,7 @@ import (
 )
 
 func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		validMoves := newState.Game.ValidMoves
 		fromPositionFound := false
