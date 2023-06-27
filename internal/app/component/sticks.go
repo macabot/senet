@@ -75,8 +75,8 @@ func steps(sticks *state.Sticks, noValidMoves bool) *hypp.VNode {
 func noMoveButton() *hypp.VNode {
 	return html.Button(
 		hypp.HProps{
-			"class": "no-move-button",
-			// "onclick": "TODO",
+			"class":   "no-move-button",
+			"onclick": dispatch.NoMoveAction(),
 		},
 		NoMoveIcon(),
 	)

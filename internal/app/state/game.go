@@ -275,3 +275,18 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 
 	return nextMove, nil
 }
+
+func (g *Game) NoMove(player int) error {
+	if len(g.ValidMoves) > 0 {
+		return fmt.Errorf("Cannot perform no-move. There are valid moves.")
+	}
+
+	g.Selected = nil
+	if !g.Sticks.CanGoAgain() {
+		g.Turn = (g.Turn + 1) % 2
+	}
+	g.Sticks.HasThrown = false
+	g.CalcValidMoves()
+
+	return nil
+}

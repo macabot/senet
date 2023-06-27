@@ -40,3 +40,13 @@ func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
 		}
 	}
 }
+
+func NoMoveAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if err := newState.Game.NoMove(newState.Game.Turn); err != nil {
+			panic(err)
+		}
+		return newState
+	}
+}
