@@ -16,6 +16,7 @@ func GamePage(s *state.State) *hypp.VNode {
 		Sticks(SticksProps{
 			Sticks:        s.Game.Sticks,
 			DrawAttention: s.Game.SticksDrawAttention(),
+			NoValidMoves:  len(s.Game.ValidMoves) == 0,
 		}),
 	)
 }

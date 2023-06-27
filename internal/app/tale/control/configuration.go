@@ -24,6 +24,25 @@ func (b BoardConfigurations) SelectOptions() []control.SelectOption[int] {
 	return options
 }
 
+var NoValidMovesBoard = &state.Board{
+	PlayerPieces: [2]state.PiecesByPosition{
+		state.NewPiecesByPosition(
+			&state.Piece{ID: 1, Position: 4},
+			&state.Piece{ID: 2, Position: 3},
+			&state.Piece{ID: 3, Position: 2},
+			&state.Piece{ID: 4, Position: 1},
+			&state.Piece{ID: 5, Position: 0},
+		),
+		state.NewPiecesByPosition(
+			&state.Piece{ID: 6, Position: 9},
+			&state.Piece{ID: 7, Position: 8},
+			&state.Piece{ID: 8, Position: 7},
+			&state.Piece{ID: 9, Position: 6},
+			&state.Piece{ID: 10, Position: 5},
+		),
+	},
+}
+
 var boardConfigurations = BoardConfigurations{
 	{
 		Label: "New game",
@@ -198,25 +217,8 @@ var boardConfigurations = BoardConfigurations{
 		},
 	},
 	{
-		Label: "P1 - No possible moves",
-		Board: &state.Board{
-			PlayerPieces: [2]state.PiecesByPosition{
-				state.NewPiecesByPosition(
-					&state.Piece{ID: 1, Position: 4},
-					&state.Piece{ID: 2, Position: 3},
-					&state.Piece{ID: 3, Position: 2},
-					&state.Piece{ID: 4, Position: 1},
-					&state.Piece{ID: 5, Position: 0},
-				),
-				state.NewPiecesByPosition(
-					&state.Piece{ID: 6, Position: 9},
-					&state.Piece{ID: 7, Position: 8},
-					&state.Piece{ID: 8, Position: 7},
-					&state.Piece{ID: 9, Position: 6},
-					&state.Piece{ID: 10, Position: 5},
-				),
-			},
-		},
+		Label: "P1 - No valid moves",
+		Board: NoValidMovesBoard,
 	},
 }
 

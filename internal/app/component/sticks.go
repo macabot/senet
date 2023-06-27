@@ -12,6 +12,7 @@ import (
 type SticksProps struct {
 	Sticks        *state.Sticks
 	DrawAttention bool
+	NoValidMoves  bool
 }
 
 func Sticks(props SticksProps) *hypp.VNode {
@@ -24,7 +25,7 @@ func Sticks(props SticksProps) *hypp.VNode {
 		Stick(props.Sticks.Flips[2]),
 		Stick(props.Sticks.Flips[3]),
 		throwButton(!props.DrawAttention),
-		steps(props.Sticks),
+		steps(props.Sticks, props.NoValidMoves),
 	)
 }
 
@@ -56,15 +57,27 @@ func stepsToIcon(steps int) *hypp.VNode {
 	}
 }
 
-func steps(sticks *state.Sticks) *hypp.VNode {
+func steps(sticks *state.Sticks, noValidMoves bool) *hypp.VNode {
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
-				"steps-wrapper": true,
-				"disabled":      !sticks.HasThrown,
-				"can-go-again":  sticks.CanGoAgain(),
+				"steps-wrapper":  true,
+				"disabled":       !sticks.HasThrown,
+				"can-go-again":   sticks.CanGoAgain(),
+				"no-valid-moves": noValidMoves,
 			},
 		},
 		stepsToIcon(sticks.Steps()),
+		noMoveButton(),
+	)
+}
+
+func noMoveButton() *hypp.VNode {
+	return html.Button(
+		hypp.HProps{
+			"class": "no-move-button",
+			// "onclick": "TODO",
+		},
+		NoMoveIcon(),
 	)
 }

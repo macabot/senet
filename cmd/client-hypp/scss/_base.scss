@@ -30,3 +30,7 @@ html.rotated {
   top: 100%;
   left: 0;
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}
