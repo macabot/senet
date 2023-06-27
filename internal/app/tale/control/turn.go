@@ -10,7 +10,7 @@ func PlayerTurn() *control.Select[*state.State, int] {
 	return control.NewSelect(
 		"Player turn",
 		func(s *state.State, player int) hypp.Dispatchable {
-			s.Game.Turn = player
+			s.Game.SetTurn(player)
 			return s
 		},
 		func(s *state.State) int {
