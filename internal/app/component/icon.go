@@ -73,8 +73,8 @@ func StartIcon() *hypp.VNode {
 	)
 }
 
-// ZeroPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_0%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ZeroPoints() *hypp.VNode {
+// ZeroPointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_0%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ZeroPointsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -88,8 +88,8 @@ func ZeroPoints() *hypp.VNode {
 	)
 }
 
-// OnePoint is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func OnePoint() *hypp.VNode {
+// OnePointIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func OnePointIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -103,8 +103,8 @@ func OnePoint() *hypp.VNode {
 	)
 }
 
-// TwoPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func TwoPoints() *hypp.VNode {
+// TwoPointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func TwoPointsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -118,8 +118,8 @@ func TwoPoints() *hypp.VNode {
 	)
 }
 
-// ThreePoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ThreePoints() *hypp.VNode {
+// ThreePointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ThreePointsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -133,8 +133,8 @@ func ThreePoints() *hypp.VNode {
 	)
 }
 
-// FourPoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func FourPoints() *hypp.VNode {
+// FourPointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FourPointsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -148,8 +148,8 @@ func FourPoints() *hypp.VNode {
 	)
 }
 
-// FivePoints is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_5%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func FivePoints() *hypp.VNode {
+// FivePointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_5%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FivePointsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -163,8 +163,8 @@ func FivePoints() *hypp.VNode {
 	)
 }
 
-// OneStep is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func OneStep() *hypp.VNode {
+// OneStepIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_1%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func OneStepIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -178,8 +178,8 @@ func OneStep() *hypp.VNode {
 	)
 }
 
-// TwoSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func TwoSteps() *hypp.VNode {
+// TwoStepsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_2%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func TwoStepsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -193,8 +193,8 @@ func TwoSteps() *hypp.VNode {
 	)
 }
 
-// ThreeSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ThreeSteps() *hypp.VNode {
+// ThreeStepsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_3%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ThreeStepsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -208,8 +208,8 @@ func ThreeSteps() *hypp.VNode {
 	)
 }
 
-// FourSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func FourSteps() *hypp.VNode {
+// FourStepsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_4%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FourStepsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -223,8 +223,8 @@ func FourSteps() *hypp.VNode {
 	)
 }
 
-// SixSteps is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_6%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func SixSteps() *hypp.VNode {
+// SixStepsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_6%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func SixStepsIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -238,8 +238,8 @@ func SixSteps() *hypp.VNode {
 	)
 }
 
-// PlayerTurnArrow is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func PlayerTurnArrow() *hypp.VNode {
+// PlayerTurnIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func PlayerTurnIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
@@ -253,8 +253,8 @@ func PlayerTurnArrow() *hypp.VNode {
 	)
 }
 
-// ScreenRotation is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Ascreen_rotation%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ScreenRotation() *hypp.VNode {
+// ScreenRotationIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Ascreen_rotation%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func ScreenRotationIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",

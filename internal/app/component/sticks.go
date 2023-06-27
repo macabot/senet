@@ -42,15 +42,15 @@ func throwButton(disabled bool) *hypp.VNode {
 func stepsToIcon(steps int) *hypp.VNode {
 	switch steps {
 	case 1:
-		return OneStep()
+		return OneStepIcon()
 	case 2:
-		return TwoSteps()
+		return TwoStepsIcon()
 	case 3:
-		return ThreeSteps()
+		return ThreeStepsIcon()
 	case 4:
-		return FourSteps()
+		return FourStepsIcon()
 	case 6:
-		return SixSteps()
+		return SixStepsIcon()
 	default:
 		panic(fmt.Errorf("there exists no icon for %d steps", steps))
 	}

@@ -43,7 +43,7 @@ func Players(props PlayersProps) *hypp.VNode {
 			},
 		},
 		player(0, props.Players[0], props.Turn == 0),
-		PlayerTurnArrow(),
+		PlayerTurnIcon(),
 		player(1, props.Players[1], props.Turn == 1),
 	)
 }
@@ -51,17 +51,17 @@ func Players(props PlayersProps) *hypp.VNode {
 func pointsIcon(points int) *hypp.VNode {
 	switch points {
 	case 0:
-		return ZeroPoints()
+		return ZeroPointsIcon()
 	case 1:
-		return OnePoint()
+		return OnePointIcon()
 	case 2:
-		return TwoPoints()
+		return TwoPointsIcon()
 	case 3:
-		return ThreePoints()
+		return ThreePointsIcon()
 	case 4:
-		return FourPoints()
+		return FourPointsIcon()
 	case 5:
-		return FivePoints()
+		return FivePointsIcon()
 	default:
 		panic(fmt.Errorf("there exists no icon for %d points", points))
 	}

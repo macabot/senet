@@ -23,6 +23,6 @@ func rotateScreenButton() *hypp.VNode {
 			"class":   "rotate-screen",
 			"onclick": dispatch.RotateScreenAction(),
 		},
-		ScreenRotation(),
+		ScreenRotationIcon(),
 	)
 }
