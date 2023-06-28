@@ -18,7 +18,7 @@ func Stick() *fairytale.Tale[*state.State] {
 	).WithControls(
 		control.NewNumberInput(
 			"Flips",
-			func(s *state.State, flips int) *state.State {
+			func(s *state.State, flips int) hypp.Dispatchable {
 				s.Game.SetSticks(&state.Sticks{Flips: [4]int{flips, 0, 0, 0}})
 				return s
 			},

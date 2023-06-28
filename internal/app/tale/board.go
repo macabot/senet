@@ -22,7 +22,7 @@ func Board() *fairytale.Tale[*state.State] {
 		mycontrol.Configuration(),
 		control.NewCheckbox(
 			"Has turn",
-			func(s *state.State, hasTurn bool) *state.State {
+			func(s *state.State, hasTurn bool) hypp.Dispatchable {
 				s.Game.HasTurn = hasTurn
 				return s
 			},

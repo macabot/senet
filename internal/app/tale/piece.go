@@ -30,7 +30,7 @@ func Piece() *fairytale.Tale[*state.State] {
 		mycontrol.PlayerTurn(),
 		control.NewCheckbox(
 			"Can select",
-			func(s *state.State, canSelect bool) *state.State {
+			func(s *state.State, canSelect bool) hypp.Dispatchable {
 				piece := s.Game.Board.FindPieceByID(1)
 				canSelectPiece := s.Game.CanClickOnPiece(s.Game.Turn, piece)
 				if canSelect == canSelectPiece {
@@ -50,7 +50,7 @@ func Piece() *fairytale.Tale[*state.State] {
 		),
 		control.NewCheckbox(
 			"Selected",
-			func(s *state.State, selected bool) *state.State {
+			func(s *state.State, selected bool) hypp.Dispatchable {
 				if selected {
 					s.Game.Selected = s.Game.Board.FindPieceByID(1)
 				} else {

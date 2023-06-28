@@ -26,7 +26,7 @@ func Sticks() *fairytale.Tale[*state.State] {
 		mycontrol.Steps(),
 		control.NewCheckbox(
 			"No valid moves",
-			func(s *state.State, noMoves bool) *state.State {
+			func(s *state.State, noMoves bool) hypp.Dispatchable {
 				if noMoves {
 					s.Game.SetBoard(mycontrol.NoValidMovesBoard)
 				} else {

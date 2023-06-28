@@ -9,7 +9,7 @@ import (
 )
 
 type Player struct {
-	Name   string
+	*state.Player
 	Points int
 }
 
@@ -22,11 +22,11 @@ func CreatePlayersProps(s *state.State) PlayersProps {
 	return PlayersProps{
 		Players: [2]Player{
 			{
-				Name:   s.Game.Players[0].Name,
+				Player: s.Game.Players[0],
 				Points: s.Game.Board.Points(0),
 			},
 			{
-				Name:   s.Game.Players[1].Name,
+				Player: s.Game.Players[1],
 				Points: s.Game.Board.Points(1),
 			},
 		},
@@ -68,6 +68,10 @@ func pointsIcon(points int) *hypp.VNode {
 }
 
 func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
+	var bubble *hypp.VNode
+	if player.Speech != "" {
+		bubble = speechBubble(player.Speech)
+	}
 	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
@@ -78,5 +82,15 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 		},
 		html.Span(nil, hypp.Text(player.Name)),
 		pointsIcon(player.Points),
+		bubble,
+	)
+}
+
+func speechBubble(speech string) *hypp.VNode {
+	return html.P(
+		hypp.HProps{
+			"class": "speech-bubble",
+		},
+		hypp.Text(speech),
 	)
 }
