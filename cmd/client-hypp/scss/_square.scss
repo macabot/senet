@@ -59,3 +59,25 @@
     box-shadow: 0 0 0 0 rgba(249, 186, 67, 0), inset 0 0 10px #000000;
   }
 }
+
+@keyframes direction-flow {
+  0% {
+    fill: #000;
+  }
+  25% {
+    fill: #aaa;
+  }
+  50% {
+    fill: #000;
+  }
+  100% {
+    fill: #000;
+  }
+}
+
+@for $pos from 0 to 30 {
+  .pos-#{$pos} .flow {
+    animation: direction-flow 3s infinite;
+    animation-delay: calc($pos * 50ms);
+  }
+}

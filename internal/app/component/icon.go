@@ -283,12 +283,12 @@ func NoMoveIcon() *hypp.VNode {
 	)
 }
 
-// ArrowLeftIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ArrowLeftIcon() *hypp.VNode {
+// FlowLeftIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FlowLeftIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
-			"class":   "icon arrow-left",
+			"class":   "icon flow flow-left",
 		},
 		svg.Path(
 			hypp.HProps{
@@ -298,12 +298,12 @@ func ArrowLeftIcon() *hypp.VNode {
 	)
 }
 
-// ArrowRightIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_right_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ArrowRightIcon() *hypp.VNode {
+// FlowRightIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_right_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FlowRightIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
-			"class":   "icon arrow-right",
+			"class":   "icon flow flow-right",
 		},
 		svg.Path(
 			hypp.HProps{
@@ -313,12 +313,12 @@ func ArrowRightIcon() *hypp.VNode {
 	)
 }
 
-// ArrowUpIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_upward_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
-func ArrowUpIcon() *hypp.VNode {
+// FlowUpIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_upward_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func FlowUpIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
-			"class":   "icon arrow-right",
+			"class":   "icon flow flow-up",
 		},
 		svg.Path(
 			hypp.HProps{

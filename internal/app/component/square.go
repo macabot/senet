@@ -30,15 +30,15 @@ func iconToLabel(icon state.Icon) *hypp.VNode {
 
 func positionToArrowIcon(pos state.Position) *hypp.VNode {
 	if pos < 9 {
-		return ArrowLeftIcon()
+		return FlowLeftIcon()
 	} else if pos == 9 {
-		return ArrowUpIcon()
+		return FlowUpIcon()
 	} else if pos < 19 {
-		return ArrowRightIcon()
+		return FlowRightIcon()
 	} else if pos == 19 {
-		return ArrowUpIcon()
+		return FlowUpIcon()
 	} else {
-		return ArrowLeftIcon()
+		return FlowLeftIcon()
 	}
 }
 
@@ -49,6 +49,7 @@ func Square(props SquareProps) *hypp.VNode {
 			"square":                                    true,
 			fmt.Sprintf("row-%d", coordinate.Row):       true,
 			fmt.Sprintf("column-%d", coordinate.Column): true,
+			fmt.Sprintf("pos-%d", props.Position):       true,
 		},
 	}
 	if props.CanClick {
