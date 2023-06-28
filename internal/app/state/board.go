@@ -163,7 +163,8 @@ func (s byID) Less(i, j int) bool {
 }
 
 type Board struct {
-	PlayerPieces [2]PiecesByPosition
+	PlayerPieces   [2]PiecesByPosition
+	ShowDirections bool
 }
 
 func (b *Board) Clone() *Board {
@@ -175,6 +176,7 @@ func (b *Board) Clone() *Board {
 			clone.Map(b.PlayerPieces[0]),
 			clone.Map(b.PlayerPieces[1]),
 		},
+		ShowDirections: b.ShowDirections,
 	}
 }
 

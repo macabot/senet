@@ -40,6 +40,7 @@ func Board(props *state.State) *hypp.VNode {
 					CanClick:           canClick,
 					InvalidDestination: invalidDestinations.Has(position),
 					IsStart:            isStart,
+					ShowDirection:      board.ShowDirections,
 				}),
 				Key(fmt.Sprintf("square-%d", position)),
 			)

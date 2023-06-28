@@ -220,6 +220,10 @@ var boardConfigurations = BoardConfigurations{
 		Label: "P1 - No valid moves",
 		Board: NoValidMovesBoard,
 	},
+	{
+		Label: "No pieces",
+		Board: &state.Board{},
+	},
 }
 
 func Configuration() *control.Select[*state.State, int] {
@@ -229,7 +233,11 @@ func Configuration() *control.Select[*state.State, int] {
 			if option == -1 {
 				return s
 			}
-			board := boardConfigurations[option].Board
+			optionBoard := boardConfigurations[option].Board
+			board := &state.Board{
+				PlayerPieces:   optionBoard.PlayerPieces,
+				ShowDirections: s.Game.Board.ShowDirections,
+			}
 			s.Game.SetBoard(board)
 			return s
 		},

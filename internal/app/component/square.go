@@ -14,6 +14,7 @@ type SquareProps struct {
 	CanClick           bool
 	InvalidDestination bool
 	IsStart            bool
+	ShowDirection      bool
 }
 
 func iconToLabel(icon state.Icon) *hypp.VNode {
@@ -24,6 +25,20 @@ func iconToLabel(icon state.Icon) *hypp.VNode {
 		return ReturnToStartIcon()
 	default:
 		panic(fmt.Errorf("invalid icon %v", icon))
+	}
+}
+
+func positionToArrowIcon(pos state.Position) *hypp.VNode {
+	if pos < 9 {
+		return ArrowLeftIcon()
+	} else if pos == 9 {
+		return ArrowUpIcon()
+	} else if pos < 19 {
+		return ArrowRightIcon()
+	} else if pos == 19 {
+		return ArrowUpIcon()
+	} else {
+		return ArrowLeftIcon()
 	}
 }
 
@@ -42,13 +57,14 @@ func Square(props SquareProps) *hypp.VNode {
 
 	validReturnToStart := false
 	var label *hypp.VNode
-	if special, ok := state.SpecialPositions[props.Position]; ok {
+	if props.ShowDirection {
+		label = positionToArrowIcon(props.Position)
+	} else if special, ok := state.SpecialPositions[props.Position]; ok {
 		label = iconToLabel(special.Icon)
 		if props.CanClick && special.ReturnToStart {
 			validReturnToStart = true
 		}
-	}
-	if props.IsStart {
+	} else if props.IsStart {
 		label = StartIcon()
 	}
 

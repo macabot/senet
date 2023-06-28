@@ -62,5 +62,6 @@ func Board() *fairytale.Tale[*state.State] {
 				{Label: "10", Value: 10},
 			},
 		),
+		mycontrol.ShowDirections(),
 	)
 }
