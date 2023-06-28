@@ -313,17 +313,22 @@ func FlowRightIcon() *hypp.VNode {
 	)
 }
 
-// FlowUpIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_upward_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+// FlowUpIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Aarrow_left_alt%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
 func FlowUpIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"viewBox": "0 -960 960 960",
-			"class":   "icon flow flow-up",
+			"class":   "icon flow flow-left",
 		},
-		svg.Path(
+		svg.G(
 			hypp.HProps{
-				"d": "M452-244v-400L282-477l-42-43 241-241 241 241-42 42-168-168v402h-60Z",
+				"transform": "rotate(90 480 -480)",
 			},
+			svg.Path(
+				hypp.HProps{
+					"d": "M400-240 160-480l241-241 43 42-169 169h526v60H275l168 168-43 42Z",
+				},
+			),
 		),
 	)
 }
