@@ -2,8 +2,10 @@ package component
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/macabot/hypp"
+	htmlDriver "github.com/macabot/hypp/driver/html"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -87,10 +89,14 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 }
 
 func speechBubble(speech string) *hypp.VNode {
+	speechVNodes, err := htmlDriver.ParseFragment(strings.NewReader(speech), nil)
+	if err != nil {
+		speechVNodes = []*hypp.VNode{hypp.Text("[ERROR: Could not parse speech]")}
+	}
 	return html.P(
 		hypp.HProps{
 			"class": "speech-bubble",
 		},
-		hypp.Text(speech),
+		speechVNodes...,
 	)
 }
