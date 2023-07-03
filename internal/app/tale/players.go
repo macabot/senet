@@ -36,7 +36,6 @@ func playerPoints(player int) *control.Select[*state.State, int] {
 	)
 }
 
-// TODO replace text input with textarea (not yet implemented in fairytale).
 func speechBubble(player int) *control.Textarea[*state.State] {
 	return control.NewTextarea(
 		fmt.Sprintf("Player %d speech", player+1),
