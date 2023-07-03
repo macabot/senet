@@ -64,10 +64,10 @@
   0% {
     fill: #000;
   }
-  25% {
+  15% {
     fill: #aaa;
   }
-  50% {
+  30% {
     fill: #000;
   }
   100% {
@@ -77,7 +77,7 @@
 
 @for $pos from 0 to 30 {
   .pos-#{$pos} .flow {
-    animation: direction-flow 3s infinite;
+    animation: direction-flow 2.5s infinite;
     animation-delay: calc($pos * 50ms);
   }
 }
