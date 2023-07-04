@@ -34,6 +34,7 @@ func main() {
 		fairytale.NewBundle[*state.State](
 			"Pages",
 			tale.GamePage(),
+			tale.StartPage(),
 		),
 	)
 }

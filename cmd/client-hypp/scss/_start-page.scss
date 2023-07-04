@@ -1,0 +1,28 @@
+.start-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  h1 {
+    font-size: 4rem;
+    margin: 20px;
+  }
+
+  .rotate-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.game-modes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-mode {
+  font-size: 3rem;
+  margin: 5px;
+}

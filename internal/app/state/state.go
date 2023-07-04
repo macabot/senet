@@ -5,7 +5,8 @@ import "github.com/macabot/hypp"
 type Page int
 
 const (
-	GamePage Page = iota
+	StartPage Page = iota
+	GamePage
 )
 
 type State struct {
@@ -22,5 +23,6 @@ func (s *State) Clone() *State {
 	return &State{
 		Game:    s.Game.Clone(),
 		Rotated: s.Rotated,
+		Page:    s.Page,
 	}
 }

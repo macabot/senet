@@ -39,6 +39,8 @@ func head() *hypp.VNode {
 func body(s *state.State) *hypp.VNode {
 	var page *hypp.VNode
 	switch s.Page {
+	case state.StartPage:
+		page = StartPage(s)
 	case state.GamePage:
 		page = GamePage(s)
 	default:
