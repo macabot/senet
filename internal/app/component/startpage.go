@@ -3,6 +3,7 @@ package component
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -24,7 +25,8 @@ func gameModes() *hypp.VNode {
 		},
 		html.Button(
 			hypp.HProps{
-				"class": "game-mode tutorial",
+				"class":   "game-mode tutorial",
+				"onclick": dispatch.StartTutorialAction(),
 			},
 			hypp.Text("Tutorial"),
 		),
