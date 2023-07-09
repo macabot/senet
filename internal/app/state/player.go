@@ -1,13 +1,13 @@
 package state
 
 type Player struct {
-	Name   string
-	Speech string
+	Name         string
+	SpeechBubble *SpeechBubble
 }
 
 func (p Player) Clone() *Player {
 	return &Player{
-		Name:   p.Name,
-		Speech: p.Speech,
+		Name:         p.Name,
+		SpeechBubble: p.SpeechBubble,
 	}
 }

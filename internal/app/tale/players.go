@@ -36,16 +36,55 @@ func playerPoints(player int) *control.Select[*state.State, int] {
 	)
 }
 
-func speechBubble(player int) *control.Textarea[*state.State] {
-	return control.NewTextarea(
-		fmt.Sprintf("Player %d speech", player+1),
-		func(s *state.State, speech string) hypp.Dispatchable {
-			s.Game.Players[player].Speech = speech
+type SpeechBubbles []*state.SpeechBubble
+
+func (b SpeechBubbles) SelectOptions() []control.SelectOption[int] {
+	options := make([]control.SelectOption[int], len(b))
+	for i, bubble := range b {
+		var label string
+		if bubble == nil {
+			label = "No speech bubble"
+		} else {
+			label = bubble.Name
+		}
+		options[i] = control.SelectOption[int]{
+			Label: label,
+			Value: i,
+		}
+	}
+	return options
+}
+
+var speechBubbles = SpeechBubbles{
+	nil,
+	state.TutorialStart,
+	state.TutorialPlayers1,
+	state.TutorialPlayers2,
+	state.TutorialGoal,
+	state.TutorialBoard,
+	state.TutorialEnd,
+}
+
+func speechBubble(player int) *control.Select[*state.State, int] {
+	return control.NewSelect(
+		fmt.Sprintf("Player %d speech bubble", player+1),
+		func(s *state.State, option int) hypp.Dispatchable {
+			s.Game.Players[player].SpeechBubble = speechBubbles[option]
 			return s
 		},
-		func(s *state.State) string {
-			return s.Game.Players[player].Speech
+		func(s *state.State) int {
+			current := s.Game.Players[player].SpeechBubble
+			if current == nil {
+				return 0
+			}
+			for i, bubble := range speechBubbles[1:] {
+				if bubble.Name == current.Name {
+					return i
+				}
+			}
+			return -1
 		},
+		speechBubbles.SelectOptions(),
 	)
 }
 
