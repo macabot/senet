@@ -34,8 +34,12 @@ type Action struct {
 	Data any
 }
 
-func (a Action) Clone() *Action {
-	return &a
+func (a *Action) Clone() *Action {
+	if a == nil {
+		return nil
+	}
+	c := *a
+	return &c
 }
 
 type Event int
@@ -63,7 +67,10 @@ type EventListener struct {
 	Action Action
 }
 
-func (l EventListener) Clone() *EventListener {
+func (l *EventListener) Clone() *EventListener {
+	if l == nil {
+		return nil
+	}
 	return &EventListener{
 		Event:  l.Event,
 		Action: l.Action,
@@ -78,7 +85,10 @@ type SpeechBubble struct {
 	OnCreate      Action
 }
 
-func (b SpeechBubble) Clone() *SpeechBubble {
+func (b *SpeechBubble) Clone() *SpeechBubble {
+	if b == nil {
+		return nil
+	}
 	return &SpeechBubble{
 		Name:          b.Name,
 		Elements:      clone.Slice(b.Elements),
