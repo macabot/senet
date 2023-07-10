@@ -70,7 +70,7 @@ func pointsIcon(points int) *hypp.VNode {
 func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 	var bubble *hypp.VNode
 	if player.SpeechBubble != nil {
-		bubble = speechBubble(player.SpeechBubble)
+		bubble = SpeechBubble(player.SpeechBubble)
 	}
 	return html.Div(
 		hypp.HProps{
@@ -83,57 +83,5 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 		html.Span(nil, hypp.Text(player.Name)),
 		pointsIcon(player.Points),
 		bubble,
-	)
-}
-
-func speechBubble(bubble *state.SpeechBubble) *hypp.VNode {
-	speechVNodes := make([]*hypp.VNode, len(bubble.Elements))
-	for i, element := range bubble.Elements {
-		speechVNodes[i] = speechElement(element)
-	}
-	if bubble.Button.Text != "" {
-		speechVNodes = append(speechVNodes, speechButton(bubble.Button))
-	}
-	return html.Div(
-		hypp.HProps{
-			"class": "speech-bubble",
-		},
-		speechVNodes...,
-	)
-}
-
-var elementKindToVNodeFunc = map[state.SpeechElementKind]func(hypp.HProps, ...*hypp.VNode) *hypp.VNode{
-	state.TitleElement:     html.H3,
-	state.ParagraphElement: html.P,
-	state.IconElement:      html.I,
-}
-
-func speechElement(element *state.SpeechElement) *hypp.VNode {
-	if element.Kind == state.TextElement {
-		return hypp.Text(element.Value)
-	} else if element.Kind == state.IconElement {
-		return html.I(nil, hypp.Text("�")) // TODO
-	}
-	vNodeFunc, ok := elementKindToVNodeFunc[element.Kind]
-	if !ok {
-		panic(fmt.Errorf("VNode func not implemented for SpeechElementKind %d", element.Kind))
-	}
-	childNodes := make([]*hypp.VNode, len(element.Children))
-	for i, childElement := range element.Children {
-		childNodes[i] = speechElement(childElement)
-	}
-	if element.Value != "" {
-		childNodes = append(childNodes, hypp.Text(element.Value))
-	}
-	return vNodeFunc(nil, childNodes...)
-}
-
-func speechButton(button state.SpeechButton) *hypp.VNode {
-	return html.Button(
-		hypp.HProps{
-			"disabled": button.Disabled,
-			// TODO onclick
-		},
-		hypp.Text(button.Text),
 	)
 }

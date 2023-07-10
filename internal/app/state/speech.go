@@ -24,8 +24,8 @@ type SpeechElement struct {
 type ActionKind int
 
 const (
-	GoToBubble ActionKind = iota + 1
-	GoToPage
+	SetSpeechBubble ActionKind = iota + 1
+	SetPage
 	ShowBoardFlow
 )
 
@@ -40,6 +40,28 @@ func (a *Action) Clone() *Action {
 	}
 	c := *a
 	return &c
+}
+
+type SetSpeechBubbleData struct {
+	Player           int
+	SpeechBubbleName string
+}
+
+func NewSetSpeechBubbleAction(player int, speechBubbleName string) *Action {
+	return &Action{
+		Kind: SetSpeechBubble,
+		Data: SetSpeechBubbleData{
+			Player:           player,
+			SpeechBubbleName: speechBubbleName,
+		},
+	}
+}
+
+func NewSetPage(page Page) *Action {
+	return &Action{
+		Kind: SetPage,
+		Data: page,
+	}
 }
 
 type Event int
@@ -82,7 +104,7 @@ type SpeechBubble struct {
 	Elements      []*SpeechElement
 	Button        SpeechButton
 	EventListener *EventListener
-	OnCreate      Action
+	OnCreate      *Action
 }
 
 func (b *SpeechBubble) Clone() *SpeechBubble {
@@ -90,11 +112,10 @@ func (b *SpeechBubble) Clone() *SpeechBubble {
 		return nil
 	}
 	return &SpeechBubble{
-		Name:          b.Name,
 		Elements:      clone.Slice(b.Elements),
 		Button:        b.Button.Clone(),
 		EventListener: b.EventListener.Clone(),
-		OnCreate:      b.OnCreate,
+		OnCreate:      b.OnCreate.Clone(),
 	}
 }
 

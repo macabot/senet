@@ -55,17 +55,17 @@ func (b SpeechBubbles) SelectOptions() []control.SelectOption[int] {
 	return options
 }
 
-var speechBubbles = SpeechBubbles{
-	nil,
-	state.TutorialStart,
-	state.TutorialPlayers1,
-	state.TutorialPlayers2,
-	state.TutorialGoal,
-	state.TutorialBoard,
-	state.TutorialEnd,
-}
-
 func speechBubble(player int) *control.Select[*state.State, int] {
+	speechBubbles := SpeechBubbles{
+		nil,
+		state.TutorialStart(player),
+		state.TutorialPlayers1(player),
+		state.TutorialPlayers2(player),
+		state.TutorialGoal(player),
+		state.TutorialBoard(player),
+		state.TutorialEnd(player),
+	}
+
 	return control.NewSelect(
 		fmt.Sprintf("Player %d speech bubble", player+1),
 		func(s *state.State, option int) hypp.Dispatchable {
