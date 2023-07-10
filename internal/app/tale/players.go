@@ -77,8 +77,11 @@ func speechBubble(player int) *control.Select[*state.State, int] {
 			if current == nil {
 				return 0
 			}
-			for i, bubble := range speechBubbles[1:] {
-				if bubble.Name == current.Name {
+			for i, bubble := range speechBubbles {
+				if bubble == nil && current == nil {
+					return i
+				}
+				if bubble != nil && current != nil && bubble.Name == current.Name {
 					return i
 				}
 			}
