@@ -8,6 +8,6 @@ type Player struct {
 func (p Player) Clone() *Player {
 	return &Player{
 		Name:         p.Name,
-		SpeechBubble: p.SpeechBubble,
+		SpeechBubble: p.SpeechBubble.Clone(),
 	}
 }
