@@ -125,8 +125,7 @@ var TutorialEnd = &SpeechBubble{
 		},
 	},
 	Button: SpeechButton{
-		Text:     "Start page",
-		Disabled: true,
+		Text: "Start page",
 		OnClick: &Action{
 			Kind: GoToPage,
 			Data: StartPage,
