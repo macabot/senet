@@ -6,24 +6,6 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-type BoardConfiguration struct {
-	Label string
-	Board *state.Board
-}
-
-type BoardConfigurations []BoardConfiguration
-
-func (b BoardConfigurations) SelectOptions() []control.SelectOption[int] {
-	options := make([]control.SelectOption[int], len(b))
-	for i, configuration := range b {
-		options[i] = control.SelectOption[int]{
-			Label: configuration.Label,
-			Value: i,
-		}
-	}
-	return options
-}
-
 var NoValidMovesBoard = &state.Board{
 	PlayerPieces: [2]state.PiecesByPosition{
 		state.NewPiecesByPosition(
@@ -43,14 +25,14 @@ var NoValidMovesBoard = &state.Board{
 	},
 }
 
-var boardConfigurations = BoardConfigurations{
+var boardConfigurations = LabeledSlice[*state.Board]{
 	{
 		Label: "New game",
-		Board: state.NewBoard(),
+		V:     state.NewBoard(),
 	},
 	{
 		Label: "P1 - Protecting",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -71,7 +53,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P2 - Protecting",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -92,7 +74,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P1 - Blocking",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -113,7 +95,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P2 - Blocking",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -134,7 +116,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P1 - 2nd piece up",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -155,7 +137,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P2 - 2nd piece up",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -176,7 +158,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P1 - Protected by square",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 9},
@@ -197,7 +179,7 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P1 - Remove other piece by moving to top row",
-		Board: &state.Board{
+		V: &state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 1, Position: 29},
@@ -218,11 +200,11 @@ var boardConfigurations = BoardConfigurations{
 	},
 	{
 		Label: "P1 - No valid moves",
-		Board: NoValidMovesBoard,
+		V:     NoValidMovesBoard,
 	},
 	{
 		Label: "No pieces",
-		Board: &state.Board{},
+		V:     &state.Board{},
 	},
 }
 
@@ -233,7 +215,7 @@ func Configuration() *control.Select[*state.State, int] {
 			if option == -1 {
 				return s
 			}
-			optionBoard := boardConfigurations[option].Board
+			optionBoard := boardConfigurations[option].V
 			board := &state.Board{
 				PlayerPieces:   optionBoard.PlayerPieces,
 				ShowDirections: s.Game.Board.ShowDirections,
@@ -243,7 +225,7 @@ func Configuration() *control.Select[*state.State, int] {
 		},
 		func(s *state.State) int {
 			for i, configuration := range boardConfigurations {
-				if configuration.Board.Equal(s.Game.Board) {
+				if configuration.V.Equal(s.Game.Board) {
 					return i
 				}
 			}

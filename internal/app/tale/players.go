@@ -36,58 +36,66 @@ func playerPoints(player int) *control.Select[*state.State, int] {
 	)
 }
 
-type SpeechBubbles []*state.SpeechBubble
-
-func (b SpeechBubbles) SelectOptions() []control.SelectOption[int] {
-	options := make([]control.SelectOption[int], len(b))
-	for i, bubble := range b {
-		var label string
-		if bubble == nil {
-			label = "No speech bubble"
-		} else {
-			label = bubble.Name
-		}
-		options[i] = control.SelectOption[int]{
-			Label: label,
-			Value: i,
-		}
-	}
-	return options
+var bubbles = mycontrol.LabeledSlice[state.SpeechBubbleKind]{
+	{
+		Label: "No speech bubble",
+	},
+	{
+		Label: "TutorialStart",
+		V:     state.TutorialStart,
+	},
+	{
+		Label: "TutorialPlayers1",
+		V:     state.TutorialPlayers1,
+	},
+	{
+		Label: "TutorialPlayers2",
+		V:     state.TutorialPlayers2,
+	},
+	{
+		Label: "TutorialGoal",
+		V:     state.TutorialGoal,
+	},
+	{
+		Label: "TutorialBoard",
+		V:     state.TutorialBoard,
+	},
+	{
+		Label: "TutorialEnd",
+		V:     state.TutorialEnd,
+	},
 }
 
-func speechBubble(player int) *control.Select[*state.State, int] {
-	speechBubbles := SpeechBubbles{
-		nil,
-		state.TutorialStart(player),
-		state.TutorialPlayers1(player),
-		state.TutorialPlayers2(player),
-		state.TutorialGoal(player),
-		state.TutorialBoard(player),
-		state.TutorialEnd(player),
-	}
-
+func speechBubbleKind(player int) *control.Select[*state.State, int] {
 	return control.NewSelect(
 		fmt.Sprintf("Player %d speech bubble", player+1),
 		func(s *state.State, option int) hypp.Dispatchable {
-			s.Game.Players[player].SpeechBubble = speechBubbles[option]
+			if bubbles[option].V == 0 {
+				s.Game.Players[player].SpeechBubble = nil
+			} else {
+				if s.Game.Players[player].SpeechBubble == nil {
+					s.Game.Players[player].SpeechBubble = &state.SpeechBubble{}
+				}
+				s.Game.Players[player].SpeechBubble.Kind = bubbles[option].V
+			}
 			return s
 		},
 		func(s *state.State) int {
 			current := s.Game.Players[player].SpeechBubble
-			if current == nil {
-				return 0
-			}
-			for i, bubble := range speechBubbles {
-				if bubble == nil && current == nil {
-					return i
-				}
-				if bubble != nil && current != nil && bubble.Name == current.Name {
-					return i
+			for i, bubble := range bubbles {
+				if current == nil {
+					if bubble.V == 0 {
+						return i
+					}
+				} else {
+					if bubble.V == current.Kind {
+						return i
+					}
 				}
 			}
 			return -1
 		},
-		speechBubbles.SelectOptions(),
+		bubbles.SelectOptions(),
 	)
 }
 
@@ -104,7 +112,7 @@ func Players() *fairytale.Tale[*state.State] {
 		mycontrol.PlayerTurn(),
 		playerPoints(0),
 		playerPoints(1),
-		speechBubble(0),
-		speechBubble(1),
+		speechBubbleKind(0),
+		speechBubbleKind(1),
 	)
 }

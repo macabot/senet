@@ -70,7 +70,7 @@ func pointsIcon(points int) *hypp.VNode {
 func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 	var bubble *hypp.VNode
 	if player.SpeechBubble != nil {
-		bubble = SpeechBubble(player.SpeechBubble)
+		bubble = SpeechBubble(playerIndex, player.SpeechBubble)
 	}
 	return html.Div(
 		hypp.HProps{
