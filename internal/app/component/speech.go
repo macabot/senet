@@ -35,9 +35,13 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	)
 }
 
+func speechBubbleIcon(s string) *hypp.VNode {
+	// TODO replace s with proper icon
+	return html.I(nil, hypp.Text("�"))
+}
+
 var iconPattern = regexp.MustCompile(`\[[a-z0-9-]+-icon\]`)
 
-// TODO use this function
 func replaceIcons(text string) []*hypp.VNode {
 	pairs := iconPattern.FindAllStringIndex(text, -1)
 	var nodes []*hypp.VNode
@@ -49,7 +53,7 @@ func replaceIcons(text string) []*hypp.VNode {
 		if lastEnd < start {
 			nodes = append(nodes, hypp.Text(text[lastEnd:start]))
 		}
-		nodes = append(nodes, html.I(nil, hypp.Text(text[start:end])))
+		nodes = append(nodes, speechBubbleIcon(text[start:end]))
 
 		lastEnd = end
 	}
