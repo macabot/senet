@@ -10,7 +10,7 @@ import (
 func TutorialStart(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Hello")),
-		html.P(nil, hypp.Text("Hi, I'm the Tutor. Today I will teach you how to play Senet.")),
+		spokenParagraph("Hi, I'm the Tutor. Today I will teach you how to play Senet.", "TutorialStart"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPlayers1),
@@ -23,7 +23,7 @@ func TutorialStart(player int) []*hypp.VNode {
 func TutorialPlayers1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Players - 1/2")),
-		html.P(nil, hypp.Text("In the top you see the two players. You can hide or show the speech bubble of a player by clicking on that player.")),
+		spokenParagraph("In the top you see the two players. You can hide or show the speech bubble of a player by clicking on that player.", "TutorialPlayers1"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPlayers2),
@@ -36,7 +36,7 @@ func TutorialPlayers1(player int) []*hypp.VNode {
 func TutorialPlayers2(player int, buttonDisabled bool) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Players - 2/2")),
-		html.P(nil, replaceIcons("Click on the Tutor [player-icon] to hide this speech bubble, then click on it again to show the speech bubble.")...),
+		spokenParagraph("Click on the Tutor [player-icon] to hide this speech bubble, then click on it again to show the speech bubble.", "TutorialPlayers2"),
 		html.Button(
 			hypp.HProps{
 				"onclick":  dispatch.SetSpeechBubbleKindAction(player, state.TutorialGoal),
@@ -50,7 +50,7 @@ func TutorialPlayers2(player int, buttonDisabled bool) []*hypp.VNode {
 func TutorialGoal(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Goal")),
-		html.P(nil, hypp.Text("The goal of Senet is to be the first player to move all of their pieces off the board.")),
+		spokenParagraph("The goal of Senet is to be the first player to move all of their pieces off the board.", "TutorialGoal"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard),
@@ -63,7 +63,7 @@ func TutorialGoal(player int) []*hypp.VNode {
 func TutorialBoard(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Board")),
-		html.P(nil, hypp.Text("This is the board on which we play. The pieces flow in a Z shape from bottom right to top left.")),
+		spokenParagraph("This is the board on which we play. The pieces flow in a Z shape from bottom right to top left.", "TutorialBoard"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
@@ -76,7 +76,7 @@ func TutorialBoard(player int) []*hypp.VNode {
 func TutorialEnd() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Good bye")),
-		html.P(nil, hypp.Text("You now know how to play Senet. Go to the start page to start playing.")),
+		spokenParagraph("You now know how to play Senet. Go to the start page to start playing.", "TutorialEnd"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetPageAction(state.StartPage),

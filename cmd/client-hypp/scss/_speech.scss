@@ -1,0 +1,43 @@
+// Based on https://projects.verou.me/bubbly/
+.speech-bubble {
+  position: absolute;
+  background: #00aabb;
+  border-radius: 0.4em;
+  top: 2rem;
+  min-width: 10rem;
+  min-height: 2rem;
+  padding: 5px;
+}
+
+.speech-bubble:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 1rem solid transparent;
+  border-bottom-color: #00aabb;
+  border-top: 0;
+  margin-left: -0.5rem;
+  margin-top: -1rem;
+}
+
+// TODO use different color (e.g. #bd7070) for player 2
+// TODO make sure the same color is used in the speech bubble and :after part.
+
+.spoken > * {
+  visibility: hidden;
+  animation-name: spoken-words;
+  animation-duration: 1ms;
+  animation-fill-mode: forwards;
+}
+
+@keyframes spoken-words {
+  0% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}

@@ -3,6 +3,8 @@ package component
 import (
 	"fmt"
 	"regexp"
+	"strings"
+	"time"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
@@ -51,15 +53,43 @@ func replaceIcons(text string) []*hypp.VNode {
 		end := pair[1]
 
 		if lastEnd < start {
-			nodes = append(nodes, hypp.Text(text[lastEnd:start]))
+			nodes = append(nodes, html.Span(nil, hypp.Text(text[lastEnd:start])))
 		}
 		nodes = append(nodes, speechBubbleIcon(text[start:end]))
 
 		lastEnd = end
 	}
 	if lastEnd < len(text) {
-		nodes = append(nodes, hypp.Text(text[lastEnd:]))
+		nodes = append(nodes, html.Span(nil, hypp.Text(text[lastEnd:])))
 	}
 
 	return nodes
+}
+
+const delayStep = 50 * time.Millisecond
+
+func speakWord(node *hypp.VNode, keyPrefix string, i int) *hypp.VNode {
+	delay := time.Duration(i) * delayStep
+	hProps := node.Props()
+	hProps.Set("style", map[string]string{
+		"animation-delay": fmt.Sprintf("%dms", delay.Milliseconds()),
+	})
+	hProps.Set("key", fmt.Sprintf("%s-%d", keyPrefix, i))
+	hProps.Set("key-debug", fmt.Sprintf("%s-%d", keyPrefix, i))
+	// FIXME - animation does not run for all words when switching to next speech bubble.
+	return hypp.H(node.Tag(), hProps, node.Children()...)
+}
+
+func spokenParagraph(text string, keyPrefix string) *hypp.VNode {
+	var children []*hypp.VNode
+	words := strings.SplitAfter(text, " ")
+	for _, word := range words {
+		for _, node := range replaceIcons(word) {
+			children = append(children, speakWord(node, keyPrefix, len(children)))
+		}
+	}
+	return html.P(
+		hypp.HProps{"class": "spoken"},
+		children...,
+	)
 }
