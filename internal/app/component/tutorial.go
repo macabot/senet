@@ -63,7 +63,7 @@ func TutorialGoal(player int) []*hypp.VNode {
 func TutorialBoard(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Board")),
-		html.P(nil, hypp.Text("This is the board on which we play. Thie pieces flow in a Z shape from bottom right to top left.")),
+		html.P(nil, hypp.Text("This is the board on which we play. The pieces flow in a Z shape from bottom right to top left.")),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
