@@ -9,6 +9,9 @@ html {
 
 body {
   margin: 0;
+  // Monospace is listed twice to prevent the browser from reducing the size of monospace.
+  // See https://github.com/necolas/normalize.css/issues/519#issuecomment-197131966
+  font-family: monospace, monospace;
 }
 
 @keyframes fadeIn {
