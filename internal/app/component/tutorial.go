@@ -81,7 +81,7 @@ func TutorialEnd() []*hypp.VNode {
 			hypp.HProps{
 				"onclick": dispatch.SetPageAction(state.StartPage),
 			},
-			hypp.Text("Next"),
+			hypp.Text("Start page"),
 		),
 	}
 }
