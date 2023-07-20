@@ -12,6 +12,15 @@
   }
 }
 
+@mixin speech-bubble-color($color) {
+  .speech-bubble {
+    background: $color;
+  }
+  .speech-bubble:after {
+    border-bottom-color: $color;
+  }
+}
+
 .players {
   width: 100%;
   display: flex;
@@ -54,6 +63,8 @@
   &.player-0 {
     background-color: rgb(204, 255, 253);
 
+    @include speech-bubble-color(#00aabb);
+
     .speech-bubble:after {
       border-left: 0;
     }
@@ -61,6 +72,8 @@
 
   &.player-1 {
     background-color: rgb(248, 206, 204);
+
+    @include speech-bubble-color(#dc6464);
 
     .speech-bubble:after {
       border-right: 0;
