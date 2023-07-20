@@ -75,8 +75,6 @@ func speakWord(node *hypp.VNode, keyPrefix string, i int) *hypp.VNode {
 		"animation-delay": fmt.Sprintf("%dms", delay.Milliseconds()),
 	})
 	hProps.Set("key", fmt.Sprintf("%s-%d", keyPrefix, i))
-	hProps.Set("key-debug", fmt.Sprintf("%s-%d", keyPrefix, i))
-	// FIXME - animation does not run for all words when switching to next speech bubble.
 	return hypp.H(node.Tag(), hProps, node.Children()...)
 }
 
