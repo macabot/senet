@@ -37,13 +37,6 @@ func TutorialPlayers2(player int, buttonDisabled bool) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Players - 2/2")),
 		spokenParagraph("Click on the Tutor [player-1-icon] to hide this speech bubble, then click on it again to show the speech bubble.", "TutorialPlayers2"),
-		html.Button(
-			hypp.HProps{
-				"onclick":  dispatch.SetSpeechBubbleKindAction(player, state.TutorialGoal),
-				"disabled": buttonDisabled,
-			},
-			hypp.Text("Next"),
-		),
 	}
 }
 
