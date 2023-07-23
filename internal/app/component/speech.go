@@ -38,8 +38,13 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 }
 
 func speechBubbleIcon(s string) *hypp.VNode {
-	// TODO replace s with proper icon
-	return html.I(nil, hypp.Text("�"))
+	switch s {
+	case "[player-1-icon]":
+		return html.Span(hypp.HProps{"class": "player-icon player-1"})
+	default:
+		// TODO replace s with proper icon
+		return html.I(nil, hypp.Text("�"))
+	}
 }
 
 var iconPattern = regexp.MustCompile(`\[[a-z0-9-]+-icon\]`)
