@@ -72,7 +72,7 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 	if player.SpeechBubble != nil {
 		bubble = SpeechBubble(playerIndex, player.SpeechBubble)
 	}
-	return html.Div(
+	return html.Button(
 		hypp.HProps{
 			"class": map[string]bool{
 				"player":                              true,
