@@ -21,6 +21,10 @@
   margin-top: -1rem;
 }
 
+.speech-bubble.closed {
+  display: none;
+}
+
 .spoken > * {
   visibility: hidden;
   animation-name: spoken-words;

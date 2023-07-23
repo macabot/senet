@@ -5,6 +5,7 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -79,6 +80,7 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 				fmt.Sprintf("player-%d", playerIndex): true,
 				"has-turn":                            hasTurn,
 			},
+			"onclick": dispatch.ToggleSpeechBubble(playerIndex),
 		},
 		html.Span(nil, hypp.Text(player.Name)),
 		pointsIcon(player.Points),

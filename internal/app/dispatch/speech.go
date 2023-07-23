@@ -33,3 +33,16 @@ func SetPageAction(page state.Page) hypp.Action[*state.State] {
 		return newState
 	}
 }
+
+func ToggleSpeechBubble(player int) hypp.Action[*state.State] {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Game.Players[player].SpeechBubble == nil {
+			newState.Game.Players[player].SpeechBubble = &state.SpeechBubble{
+				Closed: true,
+			}
+		}
+		newState.Game.Players[player].SpeechBubble.Closed = !newState.Game.Players[player].SpeechBubble.Closed
+		return newState
+	}
+}

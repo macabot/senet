@@ -3,7 +3,8 @@ package state
 type SpeechBubbleKind int
 
 const (
-	TutorialStart SpeechBubbleKind = iota + 1
+	DefaultSpeechBubble SpeechBubbleKind = iota
+	TutorialStart
 	TutorialPlayers1
 	TutorialPlayers2
 	TutorialGoal
@@ -13,6 +14,7 @@ const (
 
 type SpeechBubble struct {
 	Kind           SpeechBubbleKind
+	Closed         bool
 	ButtonDisabled bool
 }
 
@@ -22,6 +24,7 @@ func (b *SpeechBubble) Clone() *SpeechBubble {
 	}
 	return &SpeechBubble{
 		Kind:           b.Kind,
+		Closed:         b.Closed,
 		ButtonDisabled: b.ButtonDisabled,
 	}
 }

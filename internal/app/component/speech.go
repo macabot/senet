@@ -14,6 +14,8 @@ import (
 func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	var speechVNodes []*hypp.VNode
 	switch bubble.Kind {
+	case state.DefaultSpeechBubble:
+		speechVNodes = DefaultSpeechBubble()
 	case state.TutorialStart:
 		speechVNodes = TutorialStart(player)
 	case state.TutorialPlayers1:
@@ -31,10 +33,19 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	}
 	return html.Div(
 		hypp.HProps{
-			"class": "speech-bubble",
+			"class": map[string]bool{
+				"speech-bubble": true,
+				"closed":        bubble.Closed,
+			},
 		},
 		speechVNodes...,
 	)
+}
+
+func DefaultSpeechBubble() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.P(nil, hypp.Textf("[Nothing to see here]")),
+	}
 }
 
 func speechBubbleIcon(s string) *hypp.VNode {
