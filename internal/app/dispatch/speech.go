@@ -9,7 +9,7 @@ func disableSpeechBubbleButton(s *state.State, player int) {
 	s.Game.Players[player].SpeechBubble.ButtonDisabled = true
 }
 
-var OnSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
+var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
 	state.TutorialPlayers2: disableSpeechBubbleButton,
 }
 
@@ -19,7 +19,7 @@ func SetSpeechBubbleKindAction(player int, kind state.SpeechBubbleKind) hypp.Act
 		newState.Game.Players[player].SpeechBubble = &state.SpeechBubble{
 			Kind: kind,
 		}
-		if onSet, ok := OnSetSpeechBubbleKind[kind]; ok {
+		if onSet, ok := onSetSpeechBubbleKind[kind]; ok {
 			onSet(newState, player)
 		}
 		return newState
