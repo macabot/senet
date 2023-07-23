@@ -7,6 +7,7 @@ import (
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
@@ -76,7 +77,11 @@ func speechBubbleKind(player int) *control.Select[*state.State, int] {
 				if s.Game.Players[player].SpeechBubble == nil {
 					s.Game.Players[player].SpeechBubble = &state.SpeechBubble{}
 				}
-				s.Game.Players[player].SpeechBubble.Kind = bubbles[option].V
+				kind := bubbles[option].V
+				s.Game.Players[player].SpeechBubble.Kind = kind
+				if onSet, ok := dispatch.OnSetSpeechBubbleKind[kind]; ok {
+					onSet(s, player)
+				}
 			}
 			return s
 		},
