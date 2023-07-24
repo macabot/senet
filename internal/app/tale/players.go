@@ -76,7 +76,8 @@ func speechBubbleKind(player int) *control.Select[*state.State, int] {
 				return s
 			} else {
 				kind := bubbles[option].V
-				return dispatch.SetSpeechBubbleKindAction(player, kind)
+				dispatch.SetSpeechBubbleKind(s, player, kind)
+				return s
 			}
 		},
 		func(s *state.State) int {
