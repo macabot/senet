@@ -21,8 +21,9 @@
   margin-top: -1rem;
 }
 
-.speech-bubble.closed {
-  display: none;
+.speech-bubble.closed,
+.speech-bubble.closed * {
+  visibility: hidden !important;
 }
 
 .spoken > * {
