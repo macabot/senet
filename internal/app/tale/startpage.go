@@ -13,5 +13,7 @@ func StartPage() *fairytale.Tale[*state.State] {
 			Page: state.StartPage,
 		},
 		component.Senet,
-	)
+	).WithSettings(fairytale.TaleSettings{
+		Target: fairytale.TaleAsHTML,
+	})
 }
