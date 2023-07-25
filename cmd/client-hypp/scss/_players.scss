@@ -29,11 +29,38 @@
   height: 2rem;
 }
 
-.player {
+.player-wrapper {
   position: relative;
+  min-width: 30%;
+
+  &.player-0 {
+    .player {
+      background-color: rgb(204, 255, 253);
+    }
+
+    @include speech-bubble-color(#00aabb);
+
+    .speech-bubble:after {
+      border-left: 0;
+    }
+  }
+
+  &.player-1 {
+    .player {
+      background-color: rgb(248, 206, 204);
+    }
+    @include speech-bubble-color(#dc6464);
+
+    .speech-bubble:after {
+      border-right: 0;
+    }
+  }
+}
+
+.player {
   display: flex;
   height: 2rem;
-  min-width: 30%;
+  width: 100%;
   align-items: center;
   justify-content: space-around;
   border: 1px solid black;
@@ -59,26 +86,6 @@
 
   &:not(.has-turn) {
     height: 1.5rem;
-  }
-
-  &.player-0 {
-    background-color: rgb(204, 255, 253);
-
-    @include speech-bubble-color(#00aabb);
-
-    .speech-bubble:after {
-      border-left: 0;
-    }
-  }
-
-  &.player-1 {
-    background-color: rgb(248, 206, 204);
-
-    @include speech-bubble-color(#dc6464);
-
-    .speech-bubble:after {
-      border-right: 0;
-    }
   }
 }
 

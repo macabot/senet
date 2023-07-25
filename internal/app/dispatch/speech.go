@@ -37,10 +37,7 @@ func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind
 }
 
 func SetSpeechBubbleKindAction(player int, kind state.SpeechBubbleKind) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		event := payload.(hypp.Event)
-		event.StopPropagation()
-
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		SetSpeechBubbleKind(newState, player, kind)
 		return newState

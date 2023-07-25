@@ -73,17 +73,24 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 	if player.SpeechBubble != nil {
 		bubble = SpeechBubble(playerIndex, player.SpeechBubble)
 	}
-	return html.Button(
+	return html.Div(
 		hypp.HProps{
 			"class": map[string]bool{
-				"player":                              true,
+				"player-wrapper":                      true,
 				fmt.Sprintf("player-%d", playerIndex): true,
-				"has-turn":                            hasTurn,
 			},
-			"onclick": dispatch.ToggleSpeechBubble(playerIndex),
 		},
-		html.Span(nil, hypp.Text(player.Name)),
-		pointsIcon(player.Points),
+		html.Button(
+			hypp.HProps{
+				"class": map[string]bool{
+					"player":   true,
+					"has-turn": hasTurn,
+				},
+				"onclick": dispatch.ToggleSpeechBubble(playerIndex),
+			},
+			html.Span(nil, hypp.Text(player.Name)),
+			pointsIcon(player.Points),
+		),
 		bubble,
 	)
 }
