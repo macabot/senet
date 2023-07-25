@@ -73,6 +73,7 @@ func Board(props *state.State) *hypp.VNode {
 				"no-animation":         !props.Game.HasMoved,
 				"selected-change-even": props.Game.SelectedChangeCounter%2 == 0,
 				"selected-change-odd":  props.Game.SelectedChangeCounter%2 != 0,
+				"show-direction":       board.ShowDirections,
 			},
 		},
 		children...,

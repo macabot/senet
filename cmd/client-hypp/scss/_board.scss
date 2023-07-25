@@ -14,3 +14,7 @@
 .board.invalid-destination {
   border-color: #ff7575;
 }
+
+.board.show-direction .piece {
+  opacity: 50%;
+}
