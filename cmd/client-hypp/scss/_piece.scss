@@ -46,7 +46,16 @@
   }
 }
 
-.piece.player-0 {
+.piece-icon {
+  display: inline-block;
+  aspect-ratio: 1 / 1;
+  height: 1rem;
+  vertical-align: middle;
+  border-radius: 50%;
+}
+
+.piece.player-0,
+.piece-icon.player-0 {
   background: rgb(204, 255, 253);
   background: radial-gradient(
     ellipse at 10% 20%,
@@ -84,7 +93,8 @@
   animation: player-0-pulse-odd 2s infinite;
 }
 
-.piece.player-1 {
+.piece.player-1,
+.piece-icon.player-1 {
   background: rgb(248, 206, 204);
   background: radial-gradient(
     ellipse at 10% 20%,

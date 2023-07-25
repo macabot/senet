@@ -9,6 +9,7 @@ const (
 	TutorialPlayers2
 	TutorialGoal
 	TutorialBoard
+	TutorialPieces
 	TutorialEnd
 )
 

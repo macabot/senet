@@ -26,6 +26,8 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialGoal(player)
 	case state.TutorialBoard:
 		speechVNodes = TutorialBoard(player)
+	case state.TutorialPieces:
+		speechVNodes = TutorialPieces(player)
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
@@ -52,9 +54,12 @@ func speechBubbleIcon(s string) *hypp.VNode {
 	switch s {
 	case "[player-1-icon]":
 		return html.Span(hypp.HProps{"class": "player-icon player-1"})
+	case "[piece-0-icon]":
+		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
+	case "[piece-1-icon]":
+		return html.Span(hypp.HProps{"class": "piece-icon player-1"})
 	default:
-		// TODO replace s with proper icon
-		return html.I(nil, hypp.Text("�"))
+		panic(fmt.Errorf("Speech bubble icon not implemented for '%s'.", s))
 	}
 }
 
