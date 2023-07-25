@@ -4,15 +4,17 @@
   align-items: center;
   height: 100vh;
 
-  > * {
+  .top-bar {
     max-width: 1200px;
   }
 
   .board {
     flex: 1 0 100px;
+    max-width: 1200px;
   }
 
   .sticks {
-    flex: 1 1 100px;
+    flex: 0 1 100px;
+    max-width: 1200px;
   }
 }
