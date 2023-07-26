@@ -43,7 +43,7 @@ func TutorialPlayers2(player int, buttonDisabled bool) []*hypp.VNode {
 func TutorialGoal(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Goal")),
-		spokenParagraph("The goal of Senet is to be the first player to move all of their pieces off the board.", "TutorialGoal"),
+		spokenParagraph("The goal of Senet is to be the first player to move all of your pieces off the board.", "TutorialGoal"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard),
@@ -70,6 +70,32 @@ func TutorialPieces(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Pieces")),
 		spokenParagraph("At the bottom of the board we find the pieces. You will play with the blue pieces [piece-0-icon]. I will play with the red pieces [piece-1-icon].", "TutorialPieces"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks1),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialSticks1(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Pieces - 1/2")),
+		spokenParagraph("At the bottom of the screen we find the sticks. You can move a piece equal to the number of white sides.", "TutorialSticks1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialSticks2(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Pieces - 1/2")),
+		spokenParagraph("You can move a piece 1 step [sticks-1-icon], 2 steps [sticks-2-icon], 3 steps [sticks-3-icon] or 4 steps [sticks-4-icon]. If all sticks are showing the black side, you can move a piece 6 steps [sticks-6-icon].", "TutorialSticks2"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),

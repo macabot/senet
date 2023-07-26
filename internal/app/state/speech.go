@@ -10,6 +10,8 @@ const (
 	TutorialGoal
 	TutorialBoard
 	TutorialPieces
+	TutorialSticks1
+	TutorialSticks2
 	TutorialEnd
 )
 

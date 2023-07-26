@@ -28,6 +28,10 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialBoard(player)
 	case state.TutorialPieces:
 		speechVNodes = TutorialPieces(player)
+	case state.TutorialSticks1:
+		speechVNodes = TutorialSticks1(player)
+	case state.TutorialSticks2:
+		speechVNodes = TutorialSticks2(player)
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
@@ -52,12 +56,52 @@ func DefaultSpeechBubble() []*hypp.VNode {
 
 func speechBubbleIcon(s string) *hypp.VNode {
 	switch s {
-	case "[player-1-icon]":
-		return html.Span(hypp.HProps{"class": "player-icon player-1"})
 	case "[piece-0-icon]":
 		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
 	case "[piece-1-icon]":
 		return html.Span(hypp.HProps{"class": "piece-icon player-1"})
+	case "[player-1-icon]":
+		return html.Span(hypp.HProps{"class": "player-icon player-1"})
+	case "[sticks-1-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+		)
+	case "[sticks-2-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-3-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-4-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-6-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+		)
 	default:
 		panic(fmt.Errorf("Speech bubble icon not implemented for '%s'.", s))
 	}

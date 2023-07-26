@@ -9,6 +9,30 @@
   position: relative;
 }
 
+.sticks-icon {
+  height: 1rem;
+  aspect-ratio: 10 / 3;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  place-items: center;
+  vertical-align: middle;
+
+  .stick-icon {
+    width: 90%;
+    aspect-ratio: 5 / 1;
+    border-radius: 2px;
+  }
+
+  .white {
+    background-color: white;
+  }
+
+  .black {
+    background-color: black;
+  }
+}
+
 .throw-button {
   position: absolute;
   top: 0;
