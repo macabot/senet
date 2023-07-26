@@ -81,7 +81,7 @@ func TutorialPieces(player int) []*hypp.VNode {
 
 func TutorialSticks1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces - 1/3")),
+		html.H3(nil, hypp.Text("Sticks - 1/3")),
 		spokenParagraph("At the bottom of the screen we find the sticks. You can move a piece equal to the number of white sides.", "TutorialSticks1"),
 		html.Button(
 			hypp.HProps{
@@ -94,7 +94,7 @@ func TutorialSticks1(player int) []*hypp.VNode {
 
 func TutorialSticks2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces - 2/3")),
+		html.H3(nil, hypp.Text("Sticks - 2/3")),
 		spokenParagraph("You can move a piece 1 step [sticks-1-icon], 2 steps [sticks-2-icon], 3 steps [sticks-3-icon] or 4 steps [sticks-4-icon]. If all sticks are showing the black side, you can move a piece 6 steps [sticks-6-icon].", "TutorialSticks2"),
 		html.Button(
 			hypp.HProps{
@@ -107,7 +107,7 @@ func TutorialSticks2(player int) []*hypp.VNode {
 
 func TutorialSticks3() []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces - 3/3")),
+		html.H3(nil, hypp.Text("Sticks - 3/3")),
 		spokenParagraph("Click on the sticks to throw the sticks.", "TutorialSticks3"),
 	}
 }
