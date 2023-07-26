@@ -33,7 +33,7 @@ func TutorialPlayers1(player int) []*hypp.VNode {
 	}
 }
 
-func TutorialPlayers2(player int, buttonDisabled bool) []*hypp.VNode {
+func TutorialPlayers2() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Players - 2/2")),
 		spokenParagraph("Click on the Tutor [player-1-icon] to hide this speech bubble, then click on it again to show the speech bubble.", "TutorialPlayers2"),
@@ -81,7 +81,7 @@ func TutorialPieces(player int) []*hypp.VNode {
 
 func TutorialSticks1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces - 1/2")),
+		html.H3(nil, hypp.Text("Pieces - 1/3")),
 		spokenParagraph("At the bottom of the screen we find the sticks. You can move a piece equal to the number of white sides.", "TutorialSticks1"),
 		html.Button(
 			hypp.HProps{
@@ -94,14 +94,28 @@ func TutorialSticks1(player int) []*hypp.VNode {
 
 func TutorialSticks2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces - 1/2")),
+		html.H3(nil, hypp.Text("Pieces - 2/3")),
 		spokenParagraph("You can move a piece 1 step [sticks-1-icon], 2 steps [sticks-2-icon], 3 steps [sticks-3-icon] or 4 steps [sticks-4-icon]. If all sticks are showing the black side, you can move a piece 6 steps [sticks-6-icon].", "TutorialSticks2"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks3),
 			},
 			hypp.Text("Next"),
 		),
+	}
+}
+
+func TutorialSticks3() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Pieces - 3/3")),
+		spokenParagraph("Click on the sticks to throw the sticks.", "TutorialSticks3"),
+	}
+}
+
+func TutorialMovingAPiece() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Moving a piece")),
+		spokenParagraph("You are now ready to make your first move. Click on one of your pieces. The destination square will be highlighted. A green square [square-valid-icon] is a valid destination. A red square [square-invalid-icon] is an invalid destination.", "TutorialMovingAPiece"),
 	}
 }
 

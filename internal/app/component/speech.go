@@ -21,7 +21,7 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	case state.TutorialPlayers1:
 		speechVNodes = TutorialPlayers1(player)
 	case state.TutorialPlayers2:
-		speechVNodes = TutorialPlayers2(player, bubble.ButtonDisabled)
+		speechVNodes = TutorialPlayers2()
 	case state.TutorialGoal:
 		speechVNodes = TutorialGoal(player)
 	case state.TutorialBoard:
@@ -32,6 +32,10 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialSticks1(player)
 	case state.TutorialSticks2:
 		speechVNodes = TutorialSticks2(player)
+	case state.TutorialSticks3:
+		speechVNodes = TutorialSticks3()
+	case state.TutorialMovingAPiece:
+		speechVNodes = TutorialMovingAPiece()
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
@@ -62,6 +66,10 @@ func speechBubbleIcon(s string) *hypp.VNode {
 		return html.Span(hypp.HProps{"class": "piece-icon player-1"})
 	case "[player-1-icon]":
 		return html.Span(hypp.HProps{"class": "player-icon player-1"})
+	case "[square-invalid-icon]":
+		return html.Span(hypp.HProps{"class": "square-icon invalid-destination"})
+	case "[square-valid-icon]":
+		return html.Span(hypp.HProps{"class": "square-icon valid-destination"})
 	case "[sticks-1-icon]":
 		return html.Span(
 			hypp.HProps{"class": "sticks-icon"},

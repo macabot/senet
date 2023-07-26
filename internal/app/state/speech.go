@@ -12,6 +12,8 @@ const (
 	TutorialPieces
 	TutorialSticks1
 	TutorialSticks2
+	TutorialSticks3
+	TutorialMovingAPiece
 	TutorialEnd
 )
 
