@@ -17,7 +17,6 @@ var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, play
 	state.TutorialSticks3: func(s *state.State, _ int) {
 		s.Game.Sticks.HasThrown = false
 		s.Game.Turn = 0
-		s.Game.HasTurn = true
 	},
 }
 

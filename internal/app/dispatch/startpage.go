@@ -13,6 +13,7 @@ func StartTutorialAction() hypp.Action[*state.State] {
 		newState.Game.Players[0].Name = "You"
 		newState.Game.Players[1].Name = "Tutor"
 		newState.Game.Turn = 1
+		newState.Game.TurnMode = state.IsPlayer1
 		newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
 			Kind: state.TutorialStart,
 		}

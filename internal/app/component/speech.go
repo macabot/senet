@@ -39,7 +39,7 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	case state.TutorialMove2:
 		speechVNodes = TutorialMove2(player)
 	case state.TutorialMove3:
-		speechVNodes = TutorialMove3()
+		speechVNodes = TutorialMove3(player)
 	case state.TutorialMultiplemoves:
 		speechVNodes = TutorialMultipleMoves(player)
 	case state.TutorialEnd:

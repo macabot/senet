@@ -11,7 +11,7 @@ import (
 
 func Board() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.HasTurn = true
+	game.TurnMode = state.IsPlayer1
 	return fairytale.New(
 		"Board",
 		&state.State{
@@ -23,11 +23,15 @@ func Board() *fairytale.Tale[*state.State] {
 		control.NewCheckbox(
 			"Has turn",
 			func(s *state.State, hasTurn bool) hypp.Dispatchable {
-				s.Game.HasTurn = hasTurn
+				if s.Game.Turn == 0 {
+					s.Game.TurnMode = state.IsPlayer1
+				} else if s.Game.Turn == 1 {
+					s.Game.TurnMode = state.IsPlayer2
+				}
 				return s
 			},
 			func(s *state.State) bool {
-				return s.Game.HasTurn
+				return s.Game.HasTurn()
 			},
 		),
 		mycontrol.PlayerTurn(),

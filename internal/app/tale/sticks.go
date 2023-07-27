@@ -11,7 +11,7 @@ import (
 
 func Sticks() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.HasTurn = true
+	game.TurnMode = state.IsPlayer1
 	return fairytale.New(
 		"Sticks",
 		&state.State{Game: game},

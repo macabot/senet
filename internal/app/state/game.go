@@ -16,6 +16,14 @@ const (
 	Finished
 )
 
+type TurnMode int
+
+const (
+	IsBothPlayers TurnMode = iota
+	IsPlayer1
+	IsPlayer2
+)
+
 type Game struct {
 	Players               [2]*Player
 	Board                 *Board
@@ -23,7 +31,7 @@ type Game struct {
 	SelectedChangeCounter int
 	Sticks                *Sticks
 	Turn                  int
-	HasTurn               bool
+	TurnMode              TurnMode
 	Status                Status
 	ValidMoves            map[Position]Position
 	InvalidMoves          map[Position]set.Set[Position]
@@ -44,7 +52,7 @@ func (g *Game) Clone() *Game {
 		SelectedChangeCounter: g.SelectedChangeCounter,
 		Sticks:                g.Sticks.Clone(),
 		Turn:                  g.Turn,
-		HasTurn:               g.HasTurn,
+		TurnMode:              g.TurnMode,
 		Status:                g.Status,
 		ValidMoves:            maps.Clone(g.ValidMoves),
 		InvalidMoves:          maps.Clone(g.InvalidMoves),
@@ -60,6 +68,19 @@ func NewGame() *Game {
 	g.CalcValidMoves()
 	g.HasMoved = false
 	return g
+}
+
+func (g Game) HasTurn() bool {
+	switch g.TurnMode {
+	case IsBothPlayers:
+		return true
+	case IsPlayer1:
+		return g.Turn == 0
+	case IsPlayer2:
+		return g.Turn == 1
+	default:
+		panic(fmt.Errorf("Invalid TurnMode %v", g.TurnMode))
+	}
 }
 
 func (g *Game) SetBoard(board *Board) {
@@ -99,7 +120,7 @@ func (g Game) CanClickOnPiece(player int, piece *Piece) bool {
 }
 
 func (g Game) PiecesDrawAttention(player int) bool {
-	return g.HasTurn &&
+	return g.HasTurn() &&
 		g.Sticks.HasThrown &&
 		player == g.Turn
 }
@@ -109,7 +130,7 @@ func (g Game) PieceIsSelected(piece *Piece) bool {
 }
 
 func (g Game) SticksDrawAttention() bool {
-	return !g.Sticks.HasThrown && g.HasTurn
+	return !g.Sticks.HasThrown && g.HasTurn()
 }
 
 func (g Game) StartPosition() Position {

@@ -9,7 +9,7 @@ import (
 
 func GamePage() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.HasTurn = true
+	game.TurnMode = state.IsPlayer1
 	return fairytale.New(
 		"GamePage",
 		&state.State{
