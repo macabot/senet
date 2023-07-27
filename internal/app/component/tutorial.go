@@ -138,10 +138,29 @@ func TutorialMove2(player int) []*hypp.VNode {
 	}
 }
 
-func TutorialMove3() []*hypp.VNode {
+func TutorialMove3(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Move - 3/3")),
 		spokenParagraph("Click on the valid destination [square-valid-icon] to move your piece to that square.", "TutorialMove3"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMultiplemoves),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialMultipleMoves(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Multiple moves")),
+		spokenParagraph("If you threw 1 step [sticks-1-icon], 4 steps [sticks-4-icon] or 6 steps [sticks-6-icon], you may go again. This goes on until you throw 2 steps [sticks-2-icon] or 3 steps [sticks-3-icon]. Then your turn ends.", "TutorialMultipleMoves"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
+			},
+			hypp.Text("Next"),
+		),
 	}
 }
 

@@ -16,6 +16,7 @@ const (
 	TutorialMove1
 	TutorialMove2
 	TutorialMove3
+	TutorialMultiplemoves
 	TutorialEnd
 )
 

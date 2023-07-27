@@ -8,6 +8,8 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
+var onMoveToSquare = []func(s, newState *state.State){}
+
 func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
@@ -33,6 +35,9 @@ func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
 				MoveToSquareAction(nextMove.To),
 				time.Second,
 			))
+		}
+		for _, f := range onMoveToSquare {
+			f(s, newState)
 		}
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,

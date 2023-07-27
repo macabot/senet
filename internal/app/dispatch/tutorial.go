@@ -9,4 +9,10 @@ func init() {
 			SetSpeechBubbleKind(newState, 1, state.TutorialMove1)
 		}
 	})
+	onMoveToSquare = append(onMoveToSquare, func(_, newState *state.State) {
+		bubble := newState.Game.Players[1].SpeechBubble
+		if bubble != nil && bubble.Kind == state.TutorialMove3 {
+			SetSpeechBubbleKind(newState, 1, state.TutorialMultiplemoves)
+		}
+	})
 }
