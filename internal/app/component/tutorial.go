@@ -112,10 +112,36 @@ func TutorialSticks3() []*hypp.VNode {
 	}
 }
 
-func TutorialMovingAPiece() []*hypp.VNode {
+func TutorialMove1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Moving a piece")),
-		spokenParagraph("You are now ready to make your first move. Click on one of your pieces. The destination square will be highlighted. A green square [square-valid-icon] is a valid destination. A red square [square-invalid-icon] is an invalid destination.", "TutorialMovingAPiece"),
+		html.H3(nil, hypp.Text("Move - 1/3")),
+		spokenParagraph("You are now ready to make your first move. Click on one of your pieces. The destination square will be highlighted. A green square [square-valid-icon] is a valid destination. A red square [square-invalid-icon] is an invalid destination.", "TutorialMove1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMove2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialMove2(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Move - 2/3")),
+		spokenParagraph("Select your pieces to see which one has a valid destination [square-valid-icon].", "TutorialMove2"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMove3),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialMove3() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Move - 3/3")),
+		spokenParagraph("Click on the valid destination [square-valid-icon] to move your piece to that square.", "TutorialMove3"),
 	}
 }
 

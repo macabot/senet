@@ -13,7 +13,9 @@ const (
 	TutorialSticks1
 	TutorialSticks2
 	TutorialSticks3
-	TutorialMovingAPiece
+	TutorialMove1
+	TutorialMove2
+	TutorialMove3
 	TutorialEnd
 )
 
