@@ -16,6 +16,7 @@ const (
 	TutorialSticks3
 	TutorialMove
 	TutorialMultiplemoves
+	TutorialProtectedPiece
 	TutorialEnd
 )
 
