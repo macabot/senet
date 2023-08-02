@@ -24,22 +24,20 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialPlayers2()
 	case state.TutorialGoal:
 		speechVNodes = TutorialGoal(player)
-	case state.TutorialBoard:
-		speechVNodes = TutorialBoard(player)
-	case state.TutorialPieces:
-		speechVNodes = TutorialPieces(player)
+	case state.TutorialBoard1:
+		speechVNodes = TutorialBoard1(player)
+	case state.TutorialBoard2:
+		speechVNodes = TutorialBoard2(player)
+	case state.TutorialBoard3:
+		speechVNodes = TutorialBoard3(player)
 	case state.TutorialSticks1:
 		speechVNodes = TutorialSticks1(player)
 	case state.TutorialSticks2:
 		speechVNodes = TutorialSticks2(player)
 	case state.TutorialSticks3:
 		speechVNodes = TutorialSticks3()
-	case state.TutorialMove1:
-		speechVNodes = TutorialMove1(player)
-	case state.TutorialMove2:
-		speechVNodes = TutorialMove2(player)
-	case state.TutorialMove3:
-		speechVNodes = TutorialMove3(player)
+	case state.TutorialMove:
+		speechVNodes = TutorialMove()
 	case state.TutorialMultiplemoves:
 		speechVNodes = TutorialMultipleMoves(player)
 	case state.TutorialEnd:

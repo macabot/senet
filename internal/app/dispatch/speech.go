@@ -11,7 +11,7 @@ func disableSpeechBubbleButton(s *state.State, player int) {
 
 var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
 	state.TutorialPlayers2: disableSpeechBubbleButton,
-	state.TutorialBoard: func(s *state.State, _ int) {
+	state.TutorialBoard3: func(s *state.State, _ int) {
 		s.Game.Board.ShowDirections = true
 	},
 	state.TutorialSticks3: func(s *state.State, _ int) {
@@ -21,7 +21,7 @@ var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, play
 }
 
 var onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
-	state.TutorialBoard: func(s *state.State, player int) {
+	state.TutorialBoard3: func(s *state.State, player int) {
 		s.Game.Board.ShowDirections = false
 	},
 }

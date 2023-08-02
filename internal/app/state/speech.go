@@ -8,14 +8,13 @@ const (
 	TutorialPlayers1
 	TutorialPlayers2
 	TutorialGoal
-	TutorialBoard
-	TutorialPieces
+	TutorialBoard1
+	TutorialBoard2
+	TutorialBoard3
 	TutorialSticks1
 	TutorialSticks2
 	TutorialSticks3
-	TutorialMove1
-	TutorialMove2
-	TutorialMove3
+	TutorialMove
 	TutorialMultiplemoves
 	TutorialEnd
 )

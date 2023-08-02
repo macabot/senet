@@ -46,30 +46,43 @@ func TutorialGoal(player int) []*hypp.VNode {
 		spokenParagraph("The goal of Senet is to be the first player to move all of your pieces off the board.", "TutorialGoal"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard),
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard1),
 			},
 			hypp.Text("Next"),
 		),
 	}
 }
 
-func TutorialBoard(player int) []*hypp.VNode {
+func TutorialBoard1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Board")),
-		spokenParagraph("This is the board on which we play. The pieces flow in a Z shape from bottom right to top left.", "TutorialBoard"),
+		html.H3(nil, hypp.Text("Board - 1/3")),
+		spokenParagraph("Below the players is the board on which we play.", "TutorialBoard1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPieces),
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard2),
 			},
 			hypp.Text("Next"),
 		),
 	}
 }
 
-func TutorialPieces(player int) []*hypp.VNode {
+func TutorialBoard2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Pieces")),
-		spokenParagraph("At the bottom of the board we find the pieces. You will play with the blue pieces [piece-0-icon]. I will play with the red pieces [piece-1-icon].", "TutorialPieces"),
+		html.H3(nil, hypp.Text("Board - 2/3")),
+		spokenParagraph("At the bottom of the board are the pieces. You will play with the blue pieces [piece-0-icon]. I will play with the red pieces [piece-1-icon].", "TutorialBoard2"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard3),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialBoard3(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Board - 3/3")),
+		spokenParagraph("The pieces move in a Z shape from bottom right to top left.", "TutorialBoard3"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks1),
@@ -112,42 +125,10 @@ func TutorialSticks3() []*hypp.VNode {
 	}
 }
 
-func TutorialMove1(player int) []*hypp.VNode {
+func TutorialMove() []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Move - 1/3")),
-		spokenParagraph("You are now ready to make your first move. Click on one of your pieces. The destination square will be highlighted. A green square [square-valid-icon] is a valid destination. A red square [square-invalid-icon] is an invalid destination.", "TutorialMove1"),
-		html.Button(
-			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMove2),
-			},
-			hypp.Text("Next"),
-		),
-	}
-}
-
-func TutorialMove2(player int) []*hypp.VNode {
-	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Move - 2/3")),
-		spokenParagraph("Select your pieces to see which one has a valid destination [square-valid-icon].", "TutorialMove2"),
-		html.Button(
-			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMove3),
-			},
-			hypp.Text("Next"),
-		),
-	}
-}
-
-func TutorialMove3(player int) []*hypp.VNode {
-	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Move - 3/3")),
-		spokenParagraph("Click on the valid destination [square-valid-icon] to move your piece to that square.", "TutorialMove3"),
-		html.Button(
-			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMultiplemoves),
-			},
-			hypp.Text("Next"),
-		),
+		html.H3(nil, hypp.Text("Move")),
+		spokenParagraph("You can now make your first move. Click on one of your pieces. A green square [square-valid-icon] is a valid destination. A red square [square-invalid-icon] is an invalid destination. Move a piece to a valid destination.", "TutorialMove"),
 	}
 }
 
