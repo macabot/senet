@@ -1,12 +1,14 @@
 package state
 
 import (
+	"fmt"
 	"math/rand"
 )
 
 type Sticks struct {
-	Flips     [4]int
-	HasThrown bool
+	Flips         [4]int
+	HasThrown     bool
+	GeneratorKind SticksGeneratorKind
 }
 
 func (s *Sticks) Clone() *Sticks {
@@ -14,8 +16,9 @@ func (s *Sticks) Clone() *Sticks {
 		return nil
 	}
 	return &Sticks{
-		Flips:     [4]int{s.Flips[0], s.Flips[1], s.Flips[2], s.Flips[3]},
-		HasThrown: s.HasThrown,
+		Flips:         [4]int{s.Flips[0], s.Flips[1], s.Flips[2], s.Flips[3]},
+		HasThrown:     s.HasThrown,
+		GeneratorKind: s.GeneratorKind,
 	}
 }
 
@@ -34,28 +37,45 @@ func (s Sticks) up() [4]bool {
 
 const minFlips = 3
 
-func flipStick(flips int) int {
+func flipStick(flips int, up bool) int {
 	sign := 1
 	if rand.Float32() < 0.5 {
 		sign = -1
 	}
 	flips += minFlips * sign
-	up := rand.Float32() < 0.5
 	if (flips%2 == 0) == up {
 		flips += sign
 	}
 	return flips
 }
 
+func (s Sticks) generator() ThrowSticksGenerator {
+	switch s.GeneratorKind {
+	case CryptoSticksGeneratorKind:
+		return defaultCryptoSticksGenerator
+	case TutorialSticksGeneratorKind:
+		return defaultTutorialSticksGenerator
+	default:
+		panic(fmt.Errorf("Cannot get sticks generator for kind %v.", s.GeneratorKind))
+	}
+}
+
 func (s Sticks) Throw() *Sticks {
+	steps := s.generator().Throw()
+	return s.WithSteps(steps, true)
+}
+
+func (s Sticks) WithSteps(steps int, hasThrown bool) *Sticks {
+	ups := stepsToUps(steps)
 	return &Sticks{
 		Flips: [4]int{
-			flipStick(s.Flips[0]),
-			flipStick(s.Flips[1]),
-			flipStick(s.Flips[2]),
-			flipStick(s.Flips[3]),
+			flipStick(s.Flips[0], ups[0]),
+			flipStick(s.Flips[1], ups[1]),
+			flipStick(s.Flips[2], ups[2]),
+			flipStick(s.Flips[3], ups[3]),
 		},
-		HasThrown: true,
+		HasThrown:     hasThrown,
+		GeneratorKind: s.GeneratorKind,
 	}
 }
 
@@ -75,24 +95,4 @@ func (s Sticks) Steps() int {
 func (s Sticks) CanGoAgain() bool {
 	steps := s.Steps()
 	return steps == 1 || steps == 4 || steps == 6
-}
-
-func SticksFromSteps(steps int, hasThrown bool) *Sticks {
-	sticks := &Sticks{
-		Flips:     [4]int{},
-		HasThrown: hasThrown,
-	}
-	if steps >= 1 && steps < 6 {
-		sticks.Flips[0] = 1
-	}
-	if steps >= 2 && steps < 6 {
-		sticks.Flips[1] = 1
-	}
-	if steps >= 3 && steps < 6 {
-		sticks.Flips[2] = 1
-	}
-	if steps >= 4 && steps < 6 {
-		sticks.Flips[3] = 1
-	}
-	return sticks
 }

@@ -10,7 +10,7 @@ func Steps() *control.Select[*state.State, int] {
 	return control.NewSelect(
 		"Steps",
 		func(s *state.State, steps int) hypp.Dispatchable {
-			s.Game.SetSticks(state.SticksFromSteps(steps, steps != 0))
+			s.Game.SetSticks(s.Game.Sticks.WithSteps(steps, steps != 0))
 			return s
 		},
 		func(s *state.State) int {
