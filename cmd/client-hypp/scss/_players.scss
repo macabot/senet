@@ -21,6 +21,21 @@
   }
 }
 
+@keyframes player-draw-attention {
+  0% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.05, 1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+$player-0-color: rgb(204, 255, 253);
+$player-1-color: rgb(248, 206, 204);
+
 .players {
   width: 100%;
   display: flex;
@@ -35,7 +50,7 @@
 
   &.player-0 {
     .player {
-      background-color: rgb(204, 255, 253);
+      background-color: $player-0-color;
     }
 
     @include speech-bubble-color(#00aabb);
@@ -47,13 +62,17 @@
 
   &.player-1 {
     .player {
-      background-color: rgb(248, 206, 204);
+      background-color: $player-1-color;
     }
     @include speech-bubble-color(#dc6464);
 
     .speech-bubble:after {
       border-right: 0;
     }
+  }
+
+  .player.draw-attention {
+    animation: 1s player-draw-attention infinite;
   }
 }
 
@@ -109,9 +128,9 @@
 }
 
 .player-icon.player-0 {
-  background-color: rgb(204, 255, 253);
+  background-color: $player-0-color;
 }
 
 .player-icon.player-1 {
-  background-color: rgb(248, 206, 204);
+  background-color: $player-1-color;
 }

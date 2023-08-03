@@ -5,12 +5,10 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func disableSpeechBubbleButton(s *state.State, player int) {
-	s.Game.Players[player].SpeechBubble.ButtonDisabled = true
-}
-
 var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
-	state.TutorialPlayers2: disableSpeechBubbleButton,
+	state.TutorialPlayers2: func(s *state.State, player int) {
+		s.Game.Players[player].DrawAttention = true
+	},
 	state.TutorialBoard3: func(s *state.State, _ int) {
 		s.Game.Board.ShowDirections = true
 	},
@@ -59,6 +57,7 @@ func SetPageAction(page state.Page) hypp.Action[*state.State] {
 var onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
 	state.TutorialPlayers2: func(s *state.State, player int) {
 		if !s.Game.Players[player].SpeechBubble.Closed {
+			s.Game.Players[player].DrawAttention = false
 			SetSpeechBubbleKind(s, player, state.TutorialGoal)
 		}
 	},

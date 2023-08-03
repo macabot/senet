@@ -83,8 +83,9 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class": map[string]bool{
-					"player":   true,
-					"has-turn": hasTurn,
+					"player":         true,
+					"has-turn":       hasTurn,
+					"draw-attention": player.DrawAttention,
 				},
 				"onclick": dispatch.ToggleSpeechBubble(playerIndex),
 			},

@@ -99,6 +99,19 @@ func speechBubbleKind(player int) *control.Select[*state.State, int] {
 	)
 }
 
+func drawAttention(player int) *control.Checkbox[*state.State] {
+	return control.NewCheckbox(
+		fmt.Sprintf("Player %d draw attention", player),
+		func(s *state.State, drawAttention bool) hypp.Dispatchable {
+			s.Game.Players[player].DrawAttention = drawAttention
+			return s
+		},
+		func(s *state.State) bool {
+			return s.Game.Players[player].DrawAttention
+		},
+	)
+}
+
 func Players() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"Players",
@@ -114,5 +127,7 @@ func Players() *fairytale.Tale[*state.State] {
 		playerPoints(1),
 		speechBubbleKind(0),
 		speechBubbleKind(1),
+		drawAttention(0),
+		drawAttention(1),
 	)
 }
