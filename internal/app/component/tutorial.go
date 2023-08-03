@@ -135,7 +135,7 @@ func TutorialMove() []*hypp.VNode {
 func TutorialMultipleMoves(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Multiple moves")),
-		spokenParagraph("If you threw 1 step [sticks-1-icon], 4 steps [sticks-4-icon] or 6 steps [sticks-6-icon], you may go again. This goes on until you throw 2 steps [sticks-2-icon] or 3 steps [sticks-3-icon]. Then your turn ends.", "TutorialMultipleMoves"),
+		spokenParagraph("If you throw 1 step [sticks-1-icon], 4 steps [sticks-4-icon] or 6 steps [sticks-6-icon], you may go again. This goes on until you throw 2 steps [sticks-2-icon] or 3 steps [sticks-3-icon]. Then your turn ends.", "TutorialMultipleMoves"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialProtectedPiece),
