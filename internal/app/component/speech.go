@@ -40,8 +40,12 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialMove()
 	case state.TutorialMultiplemoves:
 		speechVNodes = TutorialMultipleMoves(player)
-	case state.TutorialProtectedPiece:
-		speechVNodes = TutorialProtectedPiece(player)
+	case state.TutorialTradingPlaces1:
+		speechVNodes = TutorialTradingPlaces1(player)
+	case state.TutorialTradingPlaces2:
+		speechVNodes = TutorialTradingPlaces2(player)
+	case state.TutorialTradingPlaces3:
+		speechVNodes = TutorialTradingPlaces3(player)
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
