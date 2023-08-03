@@ -17,6 +17,7 @@ func StartTutorialAction() hypp.Action[*state.State] {
 		newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
 			Kind: state.TutorialStart,
 		}
+		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
 		return newState
 	}
 }
