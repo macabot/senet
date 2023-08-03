@@ -26,12 +26,33 @@ func NewSticks() *Sticks {
 	return &Sticks{}
 }
 
-func (s Sticks) up() [4]bool {
+func (s Sticks) ups() [4]bool {
 	return [4]bool{
 		s.Flips[0]%2 != 0,
 		s.Flips[1]%2 != 0,
 		s.Flips[2]%2 != 0,
 		s.Flips[3]%2 != 0,
+	}
+}
+
+func stepsToUps(steps int) [4]bool {
+	switch steps {
+	case 1, 2, 3:
+		indices := [4]int{0, 1, 2, 3}
+		defaultRNG.Shuffle(len(indices), func(i, j int) {
+			indices[i], indices[j] = indices[j], indices[i]
+		})
+		ups := [4]bool{false, false, false, false}
+		for i := 0; i < steps; i++ {
+			ups[indices[i]] = true
+		}
+		return ups
+	case 4:
+		return [4]bool{true, true, true, true}
+	case 6:
+		return [4]bool{false, false, false, false}
+	default:
+		panic(fmt.Errorf("Cannot convert %d steps to ups.", steps))
 	}
 }
 
@@ -60,28 +81,25 @@ func (s Sticks) generator() ThrowSticksGenerator {
 	}
 }
 
-func (s Sticks) Throw() *Sticks {
+func (s *Sticks) Throw() {
 	steps := s.generator().Throw()
-	return s.WithSteps(steps, true)
+	s.SetSteps(steps)
+	s.HasThrown = true
 }
 
-func (s Sticks) WithSteps(steps int, hasThrown bool) *Sticks {
+func (s *Sticks) SetSteps(steps int) {
 	ups := stepsToUps(steps)
-	return &Sticks{
-		Flips: [4]int{
-			flipStick(s.Flips[0], ups[0]),
-			flipStick(s.Flips[1], ups[1]),
-			flipStick(s.Flips[2], ups[2]),
-			flipStick(s.Flips[3], ups[3]),
-		},
-		HasThrown:     hasThrown,
-		GeneratorKind: s.GeneratorKind,
+	s.Flips = [4]int{
+		flipStick(s.Flips[0], ups[0]),
+		flipStick(s.Flips[1], ups[1]),
+		flipStick(s.Flips[2], ups[2]),
+		flipStick(s.Flips[3], ups[3]),
 	}
 }
 
 func (s Sticks) Steps() int {
 	sum := 0
-	for _, up := range s.up() {
+	for _, up := range s.ups() {
 		if up {
 			sum++
 		}

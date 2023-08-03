@@ -3,7 +3,6 @@ package state
 import (
 	crand "crypto/rand"
 	"encoding/binary"
-	"fmt"
 	"math/rand"
 )
 
@@ -81,25 +80,4 @@ func (g *TutorialSticksGenerator) Throw() int {
 	steps := tutorialThrownSticks[g.index%len(tutorialThrownSticks)]
 	g.index++
 	return steps
-}
-
-func stepsToUps(steps int) [4]bool {
-	switch steps {
-	case 1, 2, 3:
-		indices := [4]int{0, 1, 2, 3}
-		defaultRNG.Shuffle(len(indices), func(i, j int) {
-			indices[i], indices[j] = indices[j], indices[i]
-		})
-		ups := [4]bool{false, false, false, false}
-		for i := 0; i < steps; i++ {
-			ups[indices[i]] = true
-		}
-		return ups
-	case 4:
-		return [4]bool{true, true, true, true}
-	case 6:
-		return [4]bool{false, false, false, false}
-	default:
-		panic(fmt.Errorf("Cannot convert %d steps to ups.", steps))
-	}
 }
