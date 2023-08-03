@@ -78,10 +78,7 @@ var tutorialThrownSticks = [...]int{
 }
 
 func (g *TutorialSticksGenerator) Throw() int {
-	if g.index >= len(tutorialThrownSticks) {
-		panic(fmt.Errorf("TutorialSticksGenerator cannot throw at index %d.", g.index))
-	}
-	steps := tutorialThrownSticks[g.index]
+	steps := tutorialThrownSticks[g.index%len(tutorialThrownSticks)]
 	g.index++
 	return steps
 }
