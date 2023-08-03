@@ -38,5 +38,19 @@ func Sticks() *fairytale.Tale[*state.State] {
 				return len(s.Game.ValidMoves) == 0
 			},
 		),
+		control.NewSelect(
+			"Generator",
+			func(s *state.State, kind state.SticksGeneratorKind) hypp.Dispatchable {
+				s.Game.Sticks.GeneratorKind = kind
+				return s
+			},
+			func(s *state.State) state.SticksGeneratorKind {
+				return s.Game.Sticks.GeneratorKind
+			},
+			[]control.SelectOption[state.SticksGeneratorKind]{
+				{Label: "Crypto", Value: state.CryptoSticksGeneratorKind},
+				{Label: "Tutorial", Value: state.TutorialSticksGeneratorKind},
+			},
+		),
 	)
 }
