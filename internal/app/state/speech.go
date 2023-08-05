@@ -20,7 +20,9 @@ const (
 	TutorialTradingPlaces2
 	TutorialTradingPlaces3
 	TutorialTradingPlaces4
-	TutorialBlockingPiece
+	TutorialBlockingPiece1
+	TutorialBlockingPiece2
+	TutorialReturnToStart
 	TutorialEnd
 )
 

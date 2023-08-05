@@ -20,7 +20,7 @@ var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, play
 		s.Game.SetBoard(&state.Board{
 			PlayerPieces: [2]state.PiecesByPosition{
 				state.NewPiecesByPosition(
-					&state.Piece{ID: 1, Position: 11},
+					&state.Piece{ID: 1, Position: 13},
 					&state.Piece{ID: 2, Position: 33},
 					&state.Piece{ID: 3, Position: 32},
 					&state.Piece{ID: 4, Position: 6},
@@ -28,7 +28,7 @@ var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, play
 				),
 				state.NewPiecesByPosition(
 					&state.Piece{ID: 6, Position: 14},
-					&state.Piece{ID: 7, Position: 9},
+					&state.Piece{ID: 7, Position: 7},
 					&state.Piece{ID: 8, Position: 28},
 					&state.Piece{ID: 9, Position: 5},
 					&state.Piece{ID: 10, Position: 30},

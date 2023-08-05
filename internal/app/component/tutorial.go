@@ -191,10 +191,33 @@ func TutorialTradingPlaces4() []*hypp.VNode {
 	}
 }
 
-func TutorialBlockingPiece(player int) []*hypp.VNode {
+func TutorialBlockingPiece1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Blocking piece")),
-		spokenParagraph("A piece cannot move to a square if it passes over another player's blocking piece [blocking-icon]. Neighboring pieces (left, right, above or below) that form a group of at least 3 pieces of the same color will block the movement of pieces of the other color. A piece that is blocking [blocking-icon] is also protected [protected-icon].", "TutorialBlockingPiece"),
+		html.H3(nil, hypp.Text("Blocking piece - 1/2")),
+		spokenParagraph("Neighboring pieces that form a group of at least 3 pieces of the same color will block [blocking-icon] the movement of pieces of the other color. A piece that is blocking [blocking-icon] is also protected [protected-icon].", "TutorialBlockingPiece1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBlockingPiece2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+// FIXME what if player moves piece before switching to next bubble?
+// TODO set HasThrown to true for TutorialBlockingPiece1. Set to false for TutorialBlockingPiece2.
+
+func TutorialBlockingPiece2() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Blocking piece - 2/2")),
+		spokenParagraph("Move one of your pieces. Note that you are not able to move over my blocking pieces [blocking-icon].", "TutorialBlockingPiece2"),
+	}
+}
+
+func TutorialReturnToStart(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Return to start")),
+		spokenParagraph("On the top row there is the return-to-start square [return-to-start-icon]. If you move a piece onto this square, then your piece is immediately moved to the start of the board. That is, the first unoccupied square, starting in the bottom right of the board.", "TutorialReturnToStart"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
