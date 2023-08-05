@@ -19,6 +19,8 @@ const (
 	TutorialTradingPlaces1
 	TutorialTradingPlaces2
 	TutorialTradingPlaces3
+	TutorialTradingPlaces4
+	TutorialBlockingPiece
 	TutorialEnd
 )
 

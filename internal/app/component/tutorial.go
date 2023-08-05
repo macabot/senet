@@ -147,7 +147,7 @@ func TutorialMultipleMoves(player int) []*hypp.VNode {
 
 func TutorialTradingPlaces1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Trading places - 1/3")),
+		html.H3(nil, hypp.Text("Trading places - 1/4")),
 		spokenParagraph("Let's change board to learn about trading the places of two pieces.", "TutorialTradingPlaces1"),
 		html.Button(
 			hypp.HProps{
@@ -160,8 +160,8 @@ func TutorialTradingPlaces1(player int) []*hypp.VNode {
 
 func TutorialTradingPlaces2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Trading places - 2/3")),
-		spokenParagraph("A piece can move onto a square occupied by another player's piece, except if that piece is protected [protected-icon]. If it is not protected, then the pieces trade places. You are not allowed to trade places with a piece of the same color.", "TutorialTradingPlaces2"),
+		html.H3(nil, hypp.Text("Trading places - 2/4")),
+		spokenParagraph("A piece can move onto a square occupied by another player's piece, except if that piece is protected [protected-icon]. If not, the pieces trade places. You are not allowed to trade places with a piece of the same color.", "TutorialTradingPlaces2"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces3),
@@ -173,8 +173,28 @@ func TutorialTradingPlaces2(player int) []*hypp.VNode {
 
 func TutorialTradingPlaces3(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Trading places - 3/3")),
-		spokenParagraph("A piece is protected [protected-icon] if at least one neighboring square - left, right, above or below - is occupied by a piece with the same color. A piece is also protected if it occupies a square that contains the protecting icon: [protected-icon].", "TutorialTradingPlaces3"),
+		html.H3(nil, hypp.Text("Trading places - 3/4")),
+		spokenParagraph("A piece is protected [protected-icon] if at least one neighboring square (left, right, above or below) is occupied by a piece with the same color or if it occupies a square with the protecting icon: [protected-icon].", "TutorialTradingPlaces3"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces4),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialTradingPlaces4() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Trading places - 4/4")),
+		spokenParagraph("Move one of your pieces such that it trades places with one of my pieces.", "TutorialTradingPlaces4"),
+	}
+}
+
+func TutorialBlockingPiece(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Blocking piece")),
+		spokenParagraph("A piece cannot move to a square if it passes over another player's blocking piece [blocking-icon]. Neighboring pieces (left, right, above or below) that form a group of at least 3 pieces of the same color will block the movement of pieces of the other color. A piece that is blocking [blocking-icon] is also protected [protected-icon].", "TutorialBlockingPiece"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),

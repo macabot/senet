@@ -46,6 +46,10 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialTradingPlaces2(player)
 	case state.TutorialTradingPlaces3:
 		speechVNodes = TutorialTradingPlaces3(player)
+	case state.TutorialTradingPlaces4:
+		speechVNodes = TutorialTradingPlaces4()
+	case state.TutorialBlockingPiece:
+		speechVNodes = TutorialBlockingPiece(player)
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
@@ -70,6 +74,8 @@ func DefaultSpeechBubble() []*hypp.VNode {
 
 func speechBubbleIcon(s string) *hypp.VNode {
 	switch s {
+	case "[blocking-icon]":
+		return BlockingIcon()
 	case "[piece-0-icon]":
 		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
 	case "[piece-1-icon]":

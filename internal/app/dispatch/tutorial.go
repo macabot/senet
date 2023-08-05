@@ -9,10 +9,19 @@ func init() {
 			SetSpeechBubbleKind(newState, 1, state.TutorialMove)
 		}
 	})
-	onMoveToSquare = append(onMoveToSquare, func(_, newState *state.State) {
-		bubble := newState.Game.Players[1].SpeechBubble
-		if bubble != nil && bubble.Kind == state.TutorialMove {
-			SetSpeechBubbleKind(newState, 1, state.TutorialMultiplemoves)
-		}
-	})
+	onMoveToSquare = append(
+		onMoveToSquare,
+		func(_, newState *state.State) {
+			bubble := newState.Game.Players[1].SpeechBubble
+			if bubble != nil && bubble.Kind == state.TutorialMove {
+				SetSpeechBubbleKind(newState, 1, state.TutorialMultiplemoves)
+			}
+		},
+		func(_, newState *state.State) {
+			bubble := newState.Game.Players[1].SpeechBubble
+			if bubble != nil && bubble.Kind == state.TutorialTradingPlaces4 {
+				SetSpeechBubbleKind(newState, 1, state.TutorialBlockingPiece)
+			}
+		},
+	)
 }
