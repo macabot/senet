@@ -78,6 +78,39 @@ func init() {
 	// TutorialBlockingPiece2
 	onMoveToSquare = append(
 		onMoveToSquare,
-		replaceCurrentBubbleWithNext(state.TutorialBlockingPiece2, state.TutorialReturnToStart),
+		replaceCurrentBubbleWithNext(state.TutorialBlockingPiece2, state.TutorialReturnToStart1),
 	)
+	// TutorialReturnToStart2
+	onSetSpeechBubbleKind[state.TutorialReturnToStart2] = func(s *state.State, _ int) {
+		// _ p p x p _ _ B _ _
+		// _ _ B B R R _ _ _ _
+		// _ _ _ _ R B _ R B R
+		s.Game.SetBoard(&state.Board{
+			PlayerPieces: [2]state.PiecesByPosition{
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 1, Position: 22},
+					&state.Piece{ID: 2, Position: 12},
+					&state.Piece{ID: 3, Position: 13},
+					&state.Piece{ID: 4, Position: 4},
+					&state.Piece{ID: 5, Position: 1},
+				),
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 6, Position: 15},
+					&state.Piece{ID: 7, Position: 14},
+					&state.Piece{ID: 8, Position: 5},
+					&state.Piece{ID: 9, Position: 2},
+					&state.Piece{ID: 10, Position: 0},
+				),
+			},
+		})
+	}
+	// TutorialReturnToStart3
+	onSetSpeechBubbleKind[state.TutorialReturnToStart3] = func(s *state.State, player int) {
+		s.Game.Sticks.HasThrown = false
+		s.Game.Turn = 0
+		s.Game.Players[player].DrawAttention = true
+	}
+	onToggleSpeechBubbleByKind[state.TutorialReturnToStart3] = func(s *state.State, player int) {
+		s.Game.Players[player].DrawAttention = false
+	}
 }

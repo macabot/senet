@@ -161,7 +161,7 @@ func TutorialTradingPlaces1(player int) []*hypp.VNode {
 func TutorialTradingPlaces2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Trading places - 2/4")),
-		spokenParagraph("A piece can move onto a square occupied by another player's piece, except if that piece is protected [protected-icon]. If not, the pieces trade places. You are not allowed to trade places with a piece of the same color.", "TutorialTradingPlaces2"),
+		spokenParagraph("A piece can move to a square occupied by another player's piece, except if that piece is protected [protected-icon]. If not, the pieces trade places. You are not allowed to trade places with a piece of the same color.", "TutorialTradingPlaces2"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces3),
@@ -211,16 +211,36 @@ func TutorialBlockingPiece2() []*hypp.VNode {
 	}
 }
 
-func TutorialReturnToStart(player int) []*hypp.VNode {
+func TutorialReturnToStart1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Return to start")),
-		spokenParagraph("On the top row there is the return-to-start square [return-to-start-icon]. If you move a piece onto this square, then your piece is immediately moved to the start of the board. That is, the first unoccupied square, starting in the bottom right of the board.", "TutorialReturnToStart"),
+		html.H3(nil, hypp.Text("Return to start - 1/3")),
+		spokenParagraph("On the top row there is the return-to-start square [return-to-start-icon]. Let's change the board to learn about it.", "TutorialReturnToStart1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialEnd),
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialReturnToStart2),
 			},
 			hypp.Text("Next"),
 		),
+	}
+}
+
+func TutorialReturnToStart2(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Return to start - 2/3")),
+		spokenParagraph("If you move a piece to the return-to-start square [return-to-start-icon], then your piece is immediately moved to the start of the board: the first unoccupied square, starting in the bottom right of the board.", "TutorialReturnToStart2"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialReturnToStart3),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialReturnToStart3() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Return to start - 3/3")),
+		spokenParagraph("Move a piece to the return-to-start square [return-to-start-icon]. Close the speech bubble to see all available pieces.", "TutorialReturnToStart3"),
 	}
 }
 

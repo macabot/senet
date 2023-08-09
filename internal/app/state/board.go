@@ -192,6 +192,16 @@ func (b Board) Equal(other *Board) bool {
 	return true
 }
 
+// NewBoard creates a new board where the squares and pieces are layed out as follows:
+//     _ p p x p _ _ _ _ _
+//     _ _ _ _ _ _ _ _ _ _
+//     B R B R B R B R B R
+//
+// The underscores correspond to empty squares and the letters have the following meaning:
+// - B: blue piece
+// - R: red piece
+// - p: protecting square
+// - x: return-to-start square
 func NewBoard() *Board {
 	return &Board{
 		PlayerPieces: [2]PiecesByPosition{

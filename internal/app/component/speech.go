@@ -52,8 +52,12 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialBlockingPiece1(player)
 	case state.TutorialBlockingPiece2:
 		speechVNodes = TutorialBlockingPiece2()
-	case state.TutorialReturnToStart:
-		speechVNodes = TutorialReturnToStart(player)
+	case state.TutorialReturnToStart1:
+		speechVNodes = TutorialReturnToStart1(player)
+	case state.TutorialReturnToStart2:
+		speechVNodes = TutorialReturnToStart2(player)
+	case state.TutorialReturnToStart3:
+		speechVNodes = TutorialReturnToStart3()
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
