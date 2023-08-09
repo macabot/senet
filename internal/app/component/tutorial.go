@@ -148,7 +148,7 @@ func TutorialMultipleMoves(player int) []*hypp.VNode {
 func TutorialTradingPlaces1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Trading places - 1/4")),
-		spokenParagraph("Let's change board to learn about trading the places of two pieces.", "TutorialTradingPlaces1"),
+		spokenParagraph("Let's change the board to learn about trading the places of two pieces.", "TutorialTradingPlaces1"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces2),
@@ -203,9 +203,6 @@ func TutorialBlockingPiece1(player int) []*hypp.VNode {
 		),
 	}
 }
-
-// FIXME what if player moves piece before switching to next bubble?
-// TODO set HasThrown to true for TutorialBlockingPiece1. Set to false for TutorialBlockingPiece2.
 
 func TutorialBlockingPiece2() []*hypp.VNode {
 	return []*hypp.VNode{

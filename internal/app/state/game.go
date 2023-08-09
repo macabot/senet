@@ -32,6 +32,7 @@ type Game struct {
 	Sticks                *Sticks
 	Turn                  int
 	TurnMode              TurnMode
+	OverwriteHasTurn      *bool
 	Status                Status
 	ValidMoves            map[Position]Position
 	InvalidMoves          map[Position]set.Set[Position]
@@ -53,6 +54,7 @@ func (g *Game) Clone() *Game {
 		Sticks:                g.Sticks.Clone(),
 		Turn:                  g.Turn,
 		TurnMode:              g.TurnMode,
+		OverwriteHasTurn:      g.OverwriteHasTurn,
 		Status:                g.Status,
 		ValidMoves:            maps.Clone(g.ValidMoves),
 		InvalidMoves:          maps.Clone(g.InvalidMoves),
@@ -71,6 +73,9 @@ func NewGame() *Game {
 }
 
 func (g Game) HasTurn() bool {
+	if g.OverwriteHasTurn != nil {
+		return *g.OverwriteHasTurn
+	}
 	switch g.TurnMode {
 	case IsBothPlayers:
 		return true

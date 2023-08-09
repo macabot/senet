@@ -67,6 +67,14 @@ func init() {
 		s.Game.Turn = 0
 	}
 	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNext(state.TutorialTradingPlaces4, state.TutorialBlockingPiece1))
+	// TutorialBlockingPiece1
+	onSetSpeechBubbleKind[state.TutorialBlockingPiece1] = func(s *state.State, _ int) {
+		b := false
+		s.Game.OverwriteHasTurn = &b
+	}
+	onUnsetSpeechBubbleKind[state.TutorialBlockingPiece1] = func(s *state.State, _ int) {
+		s.Game.OverwriteHasTurn = nil
+	}
 	// TutorialBlockingPiece2
 	onMoveToSquare = append(
 		onMoveToSquare,
