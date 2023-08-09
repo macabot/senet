@@ -5,48 +5,9 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
-	state.TutorialPlayers2: func(s *state.State, player int) {
-		s.Game.Players[player].DrawAttention = true
-	},
-	state.TutorialBoard3: func(s *state.State, _ int) {
-		s.Game.Board.ShowDirections = true
-	},
-	state.TutorialSticks3: func(s *state.State, _ int) {
-		s.Game.Sticks.HasThrown = false
-		s.Game.Turn = 0
-	},
-	state.TutorialTradingPlaces2: func(s *state.State, _ int) {
-		s.Game.SetBoard(&state.Board{
-			PlayerPieces: [2]state.PiecesByPosition{
-				state.NewPiecesByPosition(
-					&state.Piece{ID: 1, Position: 13},
-					&state.Piece{ID: 2, Position: 33},
-					&state.Piece{ID: 3, Position: 32},
-					&state.Piece{ID: 4, Position: 6},
-					&state.Piece{ID: 5, Position: 31},
-				),
-				state.NewPiecesByPosition(
-					&state.Piece{ID: 6, Position: 14},
-					&state.Piece{ID: 7, Position: 7},
-					&state.Piece{ID: 8, Position: 28},
-					&state.Piece{ID: 9, Position: 5},
-					&state.Piece{ID: 10, Position: 30},
-				),
-			},
-		})
-	},
-	state.TutorialTradingPlaces4: func(s *state.State, _ int) {
-		s.Game.Sticks.HasThrown = false
-		s.Game.Turn = 0
-	},
-}
+var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 
-var onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
-	state.TutorialBoard3: func(s *state.State, player int) {
-		s.Game.Board.ShowDirections = false
-	},
-}
+var onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 
 func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind) {
 	if s.Game.Players[player].SpeechBubble != nil {
@@ -78,14 +39,7 @@ func SetPageAction(page state.Page) hypp.Action[*state.State] {
 	}
 }
 
-var onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){
-	state.TutorialPlayers2: func(s *state.State, player int) {
-		if !s.Game.Players[player].SpeechBubble.Closed {
-			s.Game.Players[player].DrawAttention = false
-			SetSpeechBubbleKind(s, player, state.TutorialGoal)
-		}
-	},
-}
+var onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 
 func ToggleSpeechBubble(player int) hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
