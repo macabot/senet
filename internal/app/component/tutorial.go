@@ -244,6 +244,26 @@ func TutorialReturnToStart3() []*hypp.VNode {
 	}
 }
 
+func TutorialMoveBackwards1(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Move backwards - 1/2")),
+		spokenParagraph("If none of your pieces have a valid move forwards, then they must move backwards. When moving backwards, you are not allowed to trade places with another piece.", "TutorialMoveBackwards1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMoveBackwards2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialMoveBackwards2() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Move backwards - 2/2")),
+		spokenParagraph("Move a piece backwards. Note that you are still not allowed to move a piece if it passes over another player's blocking piece [blocking-icon].", "TutorialMoveBackwards2"),
+	}
+}
+
 func TutorialEnd() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Good bye")),

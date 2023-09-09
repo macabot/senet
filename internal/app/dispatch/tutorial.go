@@ -113,4 +113,23 @@ func init() {
 	onToggleSpeechBubbleByKind[state.TutorialReturnToStart3] = func(s *state.State, player int) {
 		s.Game.Players[player].DrawAttention = false
 	}
+	onMoveToSquare = append(
+		onMoveToSquare,
+		replaceCurrentBubbleWithNext(state.TutorialReturnToStart3, state.TutorialMoveBackwards1),
+	)
+	// TutorialMoveBackwards1
+	onSetSpeechBubbleKind[state.TutorialMoveBackwards1] = func(s *state.State, player int) {
+		b := false
+		s.Game.OverwriteHasTurn = &b
+	}
+	onUnsetSpeechBubbleKind[state.TutorialMoveBackwards1] = func(s *state.State, _ int) {
+		s.Game.OverwriteHasTurn = nil
+	}
+	// TutorialMoveBackwards2
+	onSetSpeechBubbleKind[state.TutorialMoveBackwards2] = func(s *state.State, player int) {
+		s.Game.Players[player].DrawAttention = true
+	}
+	onToggleSpeechBubbleByKind[state.TutorialMoveBackwards2] = func(s *state.State, player int) {
+		s.Game.Players[player].DrawAttention = false
+	}
 }
