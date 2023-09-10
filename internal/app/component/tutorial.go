@@ -274,7 +274,7 @@ func TutorialNoMove2() []*hypp.VNode {
 func TutorialOffTheBoard1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Off the board - 1/3")),
-		spokenParagraph("A piece that is located in top left square of the board will be moved off the board if all pieces of that color are located in the top row. Let's look at an example.", "TutorialOffTheBoard1"),
+		spokenParagraph("A piece that is located in the top left square of the board will be moved off the board if all pieces of that color are located in the top row. Let's look at an example.", "TutorialOffTheBoard1"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialOffTheBoard2),
