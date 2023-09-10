@@ -62,6 +62,10 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = TutorialMoveBackwards1(player)
 	case state.TutorialMoveBackwards2:
 		speechVNodes = TutorialMoveBackwards2()
+	case state.TutorialNoMove1:
+		speechVNodes = TutorialNoMove1(player)
+	case state.TutorialNoMove2:
+		speechVNodes = TutorialNoMove2()
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
@@ -88,6 +92,8 @@ func speechBubbleIcon(s string) *hypp.VNode {
 	switch s {
 	case "[blocking-icon]":
 		return BlockingIcon()
+	case "[no-move-icon]":
+		return NoMoveIcon()
 	case "[piece-0-icon]":
 		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
 	case "[piece-1-icon]":

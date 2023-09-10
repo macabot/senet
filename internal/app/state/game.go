@@ -182,6 +182,9 @@ func (g *Game) CalcValidMoves() {
 
 	findMoves := func(steps int, protectedSize int) {
 		for pos := range piecesByPos {
+			if pos >= 30 {
+				continue
+			}
 			if pos == ReturnToStartPosition {
 				g.ValidMoves[pos] = g.StartPosition()
 				continue
@@ -201,7 +204,17 @@ func (g *Game) CalcValidMoves() {
 				continue
 			}
 			isBlocked := false
-			for checkPos := pos + 1; checkPos <= toPos; checkPos++ {
+			loopStep := Position(1)
+			loopCheck := func(checkPos, toPos Position) bool {
+				return checkPos <= toPos
+			}
+			if toPos < pos {
+				loopStep = -1
+				loopCheck = func(checkPos, toPos Position) bool {
+					return checkPos >= toPos
+				}
+			}
+			for checkPos := pos + loopStep; loopCheck(checkPos, toPos); checkPos += loopStep {
 				if group, ok := otherGroups[checkPos]; ok && len(group) >= 3 {
 					isBlocked = true
 					break

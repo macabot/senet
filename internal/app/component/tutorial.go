@@ -264,6 +264,26 @@ func TutorialMoveBackwards2() []*hypp.VNode {
 	}
 }
 
+func TutorialNoMove1(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("No move - 1/2")),
+		spokenParagraph("Sometimes no move is possible. Let's change the board to learn more.", "TutorialNoMove1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialNoMove2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialNoMove2() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("No move - 2/2")),
+		spokenParagraph("If none of your pieces have a valid move forwards and none of your pieces have a valid move backwards, then you must perform no move [no-move-icon]. Throw the sticks and perform no move [no-move-icon].", "TutorialNoMove2"),
+	}
+}
+
 func TutorialEnd() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Good bye")),

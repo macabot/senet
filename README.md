@@ -34,3 +34,9 @@ fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets cmd/client-hypp/p
 
 `fairytale` will watch the WASM file and assets. Whenever any changes are made it will reload the web page.
 You can visit the fairytale app on http://localhost:8000/.
+
+## Test
+
+```sh
+go test ./internal/app/state ./internal/pkg/...
+```

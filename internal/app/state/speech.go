@@ -27,6 +27,8 @@ const (
 	TutorialReturnToStart3
 	TutorialMoveBackwards1
 	TutorialMoveBackwards2
+	TutorialNoMove1
+	TutorialNoMove2
 	TutorialEnd
 )
 

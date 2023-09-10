@@ -48,7 +48,7 @@ func TestBoardNeighborSquares(t *testing.T) {
 	)
 }
 
-func TestBoardFindGroups(t *testing.T) {
+func TestBoardFindGroupsForNineAndTen(t *testing.T) {
 	assert.Equal(
 		t,
 		map[state.Position]set.Set[state.Position]{
@@ -58,6 +58,22 @@ func TestBoardFindGroups(t *testing.T) {
 		state.Board{}.FindGroups(state.PiecesByPosition{
 			9:  &state.Piece{ID: 1, Position: 9},
 			10: &state.Piece{ID: 2, Position: 10},
+		}),
+	)
+}
+
+func TestBoardFindGroupsForFullColumn(t *testing.T) {
+	assert.Equal(
+		t,
+		map[state.Position]set.Set[state.Position]{
+			7:  set.New[state.Position](7, 12, 27),
+			12: set.New[state.Position](7, 12, 27),
+			27: set.New[state.Position](7, 12, 27),
+		},
+		state.Board{}.FindGroups(state.PiecesByPosition{
+			7:  &state.Piece{ID: 1, Position: 7},
+			12: &state.Piece{ID: 1, Position: 12},
+			27: &state.Piece{ID: 1, Position: 27},
 		}),
 	)
 }

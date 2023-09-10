@@ -17,8 +17,9 @@ func init() {
 		s.Game.Players[player].DrawAttention = true
 	}
 	onToggleSpeechBubbleByKind[state.TutorialPlayers2] = func(s *state.State, player int) {
-		if !s.Game.Players[player].SpeechBubble.Closed {
-			s.Game.Players[player].DrawAttention = false
+		if s.Game.Players[player].SpeechBubble.Closed {
+			s.Game.Players[player].DrawAttention = true
+		} else {
 			SetSpeechBubbleKind(s, player, state.TutorialGoal)
 		}
 	}
@@ -110,9 +111,6 @@ func init() {
 		s.Game.Turn = 0
 		s.Game.Players[player].DrawAttention = true
 	}
-	onToggleSpeechBubbleByKind[state.TutorialReturnToStart3] = func(s *state.State, player int) {
-		s.Game.Players[player].DrawAttention = false
-	}
 	onMoveToSquare = append(
 		onMoveToSquare,
 		replaceCurrentBubbleWithNext(state.TutorialReturnToStart3, state.TutorialMoveBackwards1),
@@ -126,10 +124,35 @@ func init() {
 		s.Game.OverwriteHasTurn = nil
 	}
 	// TutorialMoveBackwards2
-	onSetSpeechBubbleKind[state.TutorialMoveBackwards2] = func(s *state.State, player int) {
-		s.Game.Players[player].DrawAttention = true
-	}
-	onToggleSpeechBubbleByKind[state.TutorialMoveBackwards2] = func(s *state.State, player int) {
-		s.Game.Players[player].DrawAttention = false
+	onMoveToSquare = append(
+		onMoveToSquare,
+		replaceCurrentBubbleWithNext(state.TutorialMoveBackwards2, state.TutorialNoMove1),
+	)
+	// TutorialNoMove2
+	onSetSpeechBubbleKind[state.TutorialNoMove2] = func(s *state.State, _ int) {
+		// _ p R x p _ _ _ _ _
+		// B _ R _ _ _ _ _ _ _
+		// B _ R _ _ _ _ _ _ _
+		s.Game.SetBoard(&state.Board{
+			PlayerPieces: [2]state.PiecesByPosition{
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 1, Position: 10},
+					&state.Piece{ID: 2, Position: 9},
+					&state.Piece{ID: 3, Position: 30},
+					&state.Piece{ID: 4, Position: 31},
+					&state.Piece{ID: 5, Position: 32},
+				),
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 6, Position: 27},
+					&state.Piece{ID: 7, Position: 12},
+					&state.Piece{ID: 8, Position: 7},
+					&state.Piece{ID: 9, Position: 33},
+					&state.Piece{ID: 10, Position: 34},
+				),
+			},
+		})
+
+		s.Game.Sticks.HasThrown = false
+		s.Game.Turn = 0
 	}
 }
