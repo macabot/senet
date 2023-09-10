@@ -37,6 +37,7 @@ type Game struct {
 	ValidMoves            map[Position]Position
 	InvalidMoves          map[Position]set.Set[Position]
 	HasMoved              bool
+	Winner                *int
 }
 
 func (g *Game) Clone() *Game {
@@ -75,6 +76,9 @@ func NewGame() *Game {
 func (g Game) HasTurn() bool {
 	if g.OverwriteHasTurn != nil {
 		return *g.OverwriteHasTurn
+	}
+	if g.Winner != nil {
+		return false
 	}
 	switch g.TurnMode {
 	case IsBothPlayers:
@@ -311,9 +315,29 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 		g.Turn = (g.Turn + 1) % 2
 	}
 	g.Sticks.HasThrown = false
+
+	g.UpdateWinner()
 	g.CalcValidMoves()
 
 	return nextMove, nil
+}
+
+func (g *Game) UpdateWinner() {
+	for i, piecesByPos := range g.Board.PlayerPieces {
+		allOffBoard := true
+		for pos := range piecesByPos {
+			if pos < 30 {
+				allOffBoard = false
+				break
+			}
+		}
+		if allOffBoard {
+			player := i
+			g.Winner = &player
+			return
+		}
+	}
+	g.Winner = nil
 }
 
 func (g *Game) NoMove(player int) error {

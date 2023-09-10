@@ -300,7 +300,7 @@ func TutorialOffTheBoard3() []*hypp.VNode {
 
 func TutorialEnd() []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("End")),
+		html.H3(nil, hypp.Text("Great work!")),
 		spokenParagraph("You now know how to play Senet. Go to the start page to start playing.", "TutorialEnd"),
 		html.Button(
 			hypp.HProps{

@@ -6,7 +6,7 @@ import (
 )
 
 func StartTutorialAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
@@ -19,5 +19,13 @@ func StartTutorialAction() hypp.Action[*state.State] {
 		}
 		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
 		return newState
+	}
+}
+
+func ToStartPageAction() hypp.Action[*state.State] {
+	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+		return &state.State{
+			Page: state.StartPage,
+		}
 	}
 }

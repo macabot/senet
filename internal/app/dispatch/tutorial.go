@@ -184,4 +184,27 @@ func init() {
 		s.Game.Sticks.HasThrown = false
 		s.Game.Turn = 0
 	}
+	onMoveToSquare = append(
+		onMoveToSquare,
+		replaceCurrentBubbleWithNext(state.TutorialOffTheBoard2, state.TutorialOffTheBoard3),
+	)
+	// TutorialOffTheBoard3
+	onSetSpeechBubbleKind[state.TutorialOffTheBoard3] = func(s *state.State, _ int) {
+		if s.Game.Players[1].SpeechBubble.Closed {
+			b := false
+			s.Game.OverwriteHasTurn = &b
+		}
+	}
+	onToggleSpeechBubbleByKind[state.TutorialOffTheBoard3] = func(s *state.State, _ int) {
+		s.Game.OverwriteHasTurn = nil
+	}
+	onMoveToSquare = append(
+		onMoveToSquare,
+		func(s, newState *state.State) {
+			if newState.Game.Winner == nil {
+				return
+			}
+			replaceCurrentBubbleWithNext(state.TutorialOffTheBoard3, state.TutorialEnd)(s, newState)
+		},
+	)
 }

@@ -73,15 +73,15 @@ var defaultTutorialSticksGenerator = NewTutorialSticksGenerator(0)
 
 // tutorialThrownSticks must only contain values 1, 2, 3, 4 or 6.
 var tutorialThrownSticks = [...]int{
-	2,
-	1,
-	2,
-	4,
-	2,
-	3,
-	6,
-	4,
-	1,
+	2, // TutorialMove
+	1, // TutorialTradingPlaces4
+	2, // TutorialBlockingPiece2
+	4, // TutorialReturnToStart3
+	2, // TutorialMoveBackwards2
+	3, // TutorialNoMove2
+	6, // TutorialOffTheBoard2
+	4, // TutorialOffTheBoard3
+	1, // TutorialOffTheBoard3
 }
 
 func (g *TutorialSticksGenerator) Throw() int {

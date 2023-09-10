@@ -18,5 +18,6 @@ func GamePage(s *state.State) *hypp.VNode {
 			DrawAttention: s.Game.SticksDrawAttention(),
 			NoValidMoves:  len(s.Game.ValidMoves) == 0,
 		}),
+		GameOver(s),
 	)
 }
