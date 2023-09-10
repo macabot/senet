@@ -79,6 +79,9 @@ var tutorialThrownSticks = [...]int{
 	4,
 	2,
 	3,
+	6,
+	4,
+	1,
 }
 
 func (g *TutorialSticksGenerator) Throw() int {

@@ -20,7 +20,7 @@ func init() {
 		if s.Game.Players[player].SpeechBubble.Closed {
 			s.Game.Players[player].DrawAttention = true
 		} else {
-			SetSpeechBubbleKind(s, player, state.TutorialGoal)
+			SetSpeechBubbleKind(s, player, state.TutorialBoard1)
 		}
 	}
 	// TutorialBoard3
@@ -151,7 +151,36 @@ func init() {
 				),
 			},
 		})
-
+		s.Game.Sticks.HasThrown = false
+		s.Game.Turn = 0
+	}
+	onNoMove = append(
+		onNoMove,
+		replaceCurrentBubbleWithNext(state.TutorialNoMove2, state.TutorialOffTheBoard1),
+	)
+	// TutorialOffTheBoard2
+	onSetSpeechBubbleKind[state.TutorialOffTheBoard2] = func(s *state.State, _ int) {
+		// B p R x p _ _ _ _ _
+		// _ _ _ _ R _ _ _ B _
+		// _ _ R _ _ _ _ _ _ _
+		s.Game.SetBoard(&state.Board{
+			PlayerPieces: [2]state.PiecesByPosition{
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 1, Position: 29},
+					&state.Piece{ID: 2, Position: 18},
+					&state.Piece{ID: 3, Position: 30},
+					&state.Piece{ID: 4, Position: 31},
+					&state.Piece{ID: 5, Position: 32},
+				),
+				state.NewPiecesByPosition(
+					&state.Piece{ID: 6, Position: 27},
+					&state.Piece{ID: 7, Position: 14},
+					&state.Piece{ID: 8, Position: 7},
+					&state.Piece{ID: 9, Position: 33},
+					&state.Piece{ID: 10, Position: 34},
+				),
+			},
+		})
 		s.Game.Sticks.HasThrown = false
 		s.Game.Turn = 0
 	}

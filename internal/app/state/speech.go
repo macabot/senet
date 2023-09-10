@@ -7,7 +7,6 @@ const (
 	TutorialStart
 	TutorialPlayers1
 	TutorialPlayers2
-	TutorialGoal
 	TutorialBoard1
 	TutorialBoard2
 	TutorialBoard3
@@ -29,6 +28,9 @@ const (
 	TutorialMoveBackwards2
 	TutorialNoMove1
 	TutorialNoMove2
+	TutorialOffTheBoard1
+	TutorialOffTheBoard2
+	TutorialOffTheBoard3
 	TutorialEnd
 )
 

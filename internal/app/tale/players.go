@@ -54,10 +54,6 @@ var bubbles = mycontrol.LabeledSlice[state.SpeechBubbleKind]{
 		V:     state.TutorialPlayers2,
 	},
 	{
-		Label: "TutorialGoal",
-		V:     state.TutorialGoal,
-	},
-	{
 		Label: "TutorialBoard",
 		V:     state.TutorialBoard1,
 	},

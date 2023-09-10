@@ -40,19 +40,6 @@ func TutorialPlayers2() []*hypp.VNode {
 	}
 }
 
-func TutorialGoal(player int) []*hypp.VNode {
-	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Goal")),
-		spokenParagraph("The goal of Senet is to be the first player to move all of your pieces off the board.", "TutorialGoal"),
-		html.Button(
-			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard1),
-			},
-			hypp.Text("Next"),
-		),
-	}
-}
-
 func TutorialBoard1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Board - 1/3")),
@@ -284,9 +271,38 @@ func TutorialNoMove2() []*hypp.VNode {
 	}
 }
 
+func TutorialOffTheBoard1(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Off the board - 1/3")),
+		spokenParagraph("A piece that is located in top left square of the board will be moved off the board if all pieces of that color are located in the top row. Let's look at an example.", "TutorialOffTheBoard1"),
+		html.Button(
+			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialOffTheBoard2),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialOffTheBoard2() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Off the board - 2/3")),
+		spokenParagraph("All of your pieces are on the top row except for one. Move this piece to the top row. When all your pieces are in the top row, the piece on the top left square will be moved off the board.", "TutorialOffTheBoard2"),
+	}
+}
+
+// FIXME when moving blue piece off board it switching places with a red piece that was already off the board. This shouldn't happen.
+
+func TutorialOffTheBoard3() []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Off the board - 2/3")),
+		spokenParagraph("The goal of Senet is to be the first player to move all of your pieces off the board. Keep playing until all of your pieces have been moved off the board.", "TutorialOffTheBoard3"),
+	}
+}
+
 func TutorialEnd() []*hypp.VNode {
 	return []*hypp.VNode{
-		html.H3(nil, hypp.Text("Good bye")),
+		html.H3(nil, hypp.Text("End")),
 		spokenParagraph("You now know how to play Senet. Go to the start page to start playing.", "TutorialEnd"),
 		html.Button(
 			hypp.HProps{
