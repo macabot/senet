@@ -291,8 +291,6 @@ func TutorialOffTheBoard2() []*hypp.VNode {
 	}
 }
 
-// FIXME when moving blue piece off board it switching places with a red piece that was already off the board. This shouldn't happen.
-
 func TutorialOffTheBoard3() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Off the board - 2/3")),

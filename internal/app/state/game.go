@@ -158,12 +158,13 @@ func (g Game) AllOnTopRow(player int) bool {
 	return true
 }
 
-func (g Game) NextPositionOffBoard(player int) Position {
+func (g Game) NextPositionOffBoard() Position {
 	alreadyOffBoard := 0
-	piecesByPos := g.Board.PlayerPieces[player]
-	for pos := range piecesByPos {
-		if pos >= 30 {
-			alreadyOffBoard++
+	for _, piecesByPos := range g.Board.PlayerPieces {
+		for pos := range piecesByPos {
+			if pos >= 30 {
+				alreadyOffBoard++
+			}
 		}
 	}
 	return Position(30 + alreadyOffBoard)
@@ -190,7 +191,7 @@ func (g *Game) CalcValidMoves() {
 				continue
 			}
 			if pos == MoveOffBoardPosition && g.AllOnTopRow(g.Turn) {
-				g.ValidMoves[pos] = g.NextPositionOffBoard(g.Turn)
+				g.ValidMoves[pos] = g.NextPositionOffBoard()
 				continue
 			}
 
@@ -302,7 +303,7 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 		nextMove = &NextMove{
 			Player: player,
 			From:   MoveOffBoardPosition,
-			To:     g.NextPositionOffBoard(player),
+			To:     g.NextPositionOffBoard(),
 		}
 	}
 
