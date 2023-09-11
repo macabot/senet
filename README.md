@@ -40,3 +40,9 @@ You can visit the fairytale app on http://localhost:8000/.
 ```sh
 go test ./internal/app/state ./internal/pkg/...
 ```
+
+## Build
+
+```sh
+./cmd/client-hypp/build
+```

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+buildDir=$(dirname "$0")
+
+cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" "${buildDir}/public/wasm_exec.js"
+
+sass "${buildDir}/scss:${buildDir}/public"
+
+GOOS=js GOARCH=wasm go build -o "${buildDir}/public/main.wasm" "${buildDir}/main.go"
