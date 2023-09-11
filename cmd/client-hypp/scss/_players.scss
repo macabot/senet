@@ -103,8 +103,8 @@ $player-1-color: rgb(248, 206, 204);
     }
   }
 
-  &:not(.has-turn) {
-    height: 1.5rem;
+  &.has-turn {
+    border: 2px solid black;
   }
 }
 
