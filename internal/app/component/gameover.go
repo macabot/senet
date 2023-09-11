@@ -23,7 +23,7 @@ func GameOver(s *state.State) *hypp.VNode {
 			hypp.HProps{
 				"onclick": dispatch.ToStartPageAction(),
 			},
-			hypp.Text("Home"),
+			hypp.Text("Start page"),
 		),
 	)
 }
