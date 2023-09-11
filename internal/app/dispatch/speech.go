@@ -19,8 +19,9 @@ func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind
 		}
 	}
 	s.Game.Players[player].SpeechBubble = &state.SpeechBubble{
-		Kind:   kind,
-		Closed: currentClosed,
+		Kind:        kind,
+		Closed:      currentClosed,
+		DoNotRender: currentSpeechBubble.Kind != kind && currentClosed,
 	}
 	if s.Game.Players[player].SpeechBubble.Closed {
 		s.Game.Players[player].DrawAttention = true
@@ -59,6 +60,7 @@ func ToggleSpeechBubble(player int) hypp.Action[*state.State] {
 		newState.Game.Players[player].DrawAttention = false
 		currentClosed := newState.Game.Players[player].SpeechBubble.Closed
 		newState.Game.Players[player].SpeechBubble.Closed = !currentClosed
+		newState.Game.Players[player].SpeechBubble.DoNotRender = false
 
 		if onToggle, ok := onToggleSpeechBubbleByKind[newState.Game.Players[player].SpeechBubble.Kind]; ok {
 			onToggle(newState, player)

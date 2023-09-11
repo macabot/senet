@@ -12,6 +12,9 @@ import (
 )
 
 func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
+	if bubble.DoNotRender {
+		return nil
+	}
 	var speechVNodes []*hypp.VNode
 	switch bubble.Kind {
 	case state.DefaultSpeechBubble:

@@ -35,8 +35,9 @@ const (
 )
 
 type SpeechBubble struct {
-	Kind   SpeechBubbleKind
-	Closed bool
+	Kind        SpeechBubbleKind
+	Closed      bool
+	DoNotRender bool
 }
 
 func (b *SpeechBubble) Clone() *SpeechBubble {
@@ -44,7 +45,8 @@ func (b *SpeechBubble) Clone() *SpeechBubble {
 		return nil
 	}
 	return &SpeechBubble{
-		Kind:   b.Kind,
-		Closed: b.Closed,
+		Kind:        b.Kind,
+		Closed:      b.Closed,
+		DoNotRender: b.DoNotRender,
 	}
 }
