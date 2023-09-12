@@ -44,6 +44,11 @@ func (g *Game) Clone() *Game {
 	if g == nil {
 		return nil
 	}
+	var winnerClone *int
+	if g.Winner != nil {
+		w := *g.Winner
+		winnerClone = &w
+	}
 	return &Game{
 		Players: [2]*Player{
 			g.Players[0].Clone(),
@@ -59,6 +64,8 @@ func (g *Game) Clone() *Game {
 		Status:                g.Status,
 		ValidMoves:            maps.Clone(g.ValidMoves),
 		InvalidMoves:          maps.Clone(g.InvalidMoves),
+		HasMoved:              g.HasMoved,
+		Winner:                winnerClone,
 	}
 }
 
