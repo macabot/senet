@@ -24,17 +24,6 @@ body {
   }
 }
 
-// Based on https://css-tricks.com/snippets/css/orientation-lock/
-html.rotated {
-  transform: rotate(-90deg);
-  transform-origin: left top;
-  width: 100vh;
-  overflow-x: hidden;
-  position: absolute;
-  top: 100%;
-  left: 0;
-}
-
 button:not(:disabled) {
   cursor: pointer;
 }

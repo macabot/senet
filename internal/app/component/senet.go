@@ -10,11 +10,7 @@ import (
 
 func Senet(s *state.State) *hypp.VNode {
 	return html.Html(
-		hypp.HProps{
-			"class": map[string]bool{
-				"rotated": s.Rotated,
-			},
-		},
+		nil,
 		head(),
 		body(s),
 	)

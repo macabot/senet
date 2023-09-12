@@ -11,7 +11,6 @@ func TopBar(s *state.State) *hypp.VNode {
 		hypp.HProps{
 			"class": "top-bar",
 		},
-		RotateScreen(),
 		Players(CreatePlayersProps(s)),
 	)
 }

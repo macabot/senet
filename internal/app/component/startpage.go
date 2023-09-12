@@ -12,7 +12,6 @@ func StartPage(s *state.State) *hypp.VNode {
 		hypp.HProps{
 			"class": "start-page",
 		},
-		RotateScreen(),
 		html.H1(nil, hypp.Text("Senet")),
 		gameModes(),
 	)
