@@ -33,6 +33,17 @@ func ToTutorialAction() hypp.Action[*state.State] {
 	}
 }
 
+func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.Page = state.GamePage
+		newState.Game = state.NewGame()
+		newState.Game.TurnMode = state.IsBothPlayers
+		resetListeners()
+		return newState
+	}
+}
+
 func ToStartPageAction() hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 		resetListeners()
