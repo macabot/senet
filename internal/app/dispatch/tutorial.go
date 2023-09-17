@@ -11,7 +11,7 @@ func replaceCurrentBubbleWithNext(current, next state.SpeechBubbleKind) func(s, 
 	}
 }
 
-func init() {
+func registerTutorial() {
 	// TutorialPlayers2
 	onSetSpeechBubbleKind[state.TutorialPlayers2] = func(s *state.State, player int) {
 		s.Game.Players[player].DrawAttention = true

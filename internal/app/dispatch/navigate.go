@@ -5,7 +5,16 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func StartTutorialAction() hypp.Action[*state.State] {
+func resetListeners() {
+	onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
+	onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
+	onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
+	onMoveToSquare = []func(s, newState *state.State){}
+	onNoMove = []func(s, newState *state.State){}
+	onThrowSticks = []func(s, newState *state.State){}
+}
+
+func ToTutorialAction() hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.Page = state.GamePage
@@ -18,12 +27,15 @@ func StartTutorialAction() hypp.Action[*state.State] {
 			Kind: state.TutorialStart,
 		}
 		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
+		resetListeners()
+		registerTutorial()
 		return newState
 	}
 }
 
 func ToStartPageAction() hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+		resetListeners()
 		return &state.State{
 			Page: state.StartPage,
 		}

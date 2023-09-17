@@ -25,7 +25,7 @@ func gameModes() *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":   "game-mode tutorial",
-				"onclick": dispatch.StartTutorialAction(),
+				"onclick": dispatch.ToTutorialAction(),
 			},
 			hypp.Text("Tutorial"),
 		),
