@@ -18,8 +18,6 @@ type ThrowSticksGenerator interface {
 	Throw() int
 }
 
-var validSteps = [...]int{1, 2, 3, 4, 6}
-
 var _ ThrowSticksGenerator = &CryptoSticksGenerator{}
 
 type CryptoSticksGenerator struct {
@@ -35,13 +33,20 @@ func NewCryptoSticksGenerator(rng *rand.Rand) *CryptoSticksGenerator {
 var defaultCryptoSticksGenerator = NewCryptoSticksGenerator(defaultRNG)
 
 func (g CryptoSticksGenerator) Throw() int {
-	return validSteps[g.rng.Intn(len(validSteps))]
+	sum := 0
+	for i := 0; i < 4; i++ {
+		sum += g.rng.Intn(2)
+	}
+	if sum == 0 {
+		sum = 6
+	}
+	return sum
 }
 
 // cryptoSource is based on https://yourbasic.org/golang/crypto-rand-int/
 type cryptoSource struct{}
 
-func (s cryptoSource) Seed(seed int64) {}
+func (s cryptoSource) Seed(seed int64) { /* on-op */ }
 
 func (s cryptoSource) Int63() int64 {
 	return int64(s.Uint64() & ^uint64(1<<63))
