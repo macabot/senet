@@ -46,3 +46,62 @@ go test ./internal/app/state ./internal/pkg/...
 ```sh
 ./cmd/client-hypp/build
 ```
+
+## Development
+
+### Package dependency tree
+
+```mermaid
+flowchart TD
+
+subgraph cmd
+    client-hypp
+    fairytale
+end
+
+subgraph internal
+    app
+
+    subgraph app-group
+        component
+        dispatch
+        state
+        tale
+
+        subgraph tale-group
+            control
+        end
+    end
+
+    subgraph pkg
+        clone
+        set
+        stack
+        webrtc
+    end
+end
+
+client-hypp --> app
+
+fairytale --> state
+fairytale --> tale
+
+component --> state
+component --> set
+component --> dispatch
+
+dispatch --> state
+
+state --> clone
+state --> set
+
+control --> state
+
+tale --> component
+tale --> state
+tale --> control
+tale --> dispatch
+
+app --> component
+app --> state
+```
