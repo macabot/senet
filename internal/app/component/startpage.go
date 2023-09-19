@@ -45,8 +45,8 @@ func gameModes() *hypp.VNode {
 		),
 		html.Button(
 			hypp.HProps{
-				"class":    "game-mode online-pvp",
-				"disabled": true,
+				"class":   "game-mode online-pvp",
+				"onclick": dispatch.ToSignalingPageAction(),
 			},
 			hypp.Text("Online - Player vs. Player"),
 		),

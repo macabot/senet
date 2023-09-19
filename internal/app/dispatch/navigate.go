@@ -52,3 +52,12 @@ func ToStartPageAction() hypp.Action[*state.State] {
 		}
 	}
 }
+
+func ToSignalingPageAction() hypp.Action[*state.State] {
+	return func(_ *state.State, payload hypp.Payload) hypp.Dispatchable {
+		resetListeners()
+		return &state.State{
+			Page: state.SignalingPage,
+		}
+	}
+}

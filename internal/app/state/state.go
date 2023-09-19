@@ -6,14 +6,14 @@ type Page int
 
 const (
 	StartPage Page = iota
+	SignalingPage
 	GamePage
 )
 
 type State struct {
 	hypp.EmptyState
-	Game    *Game
-	Rotated bool
-	Page    Page
+	Game *Game
+	Page Page
 }
 
 func (s *State) Clone() *State {
@@ -21,8 +21,7 @@ func (s *State) Clone() *State {
 		return nil
 	}
 	return &State{
-		Game:    s.Game.Clone(),
-		Rotated: s.Rotated,
-		Page:    s.Page,
+		Game: s.Game.Clone(),
+		Page: s.Page,
 	}
 }
