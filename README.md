@@ -38,7 +38,7 @@ You can visit the fairytale app on http://localhost:8000/.
 ## Test
 
 ```sh
-go test ./internal/app/state ./internal/pkg/...
+go test $(go list ./... | grep -vE 'cmd|tale|webrtc')
 ```
 
 ## Build
@@ -51,6 +51,8 @@ go test ./internal/app/state ./internal/pkg/...
 
 ### Package dependency tree
 
+Red nodes directly or indirectly import `syscall/js`.
+
 ```mermaid
 flowchart TD
 
@@ -62,13 +64,13 @@ end
 subgraph internal
     app
 
-    subgraph app-group
+    subgraph app-group["app"]
         component
         dispatch
         state
         tale
 
-        subgraph tale-group
+        subgraph tale-group["tale"]
             control
         end
     end
@@ -104,4 +106,7 @@ tale --> dispatch
 
 app --> component
 app --> state
+
+classDef syscallJS fill:#f00;
+class client-hypp,fairytale,tale,control,webrtc syscallJS;
 ```

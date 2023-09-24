@@ -44,20 +44,23 @@ func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
 	}
 }
 
-func ToStartPageAction() hypp.Action[*state.State] {
+func toPageAction(page state.Page) hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 		resetListeners()
 		return &state.State{
-			Page: state.StartPage,
+			Page: page,
 		}
 	}
 }
 
+func ToStartPageAction() hypp.Action[*state.State] {
+	return toPageAction(state.StartPage)
+}
+
 func ToSignalingPageAction() hypp.Action[*state.State] {
-	return func(_ *state.State, payload hypp.Payload) hypp.Dispatchable {
-		resetListeners()
-		return &state.State{
-			Page: state.SignalingPage,
-		}
-	}
+	return toPageAction(state.SignalingPage)
+}
+
+func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
+	return toPageAction(state.SignalingNewGamePage)
 }
