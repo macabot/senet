@@ -38,7 +38,7 @@ You can visit the fairytale app on http://localhost:8000/.
 ## Test
 
 ```sh
-go test $(go list ./... | grep -vE 'cmd|tale|webrtc')
+go test $(go list ./... | grep -vE 'cmd|tale')
 ```
 
 ## Build
@@ -108,5 +108,5 @@ app --> component
 app --> state
 
 classDef syscallJS fill:#f00;
-class client-hypp,fairytale,tale,control,webrtc syscallJS;
+class client-hypp,fairytale,tale,control syscallJS;
 ```
