@@ -201,7 +201,7 @@ func TutorialBlockingPiece2() []*hypp.VNode {
 func TutorialReturnToStart1(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Return to start")),
-		spokenParagraph("On the top row there is the return-to-start square [return-to-start-icon]. Let's change the board to learn about it.", "TutorialReturnToStart1"),
+		spokenParagraph("The top row shows the return-to-start square [return-to-start-icon]. Let's change the board to learn about it.", "TutorialReturnToStart1"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialReturnToStart2),
