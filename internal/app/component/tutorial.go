@@ -36,7 +36,7 @@ func TutorialPlayers1(player int) []*hypp.VNode {
 func TutorialPlayers2() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Players")),
-		spokenParagraph("Click on the Tutor [player-1-icon] to hide this speech bubble, then click on it again to show the speech bubble.", "TutorialPlayers2"),
+		spokenParagraph("Click on the [tutor-icon] to hide this speech bubble, then click on it again to show the speech bubble.", "TutorialPlayers2"),
 	}
 }
 

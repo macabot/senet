@@ -105,8 +105,6 @@ func speechBubbleIcon(s string) *hypp.VNode {
 		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
 	case "[piece-1-icon]":
 		return html.Span(hypp.HProps{"class": "piece-icon player-1"})
-	case "[player-1-icon]":
-		return html.Span(hypp.HProps{"class": "player-icon player-1"})
 	case "[protected-icon]":
 		return ProtectedIcon()
 	case "[return-to-start-icon]":
@@ -154,6 +152,11 @@ func speechBubbleIcon(s string) *hypp.VNode {
 			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
 			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
 			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+		)
+	case "[tutor-icon]":
+		return html.Span(
+			hypp.HProps{"class": "player-icon player-1"},
+			hypp.Text("Tutor"),
 		)
 	default:
 		panic(fmt.Errorf("Speech bubble icon not implemented for '%s'.", s))
