@@ -11,8 +11,8 @@
 
   .board {
     flex: 1 0 100px;
-    max-width: 1200px;
-    max-height: 360px;
+    max-width: min(100vw, 1200px);
+    max-height: min(calc(100vw * 3 / 10), 360px);
   }
 
   .sticks {
