@@ -12,16 +12,18 @@ var onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, pl
 func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind) {
 	currentSpeechBubble := s.Game.Players[player].SpeechBubble
 	currentClosed := false
+	doNotRender := false
 	if currentSpeechBubble != nil {
 		currentClosed = currentSpeechBubble.Closed
 		if onUnSet, ok := onUnsetSpeechBubbleKind[currentSpeechBubble.Kind]; ok {
 			onUnSet(s, player)
 		}
+		doNotRender = currentSpeechBubble.Kind != kind && currentClosed
 	}
 	s.Game.Players[player].SpeechBubble = &state.SpeechBubble{
 		Kind:        kind,
 		Closed:      currentClosed,
-		DoNotRender: currentSpeechBubble.Kind != kind && currentClosed,
+		DoNotRender: doNotRender,
 	}
 	if s.Game.Players[player].SpeechBubble.Closed {
 		s.Game.Players[player].DrawAttention = true
