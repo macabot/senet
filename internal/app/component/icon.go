@@ -253,7 +253,7 @@ func PlayerTurnIcon() *hypp.VNode {
 	)
 }
 
-// NoMoveIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Anext_plan%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+// NoMoveIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Ado_not_disturb_on%3AFILL%401%3Bwght%40400%3BGRAD%400%3Bopsz%4048
 func NoMoveIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
@@ -262,7 +262,7 @@ func NoMoveIcon() *hypp.VNode {
 		},
 		svg.Path(
 			hypp.HProps{
-				"d": "M240-406h60q5-64 51.5-107T463-556q42 0 86 24t72 66h-88v60h187v-187h-60v86q-37-54-91-81.5T463-616q-91 0-154.5 61T240-406ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z",
+				"d": "M280-453h400v-60H280v60ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z",
 			},
 		),
 	)
