@@ -15,6 +15,7 @@ type State struct {
 	hypp.EmptyState
 	Game      *Game
 	Page      Page
+	ShowMenu  bool
 	Signaling *Signaling
 }
 
@@ -25,6 +26,7 @@ func (s *State) Clone() *State {
 	return &State{
 		Game:      s.Game.Clone(),
 		Page:      s.Page,
+		ShowMenu:  s.ShowMenu,
 		Signaling: s.Signaling.Clone(),
 	}
 }

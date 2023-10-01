@@ -64,3 +64,11 @@ func ToSignalingPageAction() hypp.Action[*state.State] {
 func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
 	return toPageAction(state.SignalingNewGamePage)
 }
+
+func ToggleMenuAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.ShowMenu = !newState.ShowMenu
+		return newState
+	}
+}

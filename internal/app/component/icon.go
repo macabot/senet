@@ -317,3 +317,18 @@ func FlowUpIcon() *hypp.VNode {
 		),
 	)
 }
+
+// MenuIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Amenu%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
+func MenuIcon() *hypp.VNode {
+	return svg.Svg(
+		hypp.HProps{
+			"viewBox": "0 -960 960 960",
+			"class":   "icon menu",
+		},
+		svg.Path(
+			hypp.HProps{
+				"d": "M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z",
+			},
+		),
+	)
+}

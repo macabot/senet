@@ -46,5 +46,11 @@ func body(s *state.State) *hypp.VNode {
 	default:
 		panic(fmt.Errorf("component not implemented for page %d", s.Page))
 	}
-	return html.Body(nil, page)
+
+	var menu *hypp.VNode
+	if s.ShowMenu {
+		menu = Menu()
+	}
+
+	return html.Body(nil, page, menu)
 }
