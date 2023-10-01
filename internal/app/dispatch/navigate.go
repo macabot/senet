@@ -66,9 +66,17 @@ func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
 }
 
 func ToggleMenuAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.ShowMenu = !newState.ShowMenu
+		return newState
+	}
+}
+
+func ToggleOrientationTipAction() hypp.Action[*state.State] {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.HideOrientationTip = !newState.HideOrientationTip
 		return newState
 	}
 }

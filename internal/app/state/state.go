@@ -13,10 +13,11 @@ const (
 
 type State struct {
 	hypp.EmptyState
-	Game      *Game
-	Page      Page
-	ShowMenu  bool
-	Signaling *Signaling
+	Game               *Game
+	Page               Page
+	ShowMenu           bool
+	HideOrientationTip bool
+	Signaling          *Signaling
 }
 
 func (s *State) Clone() *State {
@@ -24,9 +25,10 @@ func (s *State) Clone() *State {
 		return nil
 	}
 	return &State{
-		Game:      s.Game.Clone(),
-		Page:      s.Page,
-		ShowMenu:  s.ShowMenu,
-		Signaling: s.Signaling.Clone(),
+		Game:               s.Game.Clone(),
+		Page:               s.Page,
+		ShowMenu:           s.ShowMenu,
+		HideOrientationTip: s.HideOrientationTip,
+		Signaling:          s.Signaling.Clone(),
 	}
 }

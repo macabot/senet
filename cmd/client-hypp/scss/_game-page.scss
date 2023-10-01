@@ -20,3 +20,29 @@
     max-width: 1200px;
   }
 }
+
+.orientation-tip {
+  display: none;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+  position: fixed;
+  background-color: white;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  padding: 1rem;
+
+  button {
+    font-size: 1rem;
+    width: 4rem;
+  }
+}
+
+@media screen and (max-width: 1200px) and (orientation: portrait) {
+  .orientation-tip {
+    display: flex;
+  }
+}

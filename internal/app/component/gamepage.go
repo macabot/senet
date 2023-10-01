@@ -19,5 +19,6 @@ func GamePage(s *state.State) *hypp.VNode {
 			NoValidMoves:  len(s.Game.ValidMoves) == 0,
 		}),
 		GameOver(s),
+		OrientationTip(s),
 	)
 }
