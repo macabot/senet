@@ -14,6 +14,9 @@ func PlayerTurn() *control.Select[*state.State, int] {
 			return s
 		},
 		func(s *state.State) int {
+			if s.Game == nil {
+				return -1
+			}
 			return s.Game.Turn
 		},
 		[]control.SelectOption[int]{

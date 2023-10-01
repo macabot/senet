@@ -225,7 +225,7 @@ func Configuration() *control.Select[*state.State, int] {
 		},
 		func(s *state.State) int {
 			for i, configuration := range boardConfigurations {
-				if configuration.V.Equal(s.Game.Board) {
+				if s.Game != nil && configuration.V.Equal(s.Game.Board) {
 					return i
 				}
 			}

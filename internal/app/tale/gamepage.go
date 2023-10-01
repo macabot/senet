@@ -38,7 +38,9 @@ func GamePage() *fairytale.Tale[*state.State] {
 				return s
 			},
 			func(s *state.State) int {
-				if s.Game.Winner == nil {
+				if s.Game == nil {
+					return -1
+				} else if s.Game.Winner == nil {
 					return 0
 				} else if *s.Game.Winner == 0 {
 					return 1

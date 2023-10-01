@@ -18,6 +18,9 @@ func Steps() *control.Select[*state.State, int] {
 			return s
 		},
 		func(s *state.State) int {
+			if s.Game == nil {
+				return -1
+			}
 			if !s.Game.Sticks.HasThrown {
 				return 0
 			}
