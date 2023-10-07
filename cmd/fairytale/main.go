@@ -4,6 +4,7 @@ import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/app"
 	"github.com/macabot/hypp"
+	_ "github.com/macabot/hypp/jsd"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/app/tale"
