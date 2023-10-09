@@ -3,23 +3,23 @@ package webrtc
 import (
 	"errors"
 
-	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/js"
 )
 
 // await awaits a Promise.
 // Based on https://stackoverflow.com/a/68427221
-func await(js hypp.JavaScript, awaitable hypp.Value) (hypp.Value, hypp.Value) {
-	then := make(chan hypp.Value)
+func await(awaitable js.Value) (js.Value, js.Value) {
+	then := make(chan js.Value)
 	defer close(then)
-	thenFunc := js.FuncOf(func(this hypp.Value, args []hypp.Value) interface{} {
+	thenFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		then <- args[0]
 		return nil
 	})
 	defer thenFunc.Release()
 
-	catch := make(chan hypp.Value)
+	catch := make(chan js.Value)
 	defer close(catch)
-	catchFunc := js.FuncOf(func(this hypp.Value, args []hypp.Value) interface{} {
+	catchFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		catch <- args[0]
 		return nil
 	})
@@ -66,10 +66,10 @@ var DefaultPeerConnectionConfig = PeerConnectionConfig{
 }
 
 type PeerConnection struct {
-	hypp.Value
+	js.Value
 }
 
-func NewPeerConnection(js hypp.JavaScript, config PeerConnectionConfig) PeerConnection {
+func NewPeerConnection(config PeerConnectionConfig) PeerConnection {
 	return PeerConnection{js.Global().Get("RTCPeerConnection").New(config.Value())}
 }
 
@@ -91,89 +91,89 @@ var DefaultDataChannelOptions = DataChannelOptions{
 }
 
 func (c PeerConnection) CreateDataChannel(label string, options DataChannelOptions) DataChannel {
-	return DataChannel{hypp.Value(c).Call("createDataChannel", label, options.Value())}
+	return DataChannel{js.Value(c).Call("createDataChannel", label, options.Value())}
 }
 
-func (c PeerConnection) SetOnICEConnectionStateChange(js hypp.JavaScript, onICEConnectionStateChange func()) {
-	hypp.Value(c).Set("oniceconnectionstatechange", js.FuncOf(func(this hypp.Value, args []hypp.Value) any {
+func (c PeerConnection) SetOnICEConnectionStateChange(onICEConnectionStateChange func()) {
+	js.Value(c).Set("oniceconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onICEConnectionStateChange()
 		return nil
 	}))
 }
 
-func (c PeerConnection) SetOnConnectionStateChange(js hypp.JavaScript, onConnectionStateChange func()) {
-	hypp.Value(c).Set("onconnectionstatechange", js.FuncOf(func(this hypp.Value, args []hypp.Value) any {
+func (c PeerConnection) SetOnConnectionStateChange(onConnectionStateChange func()) {
+	js.Value(c).Set("onconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onConnectionStateChange()
 		return nil
 	}))
 }
 
 func (c PeerConnection) ICEConnectionState() string {
-	return hypp.Value(c).Get("iceConnectionState").String()
+	return js.Value(c).Get("iceConnectionState").String()
 }
 
-func (c PeerConnection) SetLocalDescription(js hypp.JavaScript, description SessionDescription) {
-	promise := hypp.Value(c).Call("setLocalDescription", description.Value)
-	if _, err := await(js, promise); !err.IsNull() {
+func (c PeerConnection) SetLocalDescription(description SessionDescription) {
+	promise := js.Value(c).Call("setLocalDescription", description.Value)
+	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 }
 
 func (c PeerConnection) LocalDescription() SessionDescription {
-	return SessionDescription{hypp.Value(c).Get("localDescription")}
+	return SessionDescription{js.Value(c).Get("localDescription")}
 }
 
-func (c PeerConnection) SetRemoteDescription(js hypp.JavaScript, description SessionDescription) {
-	promise := hypp.Value(c).Call("setRemoteDescription", description.Value)
-	if _, err := await(js, promise); !err.IsNull() {
+func (c PeerConnection) SetRemoteDescription(description SessionDescription) {
+	promise := js.Value(c).Call("setRemoteDescription", description.Value)
+	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 }
 
-func (c PeerConnection) CreateOffer(js hypp.JavaScript) SessionDescription {
-	promise := hypp.Value(c).Call("createOffer")
-	v, err := await(js, promise)
+func (c PeerConnection) CreateOffer() SessionDescription {
+	promise := js.Value(c).Call("createOffer")
+	v, err := await(promise)
 	if !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 	return SessionDescription{v}
 }
 
-func (c PeerConnection) CreateAnswer(js hypp.JavaScript) SessionDescription {
-	promise := hypp.Value(c).Call("createAnswer")
-	v, err := await(js, promise)
+func (c PeerConnection) CreateAnswer() SessionDescription {
+	promise := js.Value(c).Call("createAnswer")
+	v, err := await(promise)
 	if !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 	return SessionDescription{v}
 }
 
-type ICECandidate hypp.Value
+type ICECandidate js.Value
 
 type PeerConnectionICEEvent struct {
-	hypp.Value
+	js.Value
 }
 
 func (e PeerConnectionICEEvent) Candidate() ICECandidate {
-	return ICECandidate(hypp.Value(e).Get("candidate"))
+	return ICECandidate(js.Value(e).Get("candidate"))
 }
 
-func (c PeerConnection) SetOnICECandidate(js hypp.JavaScript, onICECandidate func(PeerConnectionICEEvent)) {
-	hypp.Value(c).Set("onicecandidate", js.FuncOf(func(this hypp.Value, args []hypp.Value) any {
+func (c PeerConnection) SetOnICECandidate(onICECandidate func(PeerConnectionICEEvent)) {
+	js.Value(c).Set("onicecandidate", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onICECandidate(PeerConnectionICEEvent{args[0]})
 		return nil
 	}))
 }
 
 func (c PeerConnection) SignalingState() string {
-	return hypp.Value(c).Get("signalingState").String()
+	return js.Value(c).Get("signalingState").String()
 }
 
 type SessionDescription struct {
-	hypp.Value
+	js.Value
 }
 
-func NewSessionDescription(js hypp.JavaScript, kind string, sdp string) SessionDescription {
+func NewSessionDescription(kind string, sdp string) SessionDescription {
 	return SessionDescription{js.ValueOf(map[string]any{
 		"type": kind,
 		"sdp":  sdp,
@@ -181,27 +181,27 @@ func NewSessionDescription(js hypp.JavaScript, kind string, sdp string) SessionD
 }
 
 func (d SessionDescription) SDP() string {
-	return hypp.Value(d).Get("sdp").String()
+	return js.Value(d).Get("sdp").String()
 }
 
 type DataChannel struct {
-	hypp.Value
+	js.Value
 }
 
-func (c DataChannel) SetOnOpen(js hypp.JavaScript, onOpen func()) {
-	hypp.Value(c).Set("onopen", js.FuncOf(func(this hypp.Value, args []hypp.Value) any {
+func (c DataChannel) SetOnOpen(onOpen func()) {
+	js.Value(c).Set("onopen", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onOpen()
 		return nil
 	}))
 }
 
-func (c DataChannel) SetOnMessage(js hypp.JavaScript, onMessage func()) {
-	hypp.Value(c).Set("onmessage", js.FuncOf(func(this hypp.Value, args []hypp.Value) any {
+func (c DataChannel) SetOnMessage(onMessage func()) {
+	js.Value(c).Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onMessage()
 		return nil
 	}))
 }
 
 func (c DataChannel) Send(data string) {
-	hypp.Value(c).Call("send", data)
+	js.Value(c).Call("send", data)
 }
