@@ -15,8 +15,8 @@ func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind
 	doNotRender := false
 	if currentSpeechBubble != nil {
 		currentClosed = currentSpeechBubble.Closed
-		if onUnSet, ok := onUnsetSpeechBubbleKind[currentSpeechBubble.Kind]; ok {
-			onUnSet(s, player)
+		if onUnset, ok := onUnsetSpeechBubbleKind[currentSpeechBubble.Kind]; ok {
+			onUnset(s, player)
 		}
 		doNotRender = currentSpeechBubble.Kind != kind && currentClosed
 	}

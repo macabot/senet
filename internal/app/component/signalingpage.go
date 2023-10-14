@@ -38,9 +38,15 @@ func SignalingPage(s *state.State) *hypp.VNode {
 }
 
 func SignalingNewGamePage(s *state.State) *hypp.VNode {
-	offer := ""
+	offer := "[error: Signaling is nil]"
 	if s.Signaling != nil {
-		offer = s.Signaling.Offer
+		if s.Signaling.Loading {
+			offer = "[Loading...]"
+		} else if s.Signaling.Offer == "" {
+			offer = "[error: Signaling.Offer is empty]"
+		} else {
+			offer = s.Signaling.Offer
+		}
 	}
 	return html.Main(
 		hypp.HProps{
@@ -48,7 +54,12 @@ func SignalingNewGamePage(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Copy the text below and send it to your opponent.")),
-		html.Textarea(nil, hypp.Text(offer)),
+		html.Textarea(
+			hypp.HProps{
+				"readonly": true,
+			},
+			hypp.Text(offer),
+		),
 		html.Button(
 			hypp.HProps{
 				"class":   "signaling back",

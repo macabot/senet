@@ -14,6 +14,11 @@ func resetListeners() {
 	onThrowSticks = []func(s, newState *state.State){}
 }
 
+func resetForNavigation() {
+	resetListeners()
+	resetSignaling()
+}
+
 func ToTutorialAction() hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
@@ -27,7 +32,7 @@ func ToTutorialAction() hypp.Action[*state.State] {
 			Kind: state.TutorialStart,
 		}
 		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
-		resetListeners()
+		resetForNavigation()
 		registerTutorial()
 		return newState
 	}
@@ -39,14 +44,14 @@ func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
 		newState.Game.TurnMode = state.IsBothPlayers
-		resetListeners()
+		resetForNavigation()
 		return newState
 	}
 }
 
 func toPageAction(page state.Page) hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-		resetListeners()
+		resetForNavigation()
 		return &state.State{
 			Page: page,
 		}
@@ -58,25 +63,26 @@ func ToStartPageAction() hypp.Action[*state.State] {
 }
 
 func ToSignalingPageAction() hypp.Action[*state.State] {
-	return toPageAction(state.SignalingPage)
-}
-
-func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
-	return toPageAction(state.SignalingNewGamePage)
-}
-
-func ToggleMenuAction() hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.ShowMenu = !newState.ShowMenu
-		return newState
+	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+		resetForNavigation()
+		initSignaling()
+		return &state.State{
+			Page: state.SignalingPage,
+		}
 	}
 }
 
-func ToggleOrientationTipAction() hypp.Action[*state.State] {
+func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.HideOrientationTip = !newState.HideOrientationTip
-		return newState
+		newState.Page = state.SignalingNewGamePage
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Loading = true
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
+		}
 	}
 }

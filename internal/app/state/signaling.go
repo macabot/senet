@@ -3,8 +3,9 @@ package state
 import "github.com/macabot/senet/internal/pkg/webrtc"
 
 type Signaling struct {
-	Offer  string
-	Answer string
+	Loading bool // Loading Offer or Answer.
+	Offer   string
+	Answer  string
 }
 
 func (s *Signaling) Clone() *Signaling {
@@ -12,9 +13,10 @@ func (s *Signaling) Clone() *Signaling {
 		return nil
 	}
 	return &Signaling{
-		Offer:  s.Offer,
-		Answer: s.Answer,
+		Loading: s.Loading,
+		Offer:   s.Offer,
+		Answer:  s.Answer,
 	}
 }
 
-var PeerConnection = webrtc.NewPeerConnection(webrtc.DefaultPeerConnectionConfig)
+var PeerConnection webrtc.PeerConnection
