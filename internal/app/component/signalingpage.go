@@ -15,7 +15,8 @@ func SignalingPage(s *state.State) *hypp.VNode {
 			modal = signalingModal(s, signalingNewGameOffer)
 		case state.SignalingStepNewGameAnswer:
 			modal = signalingModal(s, signalingNewGameAnswer)
-		case state.SignalingStepJoinGameOffer: // TODO
+		case state.SignalingStepJoinGameOffer:
+			modal = signalingModal(s, signalingJoinGameOffer)
 		case state.SignalingStepJoinGameAnswer: // TODO
 		}
 	}
@@ -33,8 +34,8 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		),
 		html.Button(
 			hypp.HProps{
-				"class": "cta",
-				// TODO "onclick"
+				"class":   "cta",
+				"onclick": dispatch.SetSignalingStepJoinGameOfferAction(),
 			},
 			hypp.Text("Join game"),
 		),
@@ -128,6 +129,37 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 					// TODO onclick
 				},
 				hypp.Text("Connect"),
+			),
+		),
+	)
+}
+
+func signalingJoinGameOffer(s *state.State) *hypp.VNode {
+	return html.Main(
+		hypp.HProps{
+			"class": "signaling-page",
+		},
+		html.H1(nil, hypp.Text("Online - Player vs. Player")),
+		html.P(nil, hypp.Text("Paste the offer of your opponent below.")),
+		html.Textarea(
+			hypp.HProps{
+				"id": "offer-textarea",
+			},
+		),
+		html.Div(
+			nil,
+			html.Button(
+				hypp.HProps{
+					"onclick": dispatch.ToSignalingPageAction(),
+				},
+				hypp.Text("Back"),
+			),
+			html.Button(
+				hypp.HProps{
+					"class": "cta",
+					// "onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
+				},
+				hypp.Text("Next"),
 			),
 		),
 	)
