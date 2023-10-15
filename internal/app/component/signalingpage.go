@@ -13,7 +13,8 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		switch s.Signaling.Step {
 		case state.SignalingStepNewGameOffer:
 			modal = signalingModal(s, signalingNewGameOffer)
-		case state.SignalingStepNewGameAnswer: // TODO
+		case state.SignalingStepNewGameAnswer:
+			modal = signalingModal(s, signalingNewGameAnswer)
 		case state.SignalingStepJoinGameOffer: // TODO
 		case state.SignalingStepJoinGameAnswer: // TODO
 		}
@@ -25,14 +26,14 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.Button(
 			hypp.HProps{
-				"class":   "signaling cta",
+				"class":   "cta",
 				"onclick": dispatch.SetSignalingStepNewGameOfferAction(),
 			},
 			hypp.Text("New game"),
 		),
 		html.Button(
 			hypp.HProps{
-				"class": "signaling cta",
+				"class": "cta",
 				// TODO "onclick"
 			},
 			hypp.Text("Join game"),
@@ -82,12 +83,52 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			},
 			hypp.Text(offer),
 		),
-		html.Button(
+		html.Div(
+			nil,
+			html.Button(
+				hypp.HProps{
+					"onclick": dispatch.ToSignalingPageAction(),
+				},
+				hypp.Text("Back"),
+			),
+			html.Button(
+				hypp.HProps{
+					"class":   "cta",
+					"onclick": dispatch.SetSignalingStepNewGameAnswerAction(),
+				},
+				hypp.Text("Next"),
+			),
+		),
+	)
+}
+
+func signalingNewGameAnswer(s *state.State) *hypp.VNode {
+	return html.Main(
+		hypp.HProps{
+			"class": "signaling-page",
+		},
+		html.H1(nil, hypp.Text("Online - Player vs. Player")),
+		html.P(nil, hypp.Text("Paste the answer of your opponent below.")),
+		html.Textarea(
 			hypp.HProps{
-				"class":   "signaling back",
-				"onclick": dispatch.ToSignalingPageAction(),
+				"id": "answer-textarea",
 			},
-			hypp.Text("Back"),
+		),
+		html.Div(
+			nil,
+			html.Button(
+				hypp.HProps{
+					"onclick": dispatch.SetSignalingStepNewGameOfferAction(),
+				},
+				hypp.Text("Back"),
+			),
+			html.Button(
+				hypp.HProps{
+					"class": "cta",
+					// TODO onclick
+				},
+				hypp.Text("Connect"),
+			),
 		),
 	)
 }

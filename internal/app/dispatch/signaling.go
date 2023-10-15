@@ -76,3 +76,14 @@ func SetSignalingStepNewGameOfferAction() hypp.Action[*state.State] {
 		}
 	}
 }
+
+func SetSignalingStepNewGameAnswerAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Step = state.SignalingStepNewGameAnswer
+		return newState
+	}
+}
