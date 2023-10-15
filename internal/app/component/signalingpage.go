@@ -17,7 +17,8 @@ func SignalingPage(s *state.State) *hypp.VNode {
 			modal = signalingModal(s, signalingNewGameAnswer)
 		case state.SignalingStepJoinGameOffer:
 			modal = signalingModal(s, signalingJoinGameOffer)
-		case state.SignalingStepJoinGameAnswer: // TODO
+		case state.SignalingStepJoinGameAnswer:
+			modal = signalingModal(s, signalingJoinGameAnswer)
 		}
 	}
 	return html.Main(
@@ -172,9 +173,56 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": nextDisabled,
-					// "onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
+					"onclick":  dispatch.SetSignalingStepJoinGameAnswerAction(),
 				},
 				hypp.Text("Next"),
+			),
+		),
+	)
+}
+
+func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
+	answer := "[error: Signaling is nil]"
+	connectDisabled := true
+	if s.Signaling != nil {
+		if s.Signaling.Loading {
+			answer = "[Loading...]"
+		} else if s.Signaling.Answer == "" {
+			answer = "[error: Signaling.Answer is empty]"
+		} else {
+			answer = s.Signaling.Answer
+			connectDisabled = false
+		}
+	}
+	return html.Main(
+		hypp.HProps{
+			"class": "signaling-page",
+		},
+		html.H1(nil, hypp.Text("Online - Player vs. Player")),
+		html.P(nil, hypp.Text("Copy the text below and send it to your opponent.")),
+		html.Textarea(
+			hypp.HProps{
+				"id":       "answer-textarea",
+				"readonly": true,
+				"onclick":  dispatch.EffectsAction(dispatch.SelectTextareaEffect("answer-textarea")),
+			},
+			hypp.Text(answer),
+		),
+		html.Div(
+			nil,
+			html.Button(
+				hypp.HProps{
+					"onclick": dispatch.SetSignalingStepJoinGameOfferAction(),
+				},
+				hypp.Text("Back"),
+			),
+			html.Button(
+				hypp.HProps{
+					"class":    "cta",
+					"disabled": connectDisabled,
+					// TODO onclick
+				},
+				hypp.Text("Connect"),
 			),
 		),
 	)

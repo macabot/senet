@@ -62,6 +62,41 @@ func setOfferAction(offer string) hypp.Action[*state.State] {
 	}
 }
 
+func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+			go func() {
+				if state.PeerConnection.SignalingState() != "stable" {
+					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
+					return
+				}
+				state.PeerConnection.SetRemoteDescription(webrtc.NewSessionDescription("offer", offer))
+				state.PeerConnection.SetLocalDescription(state.PeerConnection.CreateAnswer())
+				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
+					if pci.Candidate().Truthy() {
+						return
+					}
+					// FIXME answer seems to be the same as offer
+					answer := state.PeerConnection.LocalDescription().SDP()
+					dispatch(setAnswerAction(answer), nil)
+				})
+			}()
+		},
+	}
+}
+
+func setAnswerAction(answer string) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Answer = answer
+		newState.Signaling.Loading = false
+		return newState
+	}
+}
+
 func SetSignalingStepNewGameOfferAction() hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
@@ -96,6 +131,21 @@ func SetSignalingStepJoinGameOfferAction() hypp.Action[*state.State] {
 		}
 		newState.Signaling.Step = state.SignalingStepJoinGameOffer
 		return newState
+	}
+}
+
+func SetSignalingStepJoinGameAnswerAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Step = state.SignalingStepJoinGameAnswer
+		newState.Signaling.Loading = true
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
+		}
 	}
 }
 
