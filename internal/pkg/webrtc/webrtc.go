@@ -91,47 +91,51 @@ var DefaultDataChannelOptions = DataChannelOptions{
 }
 
 func (c PeerConnection) CreateDataChannel(label string, options DataChannelOptions) DataChannel {
-	return DataChannel{js.Value(c).Call("createDataChannel", label, options.Value())}
+	return DataChannel{c.Value.Call("createDataChannel", label, options.Value())}
 }
 
 func (c PeerConnection) SetOnICEConnectionStateChange(onICEConnectionStateChange func()) {
-	js.Value(c).Set("oniceconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
+	c.Value.Set("oniceconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onICEConnectionStateChange()
 		return nil
 	}))
 }
 
 func (c PeerConnection) SetOnConnectionStateChange(onConnectionStateChange func()) {
-	js.Value(c).Set("onconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
+	c.Value.Set("onconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onConnectionStateChange()
 		return nil
 	}))
 }
 
 func (c PeerConnection) ICEConnectionState() string {
-	return js.Value(c).Get("iceConnectionState").String()
+	return c.Value.Get("iceConnectionState").String()
+}
+
+func (c PeerConnection) ConnectionState() string {
+	return c.Value.Get("connectionState").String()
 }
 
 func (c PeerConnection) SetLocalDescription(description SessionDescription) {
-	promise := js.Value(c).Call("setLocalDescription", description.Value)
+	promise := c.Value.Call("setLocalDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 }
 
 func (c PeerConnection) LocalDescription() SessionDescription {
-	return SessionDescription{js.Value(c).Get("localDescription")}
+	return SessionDescription{c.Value.Get("localDescription")}
 }
 
 func (c PeerConnection) SetRemoteDescription(description SessionDescription) {
-	promise := js.Value(c).Call("setRemoteDescription", description.Value)
+	promise := c.Value.Call("setRemoteDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 }
 
 func (c PeerConnection) CreateOffer() SessionDescription {
-	promise := js.Value(c).Call("createOffer")
+	promise := c.Value.Call("createOffer")
 	v, err := await(promise)
 	if !err.IsNull() {
 		panic(errors.New(err.String()))
@@ -140,7 +144,7 @@ func (c PeerConnection) CreateOffer() SessionDescription {
 }
 
 func (c PeerConnection) CreateAnswer() SessionDescription {
-	promise := js.Value(c).Call("createAnswer")
+	promise := c.Value.Call("createAnswer")
 	v, err := await(promise)
 	if !err.IsNull() {
 		panic(errors.New(err.String()))
@@ -155,18 +159,18 @@ type PeerConnectionICEEvent struct {
 }
 
 func (e PeerConnectionICEEvent) Candidate() ICECandidate {
-	return ICECandidate(js.Value(e).Get("candidate"))
+	return ICECandidate(e.Value.Get("candidate"))
 }
 
 func (c PeerConnection) SetOnICECandidate(onICECandidate func(PeerConnectionICEEvent)) {
-	js.Value(c).Set("onicecandidate", js.FuncOf(func(this js.Value, args []js.Value) any {
+	c.Value.Set("onicecandidate", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onICECandidate(PeerConnectionICEEvent{args[0]})
 		return nil
 	}))
 }
 
 func (c PeerConnection) SignalingState() string {
-	return js.Value(c).Get("signalingState").String()
+	return c.Value.Get("signalingState").String()
 }
 
 type SessionDescription struct {
@@ -181,7 +185,7 @@ func NewSessionDescription(kind string, sdp string) SessionDescription {
 }
 
 func (d SessionDescription) SDP() string {
-	return js.Value(d).Get("sdp").String()
+	return d.Value.Get("sdp").String()
 }
 
 type DataChannel struct {
@@ -189,19 +193,19 @@ type DataChannel struct {
 }
 
 func (c DataChannel) SetOnOpen(onOpen func()) {
-	js.Value(c).Set("onopen", js.FuncOf(func(this js.Value, args []js.Value) any {
+	c.Value.Set("onopen", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onOpen()
 		return nil
 	}))
 }
 
-func (c DataChannel) SetOnMessage(onMessage func()) {
-	js.Value(c).Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
-		onMessage()
+func (c DataChannel) SetOnMessage(onMessage func(e js.Value)) {
+	c.Value.Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
+		onMessage(args[0])
 		return nil
 	}))
 }
 
 func (c DataChannel) Send(data string) {
-	js.Value(c).Call("send", data)
+	c.Value.Call("send", data)
 }

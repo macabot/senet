@@ -20,3 +20,4 @@ func (s *Signaling) Clone() *Signaling {
 }
 
 var PeerConnection webrtc.PeerConnection
+var DataChannel webrtc.DataChannel
