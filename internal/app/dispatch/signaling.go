@@ -61,3 +61,18 @@ func setOfferAction(offer string) hypp.Action[*state.State] {
 		return newState
 	}
 }
+
+func SetSignalingStepNewGameOfferAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Step = state.SignalingStepNewGameOffer
+		newState.Signaling.Loading = true
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
+		}
+	}
+}

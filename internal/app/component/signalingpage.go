@@ -8,6 +8,16 @@ import (
 )
 
 func SignalingPage(s *state.State) *hypp.VNode {
+	var modal *hypp.VNode
+	if s.Signaling != nil {
+		switch s.Signaling.Step {
+		case state.SignalingStepNewGameOffer:
+			modal = signalingModal(s, signalingNewGameOffer)
+		case state.SignalingStepNewGameAnswer: // TODO
+		case state.SignalingStepJoinGameOffer: // TODO
+		case state.SignalingStepJoinGameAnswer: // TODO
+		}
+	}
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
@@ -15,14 +25,14 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.Button(
 			hypp.HProps{
-				"class":   "signaling new-game",
-				"onclick": dispatch.ToSignalingNewGamePageAction(),
+				"class":   "signaling cta",
+				"onclick": dispatch.SetSignalingStepNewGameOfferAction(),
 			},
 			hypp.Text("New game"),
 		),
 		html.Button(
 			hypp.HProps{
-				"class": "signaling join-game",
+				"class": "signaling cta",
 				// TODO "onclick"
 			},
 			hypp.Text("Join game"),
@@ -34,10 +44,20 @@ func SignalingPage(s *state.State) *hypp.VNode {
 			},
 			hypp.Text("Back"),
 		),
+		modal,
 	)
 }
 
-func SignalingNewGamePage(s *state.State) *hypp.VNode {
+func signalingModal(s *state.State, f func(s *state.State) *hypp.VNode) *hypp.VNode {
+	return html.Div(
+		hypp.HProps{
+			"class": "signaling-modal",
+		},
+		f(s),
+	)
+}
+
+func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
 	if s.Signaling != nil {
 		if s.Signaling.Loading {

@@ -71,18 +71,3 @@ func ToSignalingPageAction() hypp.Action[*state.State] {
 		}
 	}
 }
-
-func ToSignalingNewGamePageAction() hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Page = state.SignalingNewGamePage
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Loading = true
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
-		}
-	}
-}
