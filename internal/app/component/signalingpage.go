@@ -56,7 +56,9 @@ func SignalingNewGamePage(s *state.State) *hypp.VNode {
 		html.P(nil, hypp.Text("Copy the text below and send it to your opponent.")),
 		html.Textarea(
 			hypp.HProps{
+				"id":       "offer-textarea",
 				"readonly": true,
+				"onclick":  dispatch.EffectsAction(dispatch.SelectTextareaEffect("offer-textarea")),
 			},
 			hypp.Text(offer),
 		),
