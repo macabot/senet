@@ -61,6 +61,7 @@ func signalingModal(s *state.State, f func(s *state.State) *hypp.VNode) *hypp.VN
 
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
+	nextDisabled := true
 	if s.Signaling != nil {
 		if s.Signaling.Loading {
 			offer = "[Loading...]"
@@ -68,6 +69,7 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			offer = "[error: Signaling.Offer is empty]"
 		} else {
 			offer = s.Signaling.Offer
+			nextDisabled = false
 		}
 	}
 	return html.Main(
@@ -94,8 +96,9 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":   "cta",
-					"onclick": dispatch.SetSignalingStepNewGameAnswerAction(),
+					"class":    "cta",
+					"disabled": nextDisabled,
+					"onclick":  dispatch.SetSignalingStepNewGameAnswerAction(),
 				},
 				hypp.Text("Next"),
 			),
@@ -104,6 +107,10 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 }
 
 func signalingNewGameAnswer(s *state.State) *hypp.VNode {
+	connectDisabled := true
+	if s.Signaling != nil {
+		connectDisabled = s.Signaling.Answer == ""
+	}
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
@@ -112,7 +119,8 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		html.P(nil, hypp.Text("Paste the answer of your opponent below.")),
 		html.Textarea(
 			hypp.HProps{
-				"id": "answer-textarea",
+				"id":      "answer-textarea",
+				"oninput": dispatch.SetSignalingAnswerAction(),
 			},
 		),
 		html.Div(
@@ -125,7 +133,8 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class": "cta",
+					"class":    "cta",
+					"disabled": connectDisabled,
 					// TODO onclick
 				},
 				hypp.Text("Connect"),
@@ -135,6 +144,10 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 }
 
 func signalingJoinGameOffer(s *state.State) *hypp.VNode {
+	nextDisabled := true
+	if s.Signaling != nil {
+		nextDisabled = s.Signaling.Offer == ""
+	}
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
@@ -143,7 +156,8 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 		html.P(nil, hypp.Text("Paste the offer of your opponent below.")),
 		html.Textarea(
 			hypp.HProps{
-				"id": "offer-textarea",
+				"id":      "offer-textarea",
+				"oninput": dispatch.SetSignalingOfferAction(),
 			},
 		),
 		html.Div(
@@ -156,7 +170,8 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class": "cta",
+					"class":    "cta",
+					"disabled": nextDisabled,
 					// "onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
 				},
 				hypp.Text("Next"),

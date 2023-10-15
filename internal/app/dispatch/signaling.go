@@ -98,3 +98,27 @@ func SetSignalingStepJoinGameOfferAction() hypp.Action[*state.State] {
 		return newState
 	}
 }
+
+func SetSignalingOfferAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		event := payload.(window.Event)
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Offer = event.Target().Value()
+		return newState
+	}
+}
+
+func SetSignalingAnswerAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		event := payload.(window.Event)
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Answer = event.Target().Value()
+		return newState
+	}
+}
