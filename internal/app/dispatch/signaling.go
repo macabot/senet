@@ -10,6 +10,7 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+// TODO replace with Subscribers
 func initSignaling() {
 	state.PeerConnection = webrtc.NewPeerConnection(webrtc.DefaultPeerConnectionConfig)
 	state.PeerConnection.SetOnICEConnectionStateChange(func() {
@@ -26,6 +27,64 @@ func initSignaling() {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
 		window.Console().Log("DataChannel message event", e.Get("data"))
 	})
+}
+
+func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.PeerConnection.SetOnICEConnectionStateChange(func() {
+		iceConnectionState := state.PeerConnection.ICEConnectionState()
+		window.Console().Log("PeerConnection.ICEConnectionState", iceConnectionState)
+		dispatch(SetICEConnectionStateAction(iceConnectionState), nil)
+	})
+	return func() {
+		dispatch(SetICEConnectionStateAction(""), nil)
+	}
+}
+
+func SetICEConnectionStateAction(iceConnectionState string) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.ICEConnectionState = iceConnectionState
+		return newState
+	}
+}
+
+func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.PeerConnection.SetOnConnectionStateChange(func() {
+		connectionState := state.PeerConnection.ConnectionState()
+		window.Console().Log("PeerConnection.ConnectionState", connectionState)
+		dispatch(SetConnectionStateAction(connectionState), nil)
+	})
+	return func() {
+		dispatch(SetConnectionStateAction(""), nil)
+	}
+}
+
+func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.ConnectionState = connectionState
+		return newState
+	}
+}
+
+func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.DataChannel.SetOnOpen(func() {
+		window.Console().Log("DataChannel open event")
+	})
+	return func() {}
+}
+
+func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.DataChannel.SetOnMessage(func(e js.Value) {
+		window.Console().Log("DataChannel message event", e.Get("data"))
+	})
+	return func() {}
 }
 
 func resetSignaling() {
