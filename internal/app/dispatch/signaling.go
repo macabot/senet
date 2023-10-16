@@ -76,7 +76,6 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 					if pci.Candidate().Truthy() {
 						return
 					}
-					// FIXME answer seems to be the same as offer
 					answer := state.PeerConnection.LocalDescription().SDP()
 					dispatch(setAnswerAction(answer), nil)
 				})
