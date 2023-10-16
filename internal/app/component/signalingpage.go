@@ -84,8 +84,8 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 				"id":       "offer-textarea",
 				"readonly": true,
 				"onclick":  dispatch.EffectsAction(dispatch.SelectTextareaEffect("offer-textarea")),
+				"value":    offer,
 			},
-			hypp.Text(offer),
 		),
 		html.Div(
 			nil,
@@ -205,8 +205,8 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 				"id":       "answer-textarea",
 				"readonly": true,
 				"onclick":  dispatch.EffectsAction(dispatch.SelectTextareaEffect("answer-textarea")),
+				"value":    answer,
 			},
-			hypp.Text(answer),
 		),
 		html.Div(
 			nil,
