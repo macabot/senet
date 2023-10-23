@@ -10,23 +10,22 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
-// TODO replace with Subscribers
-func initSignaling() {
+func initSignaling(s *state.State) {
 	state.PeerConnection = webrtc.NewPeerConnection(webrtc.DefaultPeerConnectionConfig)
-	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		window.Console().Log("PeerConnection.ICEConnectionState", state.PeerConnection.ICEConnectionState())
-	})
-	state.PeerConnection.SetOnConnectionStateChange(func() {
-		window.Console().Log("PeerConnection.ConnectionState", state.PeerConnection.ConnectionState())
-	})
-
 	state.DataChannel = state.PeerConnection.CreateDataChannel("chat", webrtc.DefaultDataChannelOptions)
-	state.DataChannel.SetOnOpen(func() {
-		window.Console().Log("DataChannel open event")
-	})
-	state.DataChannel.SetOnMessage(func(e js.Value) {
-		window.Console().Log("DataChannel message event", e.Get("data"))
-	})
+
+	if s.Signaling == nil {
+		s.Signaling = &state.Signaling{}
+	}
+	s.Signaling.Initialized = true
+}
+
+func resetSignaling(s *state.State) {
+	state.PeerConnection = webrtc.PeerConnection{}
+	state.DataChannel = webrtc.DataChannel{}
+	if s.Signaling != nil {
+		s.Signaling.Initialized = false
+	}
 }
 
 func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
@@ -85,11 +84,6 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 		window.Console().Log("DataChannel message event", e.Get("data"))
 	})
 	return func() {}
-}
-
-func resetSignaling() {
-	state.PeerConnection = webrtc.PeerConnection{}
-	state.DataChannel = webrtc.DataChannel{}
 }
 
 func CreatePeerConnectionOfferEffect() hypp.Effect {

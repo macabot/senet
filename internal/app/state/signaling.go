@@ -14,9 +14,8 @@ const (
 
 type Signaling struct {
 	Step SignalingStep
-	// When true, create the PeerConnection and DataChannel.
-	// When false, reset the PeerConnection and DataChannel.
-	Initialize         bool
+	// When true, the PeerConnection and DataChannel are set.
+	Initialized        bool
 	ICEConnectionState string
 	ConnectionState    string
 	// Loading Offer or Answer.
@@ -31,7 +30,7 @@ func (s *Signaling) Clone() *Signaling {
 	}
 	return &Signaling{
 		Step:               s.Step,
-		Initialize:         s.Initialize,
+		Initialized:        s.Initialized,
 		ICEConnectionState: s.ICEConnectionState,
 		ConnectionState:    s.ConnectionState,
 		Loading:            s.Loading,

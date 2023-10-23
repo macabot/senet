@@ -16,23 +16,23 @@ func Run(element window.Element) {
 		View: component.Senet,
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {
-			initialize := s.Signaling != nil && s.Signaling.Initialize
+			initialized := s.Signaling != nil && s.Signaling.Initialized
 			return []hypp.Subscription{
 				{
 					Subscriber: dispatch.OnICEConnectionStateChangeSubscriber,
-					Disabled:   !initialize,
+					Disabled:   !initialized,
 				},
 				{
 					Subscriber: dispatch.OnConnectionStateChangeSubscriber,
-					Disabled:   !initialize,
+					Disabled:   !initialized,
 				},
 				{
 					Subscriber: dispatch.OnDataChannelOpenSubscriber,
-					Disabled:   !initialize,
+					Disabled:   !initialized,
 				},
 				{
 					Subscriber: dispatch.OnDataChannelMessageSubscriber,
-					Disabled:   !initialize,
+					Disabled:   !initialized,
 				},
 			}
 		},
