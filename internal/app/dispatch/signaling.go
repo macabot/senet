@@ -224,3 +224,44 @@ func SetSignalingAnswerAction() hypp.Action[*state.State] {
 		return newState
 	}
 }
+
+func ConnectNewGameAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Loading = true
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
+		}
+	}
+}
+
+func ConnectNewGameEffect(answer string) hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+			go func() {
+				signalingState := state.PeerConnection.SignalingState()
+				if signalingState != "have-local-offer" {
+					window.Console().Log("ConnectNewGameEffect expected signaling state 'have-local-offer', got '%s'.", signalingState)
+					return
+				}
+				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("answer", answer))
+				dispatch(setSignalingLoadingAction(false), nil)
+			}()
+		},
+	}
+}
+
+func setSignalingLoadingAction(loading bool) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Loading = loading
+		return newState
+	}
+}

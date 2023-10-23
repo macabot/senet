@@ -164,7 +164,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": connectDisabled,
-					// TODO onclick
+					"onclick":  dispatch.ConnectNewGameAction(),
 				},
 				hypp.Text("Connect"),
 			),
