@@ -96,7 +96,7 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
-				state.PeerConnection.SetLocalDescription(state.PeerConnection.CreateOffer())
+				state.PeerConnection.AwaitSetLocalDescription(state.PeerConnection.AwaitCreateOffer())
 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
 					if pci.Candidate().Truthy() {
 						return
@@ -129,8 +129,8 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
 					return
 				}
-				state.PeerConnection.SetRemoteDescription(webrtc.NewSessionDescription("offer", offer))
-				state.PeerConnection.SetLocalDescription(state.PeerConnection.CreateAnswer())
+				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("offer", offer))
+				state.PeerConnection.AwaitSetLocalDescription(state.PeerConnection.AwaitCreateAnswer())
 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
 					if pci.Candidate().Truthy() {
 						return
