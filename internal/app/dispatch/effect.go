@@ -4,9 +4,10 @@ import (
 	"time"
 
 	"github.com/macabot/hypp"
+	"github.com/macabot/senet/internal/app/state"
 )
 
-func DelayedAction[S hypp.State](action hypp.Action[S], delay time.Duration) hypp.Effect {
+func DelayedAction(action hypp.Action[*state.State], delay time.Duration) hypp.Effect {
 	return Delayed(action, delay)
 }
 
@@ -18,5 +19,14 @@ func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 				dispatch(dispatchable, payload)
 			}()
 		},
+	}
+}
+
+func EffectsAction(effects ...hypp.Effect) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		return hypp.StateAndEffects[*state.State]{
+			State:   s,
+			Effects: effects,
+		}
 	}
 }

@@ -38,13 +38,6 @@ func gameModes() *hypp.VNode {
 		),
 		html.Button(
 			hypp.HProps{
-				"class":    "game-mode local-pvb",
-				"disabled": true,
-			},
-			hypp.Text("Local - Player vs. Bot"),
-		),
-		html.Button(
-			hypp.HProps{
 				"class":   "game-mode online-pvp",
 				"onclick": dispatch.ToSignalingPageAction(),
 			},

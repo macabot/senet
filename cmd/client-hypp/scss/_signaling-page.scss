@@ -16,8 +16,7 @@
     padding: 10px;
   }
 
-  .new-game,
-  .join-game {
+  .cta {
     background-color: lightgreen;
   }
 
@@ -26,4 +25,13 @@
     height: 10rem;
     flex: 1;
   }
+}
+
+.signaling-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
 }
