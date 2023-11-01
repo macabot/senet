@@ -1,0 +1,24 @@
+#!/bin/bash
+
+rootDir=$(dirname "$0")
+
+for arg in "$@"; do
+    if [ "$arg" = "wasm_exec.js" ] || [ "$arg" = "all" ]; then
+        cp \
+            "$(go env GOROOT)/misc/wasm/wasm_exec.js" \
+            "${rootDir}/cmd/client-hypp/public/wasm_exec.js"
+    elif [ "$arg" = "sass" ] || [ "$arg" = "all" ]; then
+        sass "${rootDir}/cmd/client-hypp/scss:${rootDir}/cmd/client-hypp/public"
+    elif [ "$arg" = "client-hypp" ] || [ "$arg" = "all" ]; then
+        GOOS=js GOARCH=wasm go build \
+            -o "${rootDir}/cmd/client-hypp/public/main.wasm" \
+            "${rootDir}/cmd/client-hypp/main.go"
+    elif [ "$arg" = "fairytale" ] || [ "$arg" = "all" ]; then
+        GOOS=js GOARCH=wasm go build \
+            -o "${rootDir}/cmd/fairytale/main.wasm" \
+            "${rootDir}/cmd/fairytale/main.go"
+    else
+        echo "Unknown argument '$arg'." >&2
+        exit 1
+    fi
+done

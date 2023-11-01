@@ -13,8 +13,13 @@ const (
 )
 
 type Signaling struct {
-	Step    SignalingStep
-	Loading bool // Loading Offer or Answer.
+	Step SignalingStep
+	// When true, the PeerConnection and DataChannel are set.
+	Initialized        bool
+	ICEConnectionState string
+	ConnectionState    string
+	// Loading Offer or Answer.
+	Loading bool
 	Offer   string
 	Answer  string
 }
@@ -24,10 +29,13 @@ func (s *Signaling) Clone() *Signaling {
 		return nil
 	}
 	return &Signaling{
-		Step:    s.Step,
-		Loading: s.Loading,
-		Offer:   s.Offer,
-		Answer:  s.Answer,
+		Step:               s.Step,
+		Initialized:        s.Initialized,
+		ICEConnectionState: s.ICEConnectionState,
+		ConnectionState:    s.ConnectionState,
+		Loading:            s.Loading,
+		Offer:              s.Offer,
+		Answer:             s.Answer,
 	}
 }
 

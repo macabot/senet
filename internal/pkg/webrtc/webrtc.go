@@ -116,7 +116,7 @@ func (c PeerConnection) ConnectionState() string {
 	return c.Value.Get("connectionState").String()
 }
 
-func (c PeerConnection) SetLocalDescription(description SessionDescription) {
+func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) {
 	promise := c.Value.Call("setLocalDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
@@ -127,14 +127,14 @@ func (c PeerConnection) LocalDescription() SessionDescription {
 	return SessionDescription{c.Value.Get("localDescription")}
 }
 
-func (c PeerConnection) SetRemoteDescription(description SessionDescription) {
+func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) {
 	promise := c.Value.Call("setRemoteDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
 		panic(errors.New(err.String()))
 	}
 }
 
-func (c PeerConnection) CreateOffer() SessionDescription {
+func (c PeerConnection) AwaitCreateOffer() SessionDescription {
 	promise := c.Value.Call("createOffer")
 	v, err := await(promise)
 	if !err.IsNull() {
@@ -143,7 +143,7 @@ func (c PeerConnection) CreateOffer() SessionDescription {
 	return SessionDescription{v}
 }
 
-func (c PeerConnection) CreateAnswer() SessionDescription {
+func (c PeerConnection) AwaitCreateAnswer() SessionDescription {
 	promise := c.Value.Call("createAnswer")
 	v, err := await(promise)
 	if !err.IsNull() {

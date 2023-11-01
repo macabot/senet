@@ -14,9 +14,9 @@ func resetListeners() {
 	onThrowSticks = []func(s, newState *state.State){}
 }
 
-func resetForNavigation() {
+func resetForNavigation(s *state.State) {
 	resetListeners()
-	resetSignaling()
+	resetSignaling(s)
 }
 
 func ToTutorialAction() hypp.Action[*state.State] {
@@ -32,7 +32,7 @@ func ToTutorialAction() hypp.Action[*state.State] {
 			Kind: state.TutorialStart,
 		}
 		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
-		resetForNavigation()
+		resetForNavigation(newState)
 		registerTutorial()
 		return newState
 	}
@@ -44,17 +44,18 @@ func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
 		newState.Game.TurnMode = state.IsBothPlayers
-		resetForNavigation()
+		resetForNavigation(newState)
 		return newState
 	}
 }
 
 func toPageAction(page state.Page) hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-		resetForNavigation()
-		return &state.State{
+		newState := &state.State{
 			Page: page,
 		}
+		resetForNavigation(newState)
+		return newState
 	}
 }
 
@@ -64,10 +65,11 @@ func ToStartPageAction() hypp.Action[*state.State] {
 
 func ToSignalingPageAction() hypp.Action[*state.State] {
 	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-		resetForNavigation()
-		initSignaling()
-		return &state.State{
+		newState := &state.State{
 			Page: state.SignalingPage,
 		}
+		resetForNavigation(newState)
+		initSignaling(newState)
+		return newState
 	}
 }

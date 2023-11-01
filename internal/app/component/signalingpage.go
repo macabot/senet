@@ -60,6 +60,32 @@ func signalingModal(s *state.State, f func(s *state.State) *hypp.VNode) *hypp.VN
 	)
 }
 
+func connectionStates(s *state.State) *hypp.VNode {
+	iceConnectionState := "[unset]"
+	connectionState := "[unset]"
+	if s.Signaling != nil {
+		if s.Signaling.ICEConnectionState != "" {
+			iceConnectionState = s.Signaling.ICEConnectionState
+		}
+		if s.Signaling.ConnectionState != "" {
+			connectionState = s.Signaling.ConnectionState
+		}
+	}
+	return html.Div(
+		hypp.HProps{"class": "connection-state"},
+		html.Div(
+			nil,
+			html.Span(nil, hypp.Text("ICE connection state:")),
+			html.B(nil, hypp.Text(iceConnectionState)),
+		),
+		html.Div(
+			nil,
+			html.Span(nil, hypp.Text("Connection state:")),
+			html.B(nil, hypp.Text(connectionState)),
+		),
+	)
+}
+
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
 	nextDisabled := true
@@ -87,6 +113,7 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 				"value":    offer,
 			},
 		),
+		connectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
@@ -124,6 +151,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 				"oninput": dispatch.SetSignalingAnswerAction(),
 			},
 		),
+		connectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
@@ -136,7 +164,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": connectDisabled,
-					// TODO onclick
+					"onclick":  dispatch.ConnectNewGameAction(),
 				},
 				hypp.Text("Connect"),
 			),
@@ -161,6 +189,7 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 				"oninput": dispatch.SetSignalingOfferAction(),
 			},
 		),
+		connectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
@@ -208,6 +237,7 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 				"value":    answer,
 			},
 		),
+		connectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
