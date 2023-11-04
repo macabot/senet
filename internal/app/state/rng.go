@@ -11,6 +11,7 @@ type SticksGeneratorKind int
 const (
 	CryptoSticksGeneratorKind SticksGeneratorKind = iota
 	TutorialSticksGeneratorKind
+	CommitmentSchemeGeneratorKind
 )
 
 type ThrowSticksGenerator interface {
