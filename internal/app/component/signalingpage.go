@@ -136,8 +136,30 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 
 func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 	connectDisabled := true
+	connectionState := ""
 	if s.Signaling != nil {
 		connectDisabled = s.Signaling.Answer == ""
+		connectionState = s.Signaling.ConnectionState
+	}
+	var ctaButton *hypp.VNode
+	if connectionState == "connecting" || connectionState == "connected" {
+		ctaButton = html.Button(
+			hypp.HProps{
+				"class":    "cta",
+				"disabled": connectionState == "connecting",
+				// "onclick"
+			},
+			hypp.Text("Play"),
+		)
+	} else {
+		ctaButton = html.Button(
+			hypp.HProps{
+				"class":    "cta",
+				"disabled": connectDisabled,
+				"onclick":  dispatch.ConnectNewGameAction(),
+			},
+			hypp.Text("Connect"),
+		)
 	}
 	return html.Main(
 		hypp.HProps{
@@ -160,14 +182,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 				},
 				hypp.Text("Back"),
 			),
-			html.Button(
-				hypp.HProps{
-					"class":    "cta",
-					"disabled": connectDisabled,
-					"onclick":  dispatch.ConnectNewGameAction(),
-				},
-				hypp.Text("Connect"),
-			),
+			ctaButton,
 		),
 	)
 }
