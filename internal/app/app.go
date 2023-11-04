@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/component"
@@ -20,7 +18,6 @@ func Run(element window.Element) {
 		// FIXME this causes error: Uncaught InternalError: too much recursion
 		Subscriptions: func(s *state.State) []hypp.Subscription {
 			initialized := s.Signaling != nil && s.Signaling.Initialized
-			fmt.Println("Signaling.Initialized", initialized)
 			return []hypp.Subscription{
 				{
 					Subscriber: dispatch.OnICEConnectionStateChangeSubscriber,
