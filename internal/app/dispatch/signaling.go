@@ -18,6 +18,8 @@ func initSignaling(s *state.State) {
 		s.Signaling = &state.Signaling{}
 	}
 	s.Signaling.Initialized = true
+	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
+	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
 }
 
 func resetSignaling(s *state.State) {
