@@ -363,7 +363,7 @@ func (g *Game) NoMove(player int) error {
 	return nil
 }
 
-func (g *Game) ThrowSticks() {
-	g.Sticks.Throw()
+func (g *Game) ThrowSticks(s *State) {
+	g.Sticks.Throw(s)
 	g.CalcValidMoves()
 }

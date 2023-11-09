@@ -81,8 +81,8 @@ func (s Sticks) generator() ThrowSticksGenerator {
 	}
 }
 
-func (s *Sticks) Throw() {
-	steps := s.generator().Throw()
+func (s *Sticks) Throw(state *State) {
+	steps := s.generator().Throw(state)
 	s.SetSteps(steps)
 	s.HasThrown = true
 }

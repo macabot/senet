@@ -17,6 +17,7 @@ type State struct {
 	ShowMenu           bool
 	HideOrientationTip bool
 	Signaling          *Signaling
+	CommitmentScheme   CommitmentScheme
 }
 
 func (s *State) Clone() *State {
@@ -29,5 +30,6 @@ func (s *State) Clone() *State {
 		ShowMenu:           s.ShowMenu,
 		HideOrientationTip: s.HideOrientationTip,
 		Signaling:          s.Signaling.Clone(),
+		CommitmentScheme:   s.CommitmentScheme.Clone(),
 	}
 }
