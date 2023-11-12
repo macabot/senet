@@ -69,8 +69,23 @@ func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] 
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
+		oldConnectionState := newState.Signaling.ConnectionState
 		newState.Signaling.ConnectionState = connectionState
-		return newState
+
+		var effects []hypp.Effect
+		if oldConnectionState != "connected" && connectionState == "connected" {
+			// TODO only one device should send a message.
+			newState.CommitmentScheme = state.CommitmentScheme{
+				FlipperSecret: state.GenerateSecret(),
+			}
+			effects = []hypp.Effect{
+				SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
+			}
+		}
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: effects,
+		}
 	}
 }
 

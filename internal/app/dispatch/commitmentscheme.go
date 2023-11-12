@@ -1,6 +1,8 @@
 package dispatch
 
 import (
+	"fmt"
+
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/senet/internal/app/state"
@@ -20,12 +22,51 @@ type CallerSecretAndPredictions struct {
 	Predictions [4]bool
 }
 
+func flipsToValue(flips [4]bool) js.Value {
+	return js.ValueOf([]any{flips[0], flips[1], flips[2], flips[3]})
+}
+
+func (c CallerSecretAndPredictions) ToValue() js.Value {
+	return js.ValueOf(map[string]any{
+		"Secret":      c.Secret,
+		"Predictions": flipsToValue(c.Predictions),
+	})
+}
+
 type CommitmentSchemeMessage[T any] struct {
 	Kind CommitmentMessageKind
 	Data T
 }
 
-func jsonStrigify(v any) string {
+func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
+	var data js.Value
+	switch d := any(m.Data).(type) {
+	case string:
+		data = js.ValueOf(d)
+	case [4]bool:
+		data = flipsToValue(d)
+	case CallerSecretAndPredictions:
+		data = d.ToValue()
+	default:
+		panic("cannot convert CommitmentSchemeMessage.Data to js.Value")
+	}
+	x := map[string]interface{}{
+		"Kind": int(m.Kind),
+		"Data": data,
+	}
+	fmt.Println("A")
+	fmt.Println(js.ValueOf(int(m.Kind)))
+	fmt.Println("B")
+	fmt.Println(js.ValueOf(data))
+	fmt.Println("C")
+	fmt.Printf("%#v\n", x)
+	// FIXME requires fix in hypp/jsd.ValueOf
+	value := js.ValueOf(x)
+	fmt.Printf("%#v\n", value)
+	return value
+}
+
+func jsonStringify(v js.Value) string {
 	return js.Global().Get("JSON").Call("stringify", v).String()
 }
 
@@ -72,7 +113,7 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 					Kind: SendFlipperSecretKind,
 					Data: flipperSecret,
 				}
-				state.DataChannel.Send(jsonStrigify(message))
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -109,7 +150,7 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 					Kind: SendCommitmentKind,
 					Data: commitment,
 				}
-				state.DataChannel.Send(jsonStrigify(message))
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -141,7 +182,7 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 					Kind: SendFlipperResultsKind,
 					Data: flipperResults,
 				}
-				state.DataChannel.Send(jsonStrigify(message))
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -175,7 +216,7 @@ func SendCallerSecretAndPredictionsEffect(
 						Predictions: callerPredictions,
 					},
 				}
-				state.DataChannel.Send(jsonStrigify(message))
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
