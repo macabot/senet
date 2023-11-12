@@ -29,6 +29,26 @@ func jsonStrigify(v any) string {
 	return js.Global().Get("JSON").Call("stringify", v).String()
 }
 
+func jsonParse(s string) js.Value {
+	return js.Global().Get("JSON").Call("parse", s)
+}
+
+func valueToFlips(value js.Value) [4]bool {
+	var flips [4]bool
+	flips[0] = value.Index(0).Bool()
+	flips[1] = value.Index(1).Bool()
+	flips[2] = value.Index(2).Bool()
+	flips[3] = value.Index(3).Bool()
+	return flips
+}
+
+func valueToCallerSecretAndPredictions(value js.Value) CallerSecretAndPredictions {
+	return CallerSecretAndPredictions{
+		Secret:      value.Get("Secret").String(),
+		Predictions: valueToFlips(value.Get("Predictions")),
+	}
+}
+
 func SendFlipperSecretAction() hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
