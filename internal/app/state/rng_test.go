@@ -24,7 +24,7 @@ func TestDistributionCryptoSticksGenerator(t *testing.T) {
 	throws := 1_000
 	delta := 0.1
 	for i := 0; i < throws; i++ {
-		throw := defaultCryptoSticksGenerator.Throw()
+		throw := defaultCryptoSticksGenerator.Throw(&State{})
 		counts[throw]++
 	}
 	options := []int{1, 2, 3, 4, 6}
