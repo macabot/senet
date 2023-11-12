@@ -12,7 +12,13 @@ const (
 	SendFlipperSecretKind CommitmentMessageKind = iota
 	SendCommitmentKind
 	SendFlipperResultsKind
+	SendCallerSecretAndPredictionsKind
 )
+
+type CallerSecretAndPredictions struct {
+	Secret      string
+	Predictions [4]bool
+}
 
 type CommitmentSchemeMessage[T any] struct {
 	Kind CommitmentMessageKind
@@ -114,6 +120,40 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 				message := CommitmentSchemeMessage[[4]bool]{
 					Kind: SendFlipperResultsKind,
 					Data: flipperResults,
+				}
+				state.DataChannel.Send(jsonStrigify(message))
+			}()
+		},
+	}
+}
+
+func SendCallerSecretAndPredictionsAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		return hypp.StateAndEffects[*state.State]{
+			State: s,
+			Effects: []hypp.Effect{
+				SendCallerSecretAndPredictionsEffect(
+					s.CommitmentScheme.CallerSecret,
+					s.CommitmentScheme.CallerPredictions,
+				),
+			},
+		}
+	}
+}
+
+func SendCallerSecretAndPredictionsEffect(
+	callerSecret string,
+	callerPredictions [4]bool,
+) hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
+			go func() {
+				message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
+					Kind: SendCallerSecretAndPredictionsKind,
+					Data: CallerSecretAndPredictions{
+						Secret:      callerSecret,
+						Predictions: callerPredictions,
+					},
 				}
 				state.DataChannel.Send(jsonStrigify(message))
 			}()
