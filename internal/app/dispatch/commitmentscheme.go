@@ -66,8 +66,10 @@ func SendCommitmentAction() hypp.Action[*state.State] {
 			newState.CommitmentScheme.CallerPredictions,
 		)
 		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: []hypp.Effect{},
+			State: newState,
+			Effects: []hypp.Effect{
+				SendCommitmentEffect(newState.CommitmentScheme.Commitment),
+			},
 		}
 	}
 }
