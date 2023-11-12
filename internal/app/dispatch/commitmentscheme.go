@@ -54,8 +54,12 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 func SendCommitmentAction() hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.CommitmentScheme.CallerSecret = state.GenerateSecret()
-		newState.CommitmentScheme.CallerPredictions = state.GenerateFlips()
+		newState.CommitmentScheme = state.CommitmentScheme{
+			CallerSecret:         state.GenerateSecret(),
+			FlipperSecret:        newState.CommitmentScheme.FlipperSecret,
+			HasCallerPredictions: true,
+			CallerPredictions:    state.GenerateFlips(),
+		}
 		newState.CommitmentScheme.Commitment = state.GenerateCommitmentHash(
 			newState.CommitmentScheme.CallerSecret,
 			newState.CommitmentScheme.FlipperSecret,
