@@ -20,6 +20,7 @@ func initSignaling(s *state.State) {
 	s.Signaling.Initialized = true
 	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
 	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
+	s.Signaling.ReadyState = state.DataChannel.ReadyState()
 }
 
 func resetSignaling(s *state.State) {
@@ -30,51 +31,20 @@ func resetSignaling(s *state.State) {
 	}
 }
 
-func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		iceConnectionState := state.PeerConnection.ICEConnectionState()
-		window.Console().Log("PeerConnection.ICEConnectionState", iceConnectionState)
-		dispatch(SetICEConnectionStateAction(iceConnectionState), nil)
-	})
-	return func() {
-		dispatch(SetICEConnectionStateAction(""), nil)
-	}
-}
-
-func SetICEConnectionStateAction(iceConnectionState string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func SetSignalingStatesAction(iceConnectionState, connectionState, readyState string) hypp.Action[*state.State] {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
+		oldReadyState := newState.Signaling.ReadyState
+
 		newState.Signaling.ICEConnectionState = iceConnectionState
-		return newState
-	}
-}
-
-func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.PeerConnection.SetOnConnectionStateChange(func() {
-		connectionState := state.PeerConnection.ConnectionState()
-		window.Console().Log("PeerConnection.ConnectionState", connectionState)
-		dispatch(SetConnectionStateAction(connectionState), nil)
-	})
-	return func() {
-		dispatch(SetConnectionStateAction(""), nil)
-	}
-}
-
-func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		oldConnectionState := newState.Signaling.ConnectionState
 		newState.Signaling.ConnectionState = connectionState
+		newState.Signaling.ReadyState = readyState
 
 		var effects []hypp.Effect
-		if oldConnectionState != "connected" && connectionState == "connected" {
-			// TODO only one device should send a message.
+		if oldReadyState != "open" && readyState == "open" {
 			newState.CommitmentScheme = state.CommitmentScheme{
 				FlipperSecret: state.GenerateSecret(),
 			}
@@ -82,6 +52,7 @@ func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] 
 				SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
 			}
 		}
+
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: effects,
@@ -89,9 +60,32 @@ func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] 
 	}
 }
 
+func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.PeerConnection.SetOnICEConnectionStateChange(func() {
+		iceConnectionState := state.PeerConnection.ICEConnectionState()
+		connectionState := state.PeerConnection.ConnectionState()
+		readyState := state.DataChannel.ReadyState()
+		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+	})
+	return func() {}
+}
+
+func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.PeerConnection.SetOnConnectionStateChange(func() {
+		iceConnectionState := state.PeerConnection.ICEConnectionState()
+		connectionState := state.PeerConnection.ConnectionState()
+		readyState := state.DataChannel.ReadyState()
+		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+	})
+	return func() {}
+}
+
 func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnOpen(func() {
-		window.Console().Log("DataChannel open event")
+		iceConnectionState := state.PeerConnection.ICEConnectionState()
+		connectionState := state.PeerConnection.ConnectionState()
+		readyState := state.DataChannel.ReadyState()
+		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
 	})
 	return func() {}
 }

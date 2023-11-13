@@ -109,11 +109,13 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				message := CommitmentSchemeMessage[string]{
-					Kind: SendFlipperSecretKind,
-					Data: flipperSecret,
-				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				fmt.Println("DataChannel readyState", state.DataChannel.ReadyState())
+				state.DataChannel.Send("Test")
+				// message := CommitmentSchemeMessage[string]{
+				// 	Kind: SendFlipperSecretKind,
+				// 	Data: flipperSecret,
+				// }
+				// state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
