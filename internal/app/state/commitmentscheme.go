@@ -165,6 +165,10 @@ func decodeCommitment(commitment string) (decodedCommitment, error) {
 	return p, nil
 }
 
+func (c CommitmentScheme) CanThrow() bool {
+	return c.HasCallerPredictions && c.HasFlipperResults
+}
+
 func (c CommitmentScheme) Throw() int {
 	if !c.HasCallerPredictions {
 		panic("CommitmentScheme cannot throw without caller predictions")
