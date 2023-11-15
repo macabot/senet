@@ -115,6 +115,7 @@ func SendCommitmentAction() hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.CommitmentScheme = state.CommitmentScheme{
+			IsCaller:             true,
 			CallerSecret:         state.GenerateSecret(),
 			FlipperSecret:        newState.CommitmentScheme.FlipperSecret,
 			HasCallerPredictions: true,

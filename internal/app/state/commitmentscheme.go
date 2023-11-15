@@ -14,6 +14,7 @@ import (
 )
 
 type CommitmentScheme struct {
+	IsCaller             bool
 	CallerSecret         string
 	FlipperSecret        string
 	HasCallerPredictions bool
