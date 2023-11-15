@@ -60,32 +60,30 @@ func SetSignalingStatesAction(iceConnectionState, connectionState, readyState st
 	}
 }
 
+func onSignalingStateChange(dispatch hypp.Dispatch) {
+	iceConnectionState := state.PeerConnection.ICEConnectionState()
+	connectionState := state.PeerConnection.ConnectionState()
+	readyState := state.DataChannel.ReadyState()
+	dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+}
+
 func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		iceConnectionState := state.PeerConnection.ICEConnectionState()
-		connectionState := state.PeerConnection.ConnectionState()
-		readyState := state.DataChannel.ReadyState()
-		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+		onSignalingStateChange(dispatch)
 	})
 	return func() {}
 }
 
 func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.PeerConnection.SetOnConnectionStateChange(func() {
-		iceConnectionState := state.PeerConnection.ICEConnectionState()
-		connectionState := state.PeerConnection.ConnectionState()
-		readyState := state.DataChannel.ReadyState()
-		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+		onSignalingStateChange(dispatch)
 	})
 	return func() {}
 }
 
 func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnOpen(func() {
-		iceConnectionState := state.PeerConnection.ICEConnectionState()
-		connectionState := state.PeerConnection.ConnectionState()
-		readyState := state.DataChannel.ReadyState()
-		dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+		onSignalingStateChange(dispatch)
 	})
 	return func() {}
 }
