@@ -50,20 +50,10 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 	default:
 		panic("cannot convert CommitmentSchemeMessage.Data to js.Value")
 	}
-	x := map[string]interface{}{
+	return js.ValueOf(map[string]any{
 		"Kind": int(m.Kind),
 		"Data": data,
-	}
-	fmt.Println("A")
-	fmt.Println(js.ValueOf(int(m.Kind)))
-	fmt.Println("B")
-	fmt.Println(js.ValueOf(data))
-	fmt.Println("C")
-	fmt.Printf("%#v\n", x)
-	// FIXME requires fix in hypp/jsd.ValueOf
-	value := js.ValueOf(x)
-	fmt.Printf("%#v\n", value)
-	return value
+	})
 }
 
 func jsonStringify(v js.Value) string {
