@@ -36,6 +36,7 @@ func main() {
 			"Pages",
 			tale.GamePage(),
 			tale.StartPage(),
+			tale.WhoGoesFirstPage(),
 		),
 	)
 }

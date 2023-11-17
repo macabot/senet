@@ -1,8 +1,11 @@
 package component
 
 import (
+	"fmt"
+
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -34,12 +37,56 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 			},
 			hypp.Text("Negotiating commitment scheme..."),
 		),
+		whoGoesFirstLoader(),
 		html.Div(
 			hypp.HProps{
 				"class": "players-wrapper",
 			},
-			player(0, Player{Player: &state.Player{Name: name0}}, false),
-			player(0, Player{Player: &state.Player{Name: name1}}, false),
+			whoGoesFirstPlayer(0, name0),
+			whoGoesFirstPlayer(1, name1),
+		),
+		html.Div(
+			nil,
+			html.Button(
+				hypp.HProps{
+					"onclick": dispatch.ToSignalingPageAction(),
+				},
+				hypp.Text("Back"),
+			),
+			html.Button(
+				hypp.HProps{
+					"class":    "cta",
+					"disabled": !hasDecision,
+					// "onclick"
+				},
+				hypp.Text("Play"),
+			),
+		),
+	)
+}
+
+func whoGoesFirstLoader() *hypp.VNode {
+	return html.Div(
+		hypp.HProps{
+			"class": "who-loader-wrapper",
+		},
+		html.Div(hypp.HProps{"class": "who-loader"}),
+	)
+}
+
+func whoGoesFirstPlayer(playerIndex int, name string) *hypp.VNode {
+	return html.Div(
+		hypp.HProps{
+			"class": map[string]bool{
+				"player-wrapper":                      true,
+				fmt.Sprintf("player-%d", playerIndex): true,
+			},
+		},
+		html.Div(
+			hypp.HProps{
+				"class": "player",
+			},
+			hypp.Text(name),
 		),
 	)
 }
