@@ -37,26 +37,11 @@ func SetSignalingStatesAction(iceConnectionState, connectionState, readyState st
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
-		oldReadyState := newState.Signaling.ReadyState
-
 		newState.Signaling.ICEConnectionState = iceConnectionState
 		newState.Signaling.ConnectionState = connectionState
 		newState.Signaling.ReadyState = readyState
 
-		var effects []hypp.Effect
-		if oldReadyState != "open" && readyState == "open" {
-			newState.CommitmentScheme = state.CommitmentScheme{
-				FlipperSecret: state.GenerateSecret(),
-			}
-			effects = []hypp.Effect{
-				SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
-			}
-		}
-
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+		return newState
 	}
 }
 

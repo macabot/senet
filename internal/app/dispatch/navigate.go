@@ -83,3 +83,24 @@ func ToOnlinePlayerVsPlayerAction(isPlayer1 bool) hypp.Action[*state.State] {
 		return newState
 	}
 }
+
+func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.Page = state.WhoGoesFirstPage
+		newState.CommitmentScheme.IsCaller = isCaller
+		var effects []hypp.Effect
+		if !isCaller {
+			newState.CommitmentScheme = state.CommitmentScheme{
+				FlipperSecret: state.GenerateSecret(),
+			}
+			effects = append(effects, SendFlipperSecretEffect(
+				newState.CommitmentScheme.FlipperSecret,
+			))
+		}
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: effects,
+		}
+	}
+}

@@ -1,8 +1,6 @@
 package dispatch
 
 import (
-	"fmt"
-
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/senet/internal/app/state"
@@ -99,13 +97,11 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				fmt.Println("DataChannel readyState", state.DataChannel.ReadyState())
-				state.DataChannel.Send("Test")
-				// message := CommitmentSchemeMessage[string]{
-				// 	Kind: SendFlipperSecretKind,
-				// 	Data: flipperSecret,
-				// }
-				// state.DataChannel.Send(jsonStringify(message.ToValue()))
+				message := CommitmentSchemeMessage[string]{
+					Kind: SendFlipperSecretKind,
+					Data: flipperSecret,
+				}
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
 	}

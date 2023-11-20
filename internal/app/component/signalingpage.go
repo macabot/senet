@@ -158,9 +158,9 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 			hypp.HProps{
 				"class":    "cta",
 				"disabled": connectionState != "connected" || readyState != "open",
-				// "onclick"
+				"onclick":  dispatch.ToWhoGoesFirstPageAction(true),
 			},
-			hypp.Text("Play"),
+			hypp.Text("Next"),
 		)
 	} else {
 		ctaButton = html.Button(
@@ -276,9 +276,9 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": playDisabled,
-					// TODO onclick
+					"onclick":  dispatch.ToWhoGoesFirstPageAction(false),
 				},
-				hypp.Text("Play"),
+				hypp.Text("Next"),
 			),
 		),
 	)
