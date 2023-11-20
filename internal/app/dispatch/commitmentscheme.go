@@ -54,6 +54,14 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 	})
 }
 
+func ParseCommitmentSchemeMessage(s string) CommitmentSchemeMessage[js.Value] {
+	parsed := jsonParse(s)
+	return CommitmentSchemeMessage[js.Value]{
+		Kind: CommitmentMessageKind(parsed.Get("Kind").Int()),
+		Data: parsed.Get("Data"),
+	}
+}
+
 func jsonStringify(v js.Value) string {
 	return js.Global().Get("JSON").Call("stringify", v).String()
 }
@@ -107,27 +115,32 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	}
 }
 
-func SendCommitmentAction() hypp.Action[*state.State] {
+func ReceiveFlipperSecretAction(flipperSecret string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller:             true,
-			CallerSecret:         state.GenerateSecret(),
-			FlipperSecret:        newState.CommitmentScheme.FlipperSecret,
-			HasCallerPredictions: true,
-			CallerPredictions:    state.GenerateFlips(),
-		}
-		newState.CommitmentScheme.Commitment = state.GenerateCommitmentHash(
-			newState.CommitmentScheme.CallerSecret,
-			newState.CommitmentScheme.FlipperSecret,
-			newState.CommitmentScheme.CallerPredictions,
-		)
-		return hypp.StateAndEffects[*state.State]{
-			State: newState,
-			Effects: []hypp.Effect{
-				SendCommitmentEffect(newState.CommitmentScheme.Commitment),
-			},
-		}
+		newState.CommitmentScheme.FlipperSecret = flipperSecret
+		return sendCommitment(newState)
+	}
+}
+
+func sendCommitment(newState *state.State) hypp.StateAndEffects[*state.State] {
+	newState.CommitmentScheme = state.CommitmentScheme{
+		IsCaller:             true,
+		CallerSecret:         state.GenerateSecret(),
+		FlipperSecret:        newState.CommitmentScheme.FlipperSecret,
+		HasCallerPredictions: true,
+		CallerPredictions:    state.GenerateFlips(),
+	}
+	newState.CommitmentScheme.Commitment = state.GenerateCommitmentHash(
+		newState.CommitmentScheme.CallerSecret,
+		newState.CommitmentScheme.FlipperSecret,
+		newState.CommitmentScheme.CallerPredictions,
+	)
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			SendCommitmentEffect(newState.CommitmentScheme.Commitment),
+		},
 	}
 }
 

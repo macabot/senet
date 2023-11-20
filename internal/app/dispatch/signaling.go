@@ -75,7 +75,19 @@ func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Un
 
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
-		window.Console().Log("DataChannel message event", e.Get("data"))
+		data := e.Get("data")
+		window.Console().Log("DataChannel message event", data)
+		message := ParseCommitmentSchemeMessage(data.String())
+		switch message.Kind {
+		case SendFlipperSecretKind:
+			flipperSecret := message.Data.String()
+			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)
+		case SendCommitmentKind:
+		case SendFlipperResultsKind:
+		case SendCallerSecretAndPredictionsKind:
+		default:
+			window.Console().Warn("Data message has unknown kind %d", int(message.Kind))
+		}
 	})
 	return func() {}
 }
