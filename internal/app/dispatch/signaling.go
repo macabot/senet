@@ -83,6 +83,8 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 			flipperSecret := message.Data.String()
 			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)
 		case SendCommitmentKind:
+			commitment := message.Data.String()
+			dispatch(ReceiveCommitmentAction(commitment), nil)
 		case SendFlipperResultsKind:
 		case SendCallerSecretAndPredictionsKind:
 		default:

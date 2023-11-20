@@ -158,21 +158,26 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 	}
 }
 
-func SendFlipperResultsAction() hypp.Action[*state.State] {
+func ReceiveCommitmentAction(commitment string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			FlipperSecret:     newState.CommitmentScheme.FlipperSecret,
-			HasFlipperResults: true,
-			FlipperResults:    state.GenerateFlips(),
-			Commitment:        newState.CommitmentScheme.Commitment,
-		}
-		return hypp.StateAndEffects[*state.State]{
-			State: newState,
-			Effects: []hypp.Effect{
-				SendFlipperResultsEffect(newState.CommitmentScheme.FlipperResults),
-			},
-		}
+		newState.CommitmentScheme.Commitment = commitment
+		return sendFlipperResults(newState)
+	}
+}
+
+func sendFlipperResults(newState *state.State) hypp.StateAndEffects[*state.State] {
+	newState.CommitmentScheme = state.CommitmentScheme{
+		FlipperSecret:     newState.CommitmentScheme.FlipperSecret,
+		HasFlipperResults: true,
+		FlipperResults:    state.GenerateFlips(),
+		Commitment:        newState.CommitmentScheme.Commitment,
+	}
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			SendFlipperResultsEffect(newState.CommitmentScheme.FlipperResults),
+		},
 	}
 }
 
