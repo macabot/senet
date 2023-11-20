@@ -7,6 +7,7 @@ type Page int
 const (
 	StartPage Page = iota
 	SignalingPage
+	WhoGoesFirstPage
 	GamePage
 )
 
