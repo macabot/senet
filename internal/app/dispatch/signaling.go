@@ -86,6 +86,8 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 			commitment := message.Data.String()
 			dispatch(ReceiveCommitmentAction(commitment), nil)
 		case SendFlipperResultsKind:
+			flipperResults := parseFlips(message.Data)
+			dispatch(ReceiveFlipperResultsAction(flipperResults), nil)
 		case SendCallerSecretAndPredictionsKind:
 		default:
 			window.Console().Warn("Data message has unknown kind %d", int(message.Kind))

@@ -24,6 +24,15 @@ func flipsToValue(flips [4]bool) js.Value {
 	return js.ValueOf([]any{flips[0], flips[1], flips[2], flips[3]})
 }
 
+func parseFlips(value js.Value) [4]bool {
+	return [4]bool{
+		value.Index(0).Bool(),
+		value.Index(1).Bool(),
+		value.Index(2).Bool(),
+		value.Index(3).Bool(),
+	}
+}
+
 func (c CallerSecretAndPredictions) ToValue() js.Value {
 	return js.ValueOf(map[string]any{
 		"Secret":      c.Secret,
@@ -195,17 +204,23 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 	}
 }
 
-func SendCallerSecretAndPredictionsAction() hypp.Action[*state.State] {
+func ReceiveFlipperResultsAction(flipperResults [4]bool) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		return hypp.StateAndEffects[*state.State]{
-			State: s,
-			Effects: []hypp.Effect{
-				SendCallerSecretAndPredictionsEffect(
-					s.CommitmentScheme.CallerSecret,
-					s.CommitmentScheme.CallerPredictions,
-				),
-			},
-		}
+		newState := s.Clone()
+		newState.CommitmentScheme.FlipperResults = flipperResults
+		return sendCallerSecretAndPredictions(newState)
+	}
+}
+
+func sendCallerSecretAndPredictions(newState *state.State) hypp.StateAndEffects[*state.State] {
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			SendCallerSecretAndPredictionsEffect(
+				newState.CommitmentScheme.CallerSecret,
+				newState.CommitmentScheme.CallerPredictions,
+			),
+		},
 	}
 }
 
