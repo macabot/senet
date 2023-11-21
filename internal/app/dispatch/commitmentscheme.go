@@ -216,6 +216,7 @@ func ReceiveFlipperResultsAction(flipperResults [4]bool) hypp.Action[*state.Stat
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.CommitmentScheme.FlipperResults = flipperResults
+		newState.CommitmentScheme.HasFlipperResults = true
 		return sendCallerSecretAndPredictions(newState)
 	}
 }
@@ -257,6 +258,7 @@ func ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions CallerSe
 		newState := s.Clone()
 		newState.CommitmentScheme.CallerSecret = callerSecretAndPredictions.Secret
 		newState.CommitmentScheme.CallerPredictions = callerSecretAndPredictions.Predictions
+		newState.CommitmentScheme.HasCallerPredictions = true
 		isExpectedCommitment := state.IsExpectedCommitment(
 			newState.CommitmentScheme.CallerSecret,
 			newState.CommitmentScheme.FlipperSecret,
