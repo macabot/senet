@@ -13,11 +13,13 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 	hasDecision := s.CommitmentScheme.CanThrow()
 	name0 := ""
 	name1 := ""
+	isPlayer0 := false
 	if hasDecision {
 		correctCall := s.CommitmentScheme.CallerPredictions[0] == s.CommitmentScheme.FlipperResults[0]
 		if s.CommitmentScheme.IsCaller == correctCall {
 			name0 = "You"
 			name1 = "Opponent"
+			isPlayer0 = true
 		} else {
 			name0 = "Opponent"
 			name1 = "You"
@@ -57,7 +59,7 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": !hasDecision,
-					// "onclick"
+					"onclick":  dispatch.ToOnlinePlayerVsPlayerAction(isPlayer0),
 				},
 				hypp.Text("Play"),
 			),
