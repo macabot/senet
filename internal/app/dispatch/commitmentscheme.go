@@ -3,6 +3,7 @@ package dispatch
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
+	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -38,6 +39,13 @@ func (c CallerSecretAndPredictions) ToValue() js.Value {
 		"Secret":      c.Secret,
 		"Predictions": flipsToValue(c.Predictions),
 	})
+}
+
+func parseCallerSecretAndPredictions(value js.Value) CallerSecretAndPredictions {
+	return CallerSecretAndPredictions{
+		Secret:      value.Get("Secret").String(),
+		Predictions: parseFlips(value.Get("Predictions")),
+	}
 }
 
 type CommitmentSchemeMessage[T any] struct {
@@ -241,5 +249,30 @@ func SendCallerSecretAndPredictionsEffect(
 				state.DataChannel.Send(jsonStringify(message.ToValue()))
 			}()
 		},
+	}
+}
+
+func ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions CallerSecretAndPredictions) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.CommitmentScheme.CallerSecret = callerSecretAndPredictions.Secret
+		newState.CommitmentScheme.CallerPredictions = callerSecretAndPredictions.Predictions
+		isExpectedCommitment := state.IsExpectedCommitment(
+			newState.CommitmentScheme.CallerSecret,
+			newState.CommitmentScheme.FlipperSecret,
+			newState.CommitmentScheme.CallerPredictions,
+			newState.CommitmentScheme.Commitment,
+		)
+		if !isExpectedCommitment {
+			window.Console().Warn(
+				"Unexpected commitment",
+				newState.CommitmentScheme.CallerSecret,
+				newState.CommitmentScheme.FlipperSecret,
+				newState.CommitmentScheme.CallerPredictions,
+				newState.CommitmentScheme.Commitment,
+			)
+		}
+
+		return newState
 	}
 }
