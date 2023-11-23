@@ -65,12 +65,12 @@ func ToSignalingPageAction() hypp.Action[*state.State] {
 	}
 }
 
-func ToOnlinePlayerVsPlayerAction(isPlayer1 bool) hypp.Action[*state.State] {
+func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
-		if isPlayer1 {
+		if isPlayer0 {
 			newState.Game.TurnMode = state.IsPlayer1
 			newState.Game.Players[0].Name = "You"
 			newState.Game.Players[1].Name = "Opponent"
