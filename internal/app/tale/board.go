@@ -11,7 +11,7 @@ import (
 
 func Board() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.TurnMode = state.IsPlayer1
+	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
 		"Board",
 		&state.State{
@@ -24,9 +24,9 @@ func Board() *fairytale.Tale[*state.State] {
 			"Has turn",
 			func(s *state.State, hasTurn bool) hypp.Dispatchable {
 				if s.Game.Turn == 0 {
-					s.Game.TurnMode = state.IsPlayer1
+					s.Game.TurnMode = state.IsPlayer0
 				} else if s.Game.Turn == 1 {
-					s.Game.TurnMode = state.IsPlayer2
+					s.Game.TurnMode = state.IsPlayer1
 				}
 				return s
 			},

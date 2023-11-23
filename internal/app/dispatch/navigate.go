@@ -22,7 +22,7 @@ func ToTutorialAction() hypp.Action[*state.State] {
 		newState.Game.Players[0].Name = "You"
 		newState.Game.Players[1].Name = "Tutor"
 		newState.Game.Turn = 1
-		newState.Game.TurnMode = state.IsPlayer1
+		newState.Game.TurnMode = state.IsPlayer0
 		newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
 			Kind: state.TutorialStart,
 		}
@@ -71,15 +71,18 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
 		if isPlayer0 {
-			newState.Game.TurnMode = state.IsPlayer1
+			newState.Game.TurnMode = state.IsPlayer0
 			newState.Game.Players[0].Name = "You"
 			newState.Game.Players[1].Name = "Opponent"
 		} else {
-			newState.Game.TurnMode = state.IsPlayer2
+			newState.Game.TurnMode = state.IsPlayer1
 			newState.Game.Players[0].Name = "Opponent"
 			newState.Game.Players[1].Name = "You"
 		}
 		newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
+		newState.CommitmentScheme = state.CommitmentScheme{
+			IsCaller: isPlayer0,
+		}
 		return newState
 	}
 }

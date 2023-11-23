@@ -20,8 +20,8 @@ type TurnMode int
 
 const (
 	IsBothPlayers TurnMode = iota
+	IsPlayer0
 	IsPlayer1
-	IsPlayer2
 )
 
 type Game struct {
@@ -90,9 +90,9 @@ func (g Game) HasTurn() bool {
 	switch g.TurnMode {
 	case IsBothPlayers:
 		return true
-	case IsPlayer1:
+	case IsPlayer0:
 		return g.Turn == 0
-	case IsPlayer2:
+	case IsPlayer1:
 		return g.Turn == 1
 	default:
 		panic(fmt.Errorf("Invalid TurnMode %v", g.TurnMode))
@@ -146,7 +146,7 @@ func (g Game) PieceIsSelected(piece *Piece) bool {
 	return g.Selected != nil && g.Selected.Position == piece.Position
 }
 
-func (g Game) SticksDrawAttention() bool {
+func (g Game) CanThrow() bool {
 	return !g.Sticks.HasThrown && g.HasTurn()
 }
 

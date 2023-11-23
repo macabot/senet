@@ -15,6 +15,7 @@ const (
 )
 
 type ThrowSticksGenerator interface {
+	CanThrow(*State) bool
 	// Throw returns 1, 2, 3, 4 or 6 steps.
 	Throw(*State) int
 }
@@ -32,6 +33,10 @@ func NewCryptoSticksGenerator(rng *rand.Rand) *CryptoSticksGenerator {
 }
 
 var defaultCryptoSticksGenerator = NewCryptoSticksGenerator(defaultRNG)
+
+func (g CryptoSticksGenerator) CanThrow(_ *State) bool {
+	return true
+}
 
 func (g CryptoSticksGenerator) Throw(_ *State) int {
 	sum := 0
@@ -90,6 +95,10 @@ var tutorialThrownSticks = [...]int{
 	1, // TutorialOffTheBoard3
 }
 
+func (g TutorialSticksGenerator) CanThrow(_ *State) bool {
+	return true
+}
+
 func (g *TutorialSticksGenerator) Throw(_ *State) int {
 	steps := tutorialThrownSticks[g.index%len(tutorialThrownSticks)]
 	g.index++
@@ -99,6 +108,10 @@ func (g *TutorialSticksGenerator) Throw(_ *State) int {
 var _ ThrowSticksGenerator = &CommitmentSchemeGenerator{}
 
 type CommitmentSchemeGenerator struct{}
+
+func (g CommitmentSchemeGenerator) CanThrow(s *State) bool {
+	return s.CommitmentScheme.CanThrow()
+}
 
 func (g CommitmentSchemeGenerator) Throw(s *State) int {
 	return s.CommitmentScheme.Throw()

@@ -39,7 +39,7 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 			},
 			hypp.Text("Negotiating commitment scheme..."),
 		),
-		whoGoesFirstLoader(),
+		Loader(hasDecision),
 		html.Div(
 			hypp.HProps{
 				"class": "players-wrapper",
@@ -64,15 +64,6 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 				hypp.Text("Play"),
 			),
 		),
-	)
-}
-
-func whoGoesFirstLoader() *hypp.VNode {
-	return html.Div(
-		hypp.HProps{
-			"class": "who-loader-wrapper",
-		},
-		html.Div(hypp.HProps{"class": "who-loader"}),
 	)
 }
 

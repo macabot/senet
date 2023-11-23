@@ -76,9 +76,15 @@ func (s Sticks) generator() ThrowSticksGenerator {
 		return defaultCryptoSticksGenerator
 	case TutorialSticksGeneratorKind:
 		return defaultTutorialSticksGenerator
+	case CommitmentSchemeGeneratorKind:
+		return CommitmentSchemeGenerator{}
 	default:
 		panic(fmt.Errorf("Cannot get sticks generator for kind %v.", s.GeneratorKind))
 	}
+}
+
+func (s Sticks) CanThrow(state *State) bool {
+	return s.generator().CanThrow(state)
 }
 
 func (s *Sticks) Throw(state *State) {

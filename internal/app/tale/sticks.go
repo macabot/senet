@@ -11,15 +11,18 @@ import (
 
 func Sticks() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.TurnMode = state.IsPlayer1
+	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
 		"Sticks",
 		&state.State{Game: game},
 		func(s *state.State) *hypp.VNode {
+			gameCanThrow := s.Game.CanThrow()
+			sticksCanThrow := s.Game.Sticks.CanThrow(s)
 			return component.Sticks(component.SticksProps{
 				Sticks:        s.Game.Sticks,
-				DrawAttention: s.Game.SticksDrawAttention(),
+				DrawAttention: gameCanThrow && sticksCanThrow,
 				NoValidMoves:  len(s.Game.ValidMoves) == 0,
+				IsLoading:     gameCanThrow && !sticksCanThrow,
 			})
 		},
 	).WithControls(
@@ -50,6 +53,7 @@ func Sticks() *fairytale.Tale[*state.State] {
 			[]control.SelectOption[state.SticksGeneratorKind]{
 				{Label: "Crypto", Value: state.CryptoSticksGeneratorKind},
 				{Label: "Tutorial", Value: state.TutorialSticksGeneratorKind},
+				{Label: "CommitmentScheme", Value: state.CommitmentSchemeGeneratorKind},
 			},
 		),
 	)
