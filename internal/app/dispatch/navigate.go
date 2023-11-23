@@ -89,18 +89,9 @@ func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 		newState := s.Clone()
 		newState.Page = state.WhoGoesFirstPage
 		newState.CommitmentScheme.IsCaller = isCaller
-		var effects []hypp.Effect
 		if !isCaller {
-			newState.CommitmentScheme = state.CommitmentScheme{
-				FlipperSecret: state.GenerateSecret(),
-			}
-			effects = append(effects, SendFlipperSecretEffect(
-				newState.CommitmentScheme.FlipperSecret,
-			))
+			return sendFlipperSecret(newState)
 		}
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+		return newState
 	}
 }

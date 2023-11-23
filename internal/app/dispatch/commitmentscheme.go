@@ -103,18 +103,15 @@ func valueToCallerSecretAndPredictions(value js.Value) CallerSecretAndPrediction
 	}
 }
 
-func SendFlipperSecretAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			FlipperSecret: state.GenerateSecret(),
-		}
-		return hypp.StateAndEffects[*state.State]{
-			State: newState,
-			Effects: []hypp.Effect{
-				SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
-			},
-		}
+func sendFlipperSecret(newState *state.State) hypp.StateAndEffects[*state.State] {
+	newState.CommitmentScheme = state.CommitmentScheme{
+		FlipperSecret: state.GenerateSecret(),
+	}
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
+		},
 	}
 }
 
