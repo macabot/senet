@@ -281,6 +281,18 @@ type NextMove struct {
 	To     Position
 }
 
+func (g Game) FindValidFromPosition(toPosition Position) (Position, bool) {
+	fromPositionFound := false
+	var fromPosition Position
+	for from, to := range g.ValidMoves {
+		if to == toPosition {
+			fromPosition = from
+			fromPositionFound = true
+		}
+	}
+	return fromPosition, fromPositionFound
+}
+
 func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]

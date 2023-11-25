@@ -5,12 +5,19 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func replaceCurrentBubbleWithNext(current, next state.SpeechBubbleKind) func(s, newState *state.State) {
-	return func(_, newState *state.State) {
+func replaceCurrentBubbleWithNext(current, next state.SpeechBubbleKind) func(s, newState *state.State) []hypp.Effect {
+	return func(_, newState *state.State) []hypp.Effect {
 		bubble := newState.Game.Players[1].SpeechBubble
 		if bubble != nil && bubble.Kind == current {
 			SetSpeechBubbleKind(newState, 1, next)
 		}
+		return nil
+	}
+}
+
+func replaceCurrentBubbleWithNextOnMove(current, next state.SpeechBubbleKind) func(s, newState *state.State, from, to state.Position) []hypp.Effect {
+	return func(s, newState *state.State, _, _ state.Position) []hypp.Effect {
+		return replaceCurrentBubbleWithNext(current, next)(s, newState)
 	}
 }
 
@@ -40,13 +47,10 @@ func registerTutorial() {
 	}
 	onThrowSticks = append(
 		onThrowSticks,
-		func(s, newState *state.State) []hypp.Effect {
-			replaceCurrentBubbleWithNext(state.TutorialSticks3, state.TutorialMove)(s, newState)
-			return nil
-		},
+		replaceCurrentBubbleWithNext(state.TutorialSticks3, state.TutorialMove),
 	)
 	// TutorialMove
-	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNext(state.TutorialMove, state.TutorialMultiplemoves))
+	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNextOnMove(state.TutorialMove, state.TutorialMultiplemoves))
 	// TutorialTradingPlaces2
 	onSetSpeechBubbleKind[state.TutorialTradingPlaces2] = func(s *state.State, _ int) {
 		s.Game.SetBoard(&state.Board{
@@ -73,7 +77,7 @@ func registerTutorial() {
 		s.Game.Sticks.HasThrown = false
 		s.Game.Turn = 0
 	}
-	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNext(state.TutorialTradingPlaces4, state.TutorialBlockingPiece1))
+	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNextOnMove(state.TutorialTradingPlaces4, state.TutorialBlockingPiece1))
 	// TutorialBlockingPiece1
 	onSetSpeechBubbleKind[state.TutorialBlockingPiece1] = func(s *state.State, _ int) {
 		b := false
@@ -85,7 +89,7 @@ func registerTutorial() {
 	// TutorialBlockingPiece2
 	onMoveToSquare = append(
 		onMoveToSquare,
-		replaceCurrentBubbleWithNext(state.TutorialBlockingPiece2, state.TutorialReturnToStart1),
+		replaceCurrentBubbleWithNextOnMove(state.TutorialBlockingPiece2, state.TutorialReturnToStart1),
 	)
 	// TutorialReturnToStart2
 	onSetSpeechBubbleKind[state.TutorialReturnToStart2] = func(s *state.State, _ int) {
@@ -119,7 +123,7 @@ func registerTutorial() {
 	}
 	onMoveToSquare = append(
 		onMoveToSquare,
-		replaceCurrentBubbleWithNext(state.TutorialReturnToStart3, state.TutorialMoveBackwards1),
+		replaceCurrentBubbleWithNextOnMove(state.TutorialReturnToStart3, state.TutorialMoveBackwards1),
 	)
 	// TutorialMoveBackwards1
 	onSetSpeechBubbleKind[state.TutorialMoveBackwards1] = func(s *state.State, player int) {
@@ -132,7 +136,7 @@ func registerTutorial() {
 	// TutorialMoveBackwards2
 	onMoveToSquare = append(
 		onMoveToSquare,
-		replaceCurrentBubbleWithNext(state.TutorialMoveBackwards2, state.TutorialNoMove1),
+		replaceCurrentBubbleWithNextOnMove(state.TutorialMoveBackwards2, state.TutorialNoMove1),
 	)
 	// TutorialNoMove2
 	onSetSpeechBubbleKind[state.TutorialNoMove2] = func(s *state.State, _ int) {
@@ -192,7 +196,7 @@ func registerTutorial() {
 	}
 	onMoveToSquare = append(
 		onMoveToSquare,
-		replaceCurrentBubbleWithNext(state.TutorialOffTheBoard2, state.TutorialOffTheBoard3),
+		replaceCurrentBubbleWithNextOnMove(state.TutorialOffTheBoard2, state.TutorialOffTheBoard3),
 	)
 	// TutorialOffTheBoard3
 	onSetSpeechBubbleKind[state.TutorialOffTheBoard3] = func(s *state.State, _ int) {
@@ -206,11 +210,11 @@ func registerTutorial() {
 	}
 	onMoveToSquare = append(
 		onMoveToSquare,
-		func(s, newState *state.State) {
+		func(s, newState *state.State, from, to state.Position) []hypp.Effect {
 			if newState.Game.Winner == nil {
-				return
+				return nil
 			}
-			replaceCurrentBubbleWithNext(state.TutorialOffTheBoard3, state.TutorialEnd)(s, newState)
+			return replaceCurrentBubbleWithNextOnMove(state.TutorialOffTheBoard3, state.TutorialEnd)(s, newState, from, to)
 		},
 	)
 }

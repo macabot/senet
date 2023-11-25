@@ -9,8 +9,8 @@ func resetListeners() {
 	onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 	onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 	onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
-	onMoveToSquare = []func(s, newState *state.State){}
-	onNoMove = []func(s, newState *state.State){}
+	onMoveToSquare = []func(s, newState *state.State, from, to state.Position) []hypp.Effect{}
+	onNoMove = []func(s, newState *state.State) []hypp.Effect{}
 	onThrowSticks = []func(s, newState *state.State) []hypp.Effect{}
 }
 

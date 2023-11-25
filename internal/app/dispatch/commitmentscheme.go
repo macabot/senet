@@ -17,6 +17,17 @@ func registerCommitmentScheme() {
 			SendHasThrownEffect(),
 		}
 	})
+
+	onMoveToSquare = append(
+		onMoveToSquare,
+		func(s, newState *state.State, from, to state.Position) []hypp.Effect {
+			return []hypp.Effect{
+				SendMoveEffect(from, to),
+			}
+		},
+	)
+
+	// TODO onNoMove
 }
 
 type CommitmentMessageKind int
@@ -27,11 +38,31 @@ const (
 	SendFlipperResultsKind
 	SendCallerSecretAndPredictionsKind
 	SendHasThrownKind
+	SendMoveKind
 )
 
 type CallerSecretAndPredictions struct {
 	Secret      string
 	Predictions [4]bool
+}
+
+type Move struct {
+	From state.Position
+	To   state.Position
+}
+
+func (m Move) ToValue() js.Value {
+	return js.ValueOf(map[string]any{
+		"From": int(m.From),
+		"To":   int(m.To),
+	})
+}
+
+func parseMove(value js.Value) Move {
+	return Move{
+		From: state.Position(value.Get("From").Int()),
+		To:   state.Position(value.Get("To").Int()),
+	}
 }
 
 func flipsToValue(flips [4]bool) js.Value {
@@ -77,6 +108,8 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 		data = d.ToValue()
 	case struct{}:
 		data = js.Undefined()
+	case Move:
+		data = d.ToValue()
 	default:
 		panic("cannot convert CommitmentSchemeMessage.Data to js.Value")
 	}
@@ -314,5 +347,22 @@ func ReceiveHasThrownAction() hypp.Action[*state.State] {
 			IsCaller: isCaller,
 		}
 		return newState
+	}
+}
+
+func SendMoveEffect(from, to state.Position) hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
+			go func() {
+				message := CommitmentSchemeMessage[Move]{
+					Kind: SendMoveKind,
+					Data: Move{
+						From: from,
+						To:   to,
+					},
+				}
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
+			}()
+		},
 	}
 }
