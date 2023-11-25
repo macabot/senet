@@ -119,16 +119,23 @@ Instead a [commitment scheme](https://en.wikipedia.org/wiki/Coin_flipping#Teleco
 
 ```mermaid
 sequenceDiagram
-    Flipper-->>Flipper: Generate Flipper secret
-    Flipper->>Caller: Send Flipper secret
-    Caller-->>Caller: Generate Caller secret
-    Caller-->>Caller: Generate Caller predictions
-    Caller-->>Caller: Generate commitment
-    Caller->>Flipper: Send commitment
-    Flipper-->>Flipper: Generate Flipper results
-    Flipper->>Caller: Send Flipper results
-    Caller->>Flipper: Send Caller secret and predictions
-    Flipper-->>Flipper: Verify commitment
+    Note right of Flipper: Flipper is player whose turn it is
+    loop Until end of game
+        Flipper-->>Flipper: Generate Flipper secret
+        Flipper->>Caller: Send Flipper secret
+        Caller-->>Caller: Generate Caller secret
+        Caller-->>Caller: Generate Caller predictions
+        Caller-->>Caller: Generate commitment
+        Caller->>Flipper: Send commitment
+        Flipper-->>Flipper: Generate Flipper results
+        Flipper->>Caller: Send Flipper results
+        Caller->>Flipper: Send Caller secret and predictions
+        Flipper-->>Flipper: Verify commitment
+        Flipper-->>Flipper: Player throws sticks
+        Flipper->>Caller: Send sticks are thrown
+        Flipper-->>Flipper: Player moves piece
+    end
+    Note right of Flipper: Depending on throw, Flipper and Caller switch roles
 ```
 
 The throw of the sticks is based on the [NXOR](https://en.wikipedia.org/wiki/XNOR_gate) operation on every prediction and result pair.
