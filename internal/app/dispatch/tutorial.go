@@ -1,6 +1,9 @@
 package dispatch
 
-import "github.com/macabot/senet/internal/app/state"
+import (
+	"github.com/macabot/hypp"
+	"github.com/macabot/senet/internal/app/state"
+)
 
 func replaceCurrentBubbleWithNext(current, next state.SpeechBubbleKind) func(s, newState *state.State) {
 	return func(_, newState *state.State) {
@@ -37,7 +40,10 @@ func registerTutorial() {
 	}
 	onThrowSticks = append(
 		onThrowSticks,
-		replaceCurrentBubbleWithNext(state.TutorialSticks3, state.TutorialMove),
+		func(s, newState *state.State) []hypp.Effect {
+			replaceCurrentBubbleWithNext(state.TutorialSticks3, state.TutorialMove)(s, newState)
+			return nil
+		},
 	)
 	// TutorialMove
 	onMoveToSquare = append(onMoveToSquare, replaceCurrentBubbleWithNext(state.TutorialMove, state.TutorialMultiplemoves))

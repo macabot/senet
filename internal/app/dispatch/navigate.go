@@ -11,7 +11,7 @@ func resetListeners() {
 	onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 	onMoveToSquare = []func(s, newState *state.State){}
 	onNoMove = []func(s, newState *state.State){}
-	onThrowSticks = []func(s, newState *state.State){}
+	onThrowSticks = []func(s, newState *state.State) []hypp.Effect{}
 }
 
 func ToTutorialAction() hypp.Action[*state.State] {
@@ -80,10 +80,11 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 			newState.Game.Players[1].Name = "You"
 		}
 		newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
+		isCaller := !newState.Game.HasTurn()
 		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller: isPlayer0,
+			IsCaller: isCaller,
 		}
-		if !isPlayer0 {
+		if !isCaller {
 			return sendFlipperSecret(newState)
 		}
 		return newState
@@ -95,6 +96,8 @@ func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 		newState := s.Clone()
 		newState.Page = state.WhoGoesFirstPage
 		newState.CommitmentScheme.IsCaller = isCaller
+		resetListeners()
+		registerCommitmentScheme()
 		if !isCaller {
 			return sendFlipperSecret(newState)
 		}

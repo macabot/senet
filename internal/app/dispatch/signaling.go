@@ -91,6 +91,8 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 		case SendCallerSecretAndPredictionsKind:
 			callerSecretAndPredictions := parseCallerSecretAndPredictions(message.Data)
 			dispatch(ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions), nil)
+		case SendHasThrownKind:
+			dispatch(ReceiveHasThrownAction(), nil)
 		default:
 			window.Console().Warn("Data message has unknown kind %d", int(message.Kind))
 		}

@@ -7,6 +7,18 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
+func registerCommitmentScheme() {
+	onThrowSticks = append(onThrowSticks, func(_, newState *state.State) []hypp.Effect {
+		isCaller := !newState.Game.HasTurn()
+		newState.CommitmentScheme = state.CommitmentScheme{
+			IsCaller: isCaller,
+		}
+		return []hypp.Effect{
+			SendHasThrownEffect(),
+		}
+	})
+}
+
 type CommitmentMessageKind int
 
 const (
@@ -14,6 +26,7 @@ const (
 	SendCommitmentKind
 	SendFlipperResultsKind
 	SendCallerSecretAndPredictionsKind
+	SendHasThrownKind
 )
 
 type CallerSecretAndPredictions struct {
@@ -62,6 +75,8 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 		data = flipsToValue(d)
 	case CallerSecretAndPredictions:
 		data = d.ToValue()
+	case struct{}:
+		data = js.Undefined()
 	default:
 		panic("cannot convert CommitmentSchemeMessage.Data to js.Value")
 	}
@@ -272,6 +287,32 @@ func ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions CallerSe
 			)
 		}
 
+		return newState
+	}
+}
+
+func SendHasThrownEffect() hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
+			go func() {
+				message := CommitmentSchemeMessage[struct{}]{
+					Kind: SendHasThrownKind,
+				}
+				state.DataChannel.Send(jsonStringify(message.ToValue()))
+			}()
+		},
+	}
+}
+
+func ReceiveHasThrownAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.Game.ThrowSticks(newState)
+
+		isCaller := !newState.Game.HasTurn()
+		newState.CommitmentScheme = state.CommitmentScheme{
+			IsCaller: isCaller,
+		}
 		return newState
 	}
 }
