@@ -83,6 +83,9 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 		newState.CommitmentScheme = state.CommitmentScheme{
 			IsCaller: isPlayer0,
 		}
+		if !isPlayer0 {
+			return sendFlipperSecret(newState)
+		}
 		return newState
 	}
 }
