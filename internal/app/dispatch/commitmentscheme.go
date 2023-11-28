@@ -217,6 +217,7 @@ func valueToCallerSecretAndPredictions(value js.Value) CallerSecretAndPrediction
 
 func sendFlipperSecret(newState *state.State) []hypp.Effect {
 	newState.CommitmentScheme = state.CommitmentScheme{
+		IsCaller:      false,
 		FlipperSecret: state.GenerateSecret(),
 	}
 	return []hypp.Effect{
@@ -241,19 +242,18 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 func ReceiveFlipperSecretAction(flipperSecret string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.CommitmentScheme.FlipperSecret = flipperSecret
+		newState.CommitmentScheme = state.CommitmentScheme{
+			IsCaller:      true,
+			FlipperSecret: flipperSecret,
+		}
 		return sendCommitment(newState)
 	}
 }
 
 func sendCommitment(newState *state.State) hypp.StateAndEffects[*state.State] {
-	newState.CommitmentScheme = state.CommitmentScheme{
-		IsCaller:             true,
-		CallerSecret:         state.GenerateSecret(),
-		FlipperSecret:        newState.CommitmentScheme.FlipperSecret,
-		HasCallerPredictions: true,
-		CallerPredictions:    state.GenerateFlips(),
-	}
+	newState.CommitmentScheme.CallerSecret = state.GenerateSecret()
+	newState.CommitmentScheme.CallerPredictions = state.GenerateFlips()
+	newState.CommitmentScheme.HasCallerPredictions = true
 	newState.CommitmentScheme.Commitment = state.GenerateCommitmentHash(
 		newState.CommitmentScheme.CallerSecret,
 		newState.CommitmentScheme.FlipperSecret,
@@ -283,6 +283,11 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 
 func ReceiveCommitmentAction(commitment string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		if s.CommitmentScheme.IsCaller {
+			window.Console().Warn("Caller received commitment")
+			return s
+		}
+
 		newState := s.Clone()
 		newState.CommitmentScheme.Commitment = commitment
 		return sendFlipperResults(newState)
@@ -290,12 +295,8 @@ func ReceiveCommitmentAction(commitment string) hypp.Action[*state.State] {
 }
 
 func sendFlipperResults(newState *state.State) hypp.StateAndEffects[*state.State] {
-	newState.CommitmentScheme = state.CommitmentScheme{
-		FlipperSecret:     newState.CommitmentScheme.FlipperSecret,
-		HasFlipperResults: true,
-		FlipperResults:    state.GenerateFlips(),
-		Commitment:        newState.CommitmentScheme.Commitment,
-	}
+	newState.CommitmentScheme.FlipperResults = state.GenerateFlips()
+	newState.CommitmentScheme.HasFlipperResults = true
 	return hypp.StateAndEffects[*state.State]{
 		State: newState,
 		Effects: []hypp.Effect{
@@ -320,6 +321,11 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 
 func ReceiveFlipperResultsAction(flipperResults [4]bool) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		if !s.CommitmentScheme.IsCaller {
+			window.Console().Warn("Flipper received flipperResults")
+			return s
+		}
+
 		newState := s.Clone()
 		newState.CommitmentScheme.FlipperResults = flipperResults
 		newState.CommitmentScheme.HasFlipperResults = true
@@ -402,11 +408,6 @@ func ReceiveHasThrownAction() hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		newState.Game.ThrowSticks(newState)
-
-		isCaller := !newState.Game.HasTurn()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller: isCaller,
-		}
 		return newState
 	}
 }
