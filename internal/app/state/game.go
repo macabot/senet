@@ -7,15 +7,6 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-type Status int
-
-const (
-	Created Status = iota
-	Ready
-	InProgress
-	Finished
-)
-
 type TurnMode int
 
 const (
@@ -33,7 +24,6 @@ type Game struct {
 	Turn                  int
 	TurnMode              TurnMode
 	OverwriteHasTurn      *bool
-	Status                Status
 	ValidMoves            map[Position]Position
 	InvalidMoves          map[Position]set.Set[Position]
 	HasMoved              bool
@@ -61,7 +51,6 @@ func (g *Game) Clone() *Game {
 		Turn:                  g.Turn,
 		TurnMode:              g.TurnMode,
 		OverwriteHasTurn:      g.OverwriteHasTurn,
-		Status:                g.Status,
 		ValidMoves:            maps.Clone(g.ValidMoves),
 		InvalidMoves:          maps.Clone(g.InvalidMoves),
 		HasMoved:              g.HasMoved,
