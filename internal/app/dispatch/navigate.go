@@ -84,10 +84,14 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 		newState.CommitmentScheme = state.CommitmentScheme{
 			IsCaller: isCaller,
 		}
+		var effects []hypp.Effect
 		if !isCaller {
-			return sendFlipperSecret(newState)
+			effects = append(effects, sendFlipperSecret(newState)...)
 		}
-		return newState
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: effects,
+		}
 	}
 }
 
@@ -98,9 +102,13 @@ func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 		newState.CommitmentScheme.IsCaller = isCaller
 		resetListeners()
 		registerCommitmentScheme()
+		var effects []hypp.Effect
 		if !isCaller {
-			return sendFlipperSecret(newState)
+			effects = append(effects, sendFlipperSecret(newState)...)
 		}
-		return newState
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: effects,
+		}
 	}
 }
