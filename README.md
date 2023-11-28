@@ -134,6 +134,7 @@ sequenceDiagram
         Flipper-->>Flipper: Player throws sticks
         Flipper->>Caller: Send sticks are thrown
         Flipper-->>Flipper: Player moves piece
+        Flipper->>Caller: Send piece is moved
     end
     Note right of Flipper: Depending on throw, Flipper and Caller switch roles
 ```
