@@ -76,7 +76,7 @@ func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Un
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
 		data := e.Get("data")
-		window.Console().Log("DataChannel message event", data)
+		window.Console().Log("<<< Receive DataChannel message", data)
 		message := ParseCommitmentSchemeMessage(data.String())
 		switch message.Kind {
 		case SendFlipperSecretKind:
@@ -103,6 +103,11 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 		}
 	})
 	return func() {}
+}
+
+func sendDataChannelMessage(data string) {
+	window.Console().Log(">>> Send DataChannel message", data)
+	state.DataChannel.Send(data)
 }
 
 func CreatePeerConnectionOfferEffect() hypp.Effect {

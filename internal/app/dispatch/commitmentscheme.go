@@ -63,6 +63,48 @@ const (
 	SendNoMoveKind
 )
 
+func (k CommitmentMessageKind) String() string {
+	switch k {
+	case SendFlipperSecretKind:
+		return "SendFlipperSecret"
+	case SendCommitmentKind:
+		return "SendCommitment"
+	case SendFlipperResultsKind:
+		return "SendFlipperResults"
+	case SendCallerSecretAndPredictionsKind:
+		return "SendCallerSecretAndPredictions"
+	case SendHasThrownKind:
+		return "SendHasThrown"
+	case SendMoveKind:
+		return "SendMove"
+	case SendNoMoveKind:
+		return "SendNoMove"
+	default:
+		panic("invalid CommitmentMessageKind")
+	}
+}
+
+func commitmentMessageKindFromString(s string) CommitmentMessageKind {
+	switch s {
+	case "SendFlipperSecret":
+		return SendFlipperSecretKind
+	case "SendCommitment":
+		return SendCommitmentKind
+	case "SendFlipperResults":
+		return SendFlipperResultsKind
+	case "SendCallerSecretAndPredictions":
+		return SendCallerSecretAndPredictionsKind
+	case "SendHasThrown":
+		return SendHasThrownKind
+	case "SendMove":
+		return SendMoveKind
+	case "SendNoMove":
+		return SendNoMoveKind
+	default:
+		panic("invalid CommitmentMessageKind string")
+	}
+}
+
 type CallerSecretAndPredictions struct {
 	Secret      string
 	Predictions [4]bool
@@ -136,7 +178,7 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 		panic("cannot convert CommitmentSchemeMessage.Data to js.Value")
 	}
 	return js.ValueOf(map[string]any{
-		"Kind": int(m.Kind),
+		"Kind": m.Kind.String(),
 		"Data": data,
 	})
 }
@@ -144,7 +186,7 @@ func (m CommitmentSchemeMessage[T]) ToValue() js.Value {
 func ParseCommitmentSchemeMessage(s string) CommitmentSchemeMessage[js.Value] {
 	parsed := jsonParse(s)
 	return CommitmentSchemeMessage[js.Value]{
-		Kind: CommitmentMessageKind(parsed.Get("Kind").Int()),
+		Kind: commitmentMessageKindFromString(parsed.Get("Kind").String()),
 		Data: parsed.Get("Data"),
 	}
 }
@@ -190,7 +232,7 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 					Kind: SendFlipperSecretKind,
 					Data: flipperSecret,
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -233,7 +275,7 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 					Kind: SendCommitmentKind,
 					Data: commitment,
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -270,7 +312,7 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 					Kind: SendFlipperResultsKind,
 					Data: flipperResults,
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -311,7 +353,7 @@ func SendCallerSecretAndPredictionsEffect(
 						Predictions: callerPredictions,
 					},
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -350,7 +392,7 @@ func SendHasThrownEffect() hypp.Effect {
 				message := CommitmentSchemeMessage[struct{}]{
 					Kind: SendHasThrownKind,
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -380,7 +422,7 @@ func SendMoveEffect(from, to state.Position) hypp.Effect {
 						To:   to,
 					},
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
@@ -423,7 +465,7 @@ func SendNoMoveEffect() hypp.Effect {
 				message := CommitmentSchemeMessage[struct{}]{
 					Kind: SendNoMoveKind,
 				}
-				state.DataChannel.Send(jsonStringify(message.ToValue()))
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
 			}()
 		},
 	}
