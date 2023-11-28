@@ -79,6 +79,8 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 		window.Console().Log("<<< Receive DataChannel message", data)
 		message := ParseCommitmentSchemeMessage(data.String())
 		switch message.Kind {
+		case SendIsReadyKind:
+			dispatch(ReceiveIsReadyAction(), nil)
 		case SendFlipperSecretKind:
 			flipperSecret := message.Data.String()
 			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)

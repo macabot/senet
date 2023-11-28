@@ -19,16 +19,11 @@ func registerCommitmentScheme() {
 	onMoveToSquare = append(
 		onMoveToSquare,
 		func(s, newState *state.State, from, to state.Position) []hypp.Effect {
-			isCaller := !newState.Game.HasTurn()
-			newState.CommitmentScheme = state.CommitmentScheme{
-				IsCaller: isCaller,
-			}
 			effects := []hypp.Effect{
 				SendMoveEffect(from, to),
 			}
-			if !isCaller {
-				effects = append(effects, sendFlipperSecret(newState)...)
-			}
+			isCaller := !newState.Game.HasTurn()
+			effects = append(effects, sendIsReady(newState, isCaller)...)
 			return effects
 		},
 	)
@@ -36,16 +31,11 @@ func registerCommitmentScheme() {
 	onNoMove = append(
 		onNoMove,
 		func(s, newState *state.State) []hypp.Effect {
-			isCaller := !newState.Game.HasTurn()
-			newState.CommitmentScheme = state.CommitmentScheme{
-				IsCaller: isCaller,
-			}
 			effects := []hypp.Effect{
 				SendNoMoveEffect(),
 			}
-			if !isCaller {
-				effects = append(effects, sendFlipperSecret(newState)...)
-			}
+			isCaller := !newState.Game.HasTurn()
+			effects = append(effects, sendIsReady(newState, isCaller)...)
 			return effects
 		},
 	)
@@ -54,7 +44,8 @@ func registerCommitmentScheme() {
 type CommitmentMessageKind int
 
 const (
-	SendFlipperSecretKind CommitmentMessageKind = iota
+	SendIsReadyKind CommitmentMessageKind = iota
+	SendFlipperSecretKind
 	SendCommitmentKind
 	SendFlipperResultsKind
 	SendCallerSecretAndPredictionsKind
@@ -65,6 +56,8 @@ const (
 
 func (k CommitmentMessageKind) String() string {
 	switch k {
+	case SendIsReadyKind:
+		return "SendIsReady"
 	case SendFlipperSecretKind:
 		return "SendFlipperSecret"
 	case SendCommitmentKind:
@@ -86,6 +79,8 @@ func (k CommitmentMessageKind) String() string {
 
 func commitmentMessageKindFromString(s string) CommitmentMessageKind {
 	switch s {
+	case "SendIsReady":
+		return SendIsReadyKind
 	case "SendFlipperSecret":
 		return SendFlipperSecretKind
 	case "SendCommitment":
@@ -215,11 +210,60 @@ func valueToCallerSecretAndPredictions(value js.Value) CallerSecretAndPrediction
 	}
 }
 
-func sendFlipperSecret(newState *state.State) []hypp.Effect {
+func sendIsReady(newState *state.State, isCaller bool) []hypp.Effect {
 	newState.CommitmentScheme = state.CommitmentScheme{
-		IsCaller:      false,
-		FlipperSecret: state.GenerateSecret(),
+		IsReady:         true,
+		OpponentIsReady: newState.CommitmentScheme.OpponentIsReady,
+		IsCaller:        isCaller,
 	}
+	effects := []hypp.Effect{
+		SendIsReadyEffect(),
+	}
+	if !isCaller && newState.CommitmentScheme.OpponentIsReady {
+		effects = append(effects, sendFlipperSecret(newState)...)
+	}
+	if newState.CommitmentScheme.OpponentIsReady {
+		newState.CommitmentScheme.IsReady = false
+		newState.CommitmentScheme.OpponentIsReady = false
+	}
+	return effects
+}
+
+func SendIsReadyEffect() hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
+			go func() {
+				message := CommitmentSchemeMessage[struct{}]{
+					Kind: SendIsReadyKind,
+				}
+				sendDataChannelMessage(jsonStringify(message.ToValue()))
+			}()
+		},
+	}
+}
+
+func ReceiveIsReadyAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		newState.CommitmentScheme.OpponentIsReady = true
+		var effects []hypp.Effect
+		if !newState.CommitmentScheme.IsCaller && newState.CommitmentScheme.IsReady {
+			effects = append(effects, sendFlipperSecret(newState)...)
+		}
+		if newState.CommitmentScheme.IsReady {
+			newState.CommitmentScheme.IsReady = false
+			newState.CommitmentScheme.OpponentIsReady = false
+		}
+		return hypp.StateAndEffects[*state.State]{
+			State:   newState,
+			Effects: effects,
+		}
+	}
+}
+
+func sendFlipperSecret(newState *state.State) []hypp.Effect {
+	newState.CommitmentScheme.IsCaller = false
+	newState.CommitmentScheme.FlipperSecret = state.GenerateSecret()
 	return []hypp.Effect{
 		SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
 	}
@@ -242,10 +286,8 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 func ReceiveFlipperSecretAction(flipperSecret string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller:      true,
-			FlipperSecret: flipperSecret,
-		}
+		newState.CommitmentScheme.IsCaller = true
+		newState.CommitmentScheme.FlipperSecret = flipperSecret
 		return sendCommitment(newState)
 	}
 }
@@ -445,12 +487,7 @@ func ReceiveMoveAction(move Move) hypp.Action[*state.State] {
 		}
 
 		isCaller := !newState.Game.HasTurn()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller: isCaller,
-		}
-		if !isCaller {
-			effects = append(effects, sendFlipperSecret(newState)...)
-		}
+		effects = append(effects, sendIsReady(newState, isCaller)...)
 
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
@@ -479,14 +516,8 @@ func ReceiveNoMoveAction() hypp.Action[*state.State] {
 			panic(err)
 		}
 
-		var effects []hypp.Effect
 		isCaller := !newState.Game.HasTurn()
-		newState.CommitmentScheme = state.CommitmentScheme{
-			IsCaller: isCaller,
-		}
-		if !isCaller {
-			effects = append(effects, sendFlipperSecret(newState)...)
-		}
+		effects := sendIsReady(newState, isCaller)
 
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,

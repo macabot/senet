@@ -121,6 +121,11 @@ Instead a [commitment scheme](https://en.wikipedia.org/wiki/Coin_flipping#Teleco
 sequenceDiagram
     Note right of Flipper: Flipper is player whose turn it is
     loop Until end of game
+        par Wait for opponent to be ready
+            Flipper->>Caller: Send is ready
+        and
+            Caller->>Flipper: Send is ready
+        end
         Flipper-->>Flipper: Generate Flipper secret
         Flipper->>Caller: Send Flipper secret
         Caller-->>Caller: Generate Caller secret

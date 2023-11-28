@@ -14,6 +14,8 @@ import (
 )
 
 type CommitmentScheme struct {
+	IsReady              bool
+	OpponentIsReady      bool
 	IsCaller             bool
 	CallerSecret         string
 	FlipperSecret        string
