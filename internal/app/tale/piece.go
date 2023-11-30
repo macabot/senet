@@ -21,7 +21,7 @@ func Piece() *fairytale.Tale[*state.State] {
 				Piece:         piece,
 				Player:        s.Game.Turn,
 				CanClick:      s.Game.CanClickOnPiece(s.Game.Turn, piece),
-				DrawAttention: s.Game.PiecesDrawAttention(s.Game.Turn),
+				DrawAttention: s.Game.PieceDrawsAttention(s.Game.Turn, piece.Position),
 				Selected:      s.Game.PieceIsSelected(piece),
 			}
 			return component.Piece(props)

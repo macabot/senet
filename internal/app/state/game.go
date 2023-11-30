@@ -121,14 +121,14 @@ func (g *Game) addInvalidMove(from, to Position) {
 }
 
 func (g Game) CanClickOnPiece(player int, piece *Piece) bool {
-	isOnBoard := piece.Position >= 0 && piece.Position < 30
-	return isOnBoard && g.PiecesDrawAttention(player) || g.PieceIsSelected(piece)
+	return g.PieceDrawsAttention(player, piece.Position) || g.PieceIsSelected(piece)
 }
 
-func (g Game) PiecesDrawAttention(player int) bool {
+func (g Game) PieceDrawsAttention(player int, pos Position) bool {
 	return g.HasTurn() &&
 		g.Sticks.HasThrown &&
-		player == g.Turn
+		player == g.Turn &&
+		pos >= 0 && pos < 30
 }
 
 func (g Game) PieceIsSelected(piece *Piece) bool {
