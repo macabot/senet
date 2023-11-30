@@ -91,8 +91,8 @@ func GenerateCommitmentHash(callerSecret, flipperSecret string, callerPrediction
 	password := createPlainTextCommitment(callerSecret, flipperSecret, callerPredictions)
 	const (
 		time    = 1
-		memory  = 64 * 1024
-		threads = 4
+		memory  = 7 * 1024
+		threads = 5
 		keyLen  = 32
 	)
 	salt := generateRandomBytes(keyLen)
