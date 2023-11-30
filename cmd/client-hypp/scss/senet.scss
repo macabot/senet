@@ -1,8 +1,9 @@
 @use "./base";
 @use "./board";
 @use "./coordinate";
-@use "./game-page";
 @use "./game-over";
+@use "./game-page";
+@use "./loader";
 @use "./menu";
 @use "./piece";
 @use "./players";
@@ -13,3 +14,4 @@
 @use "./stick";
 @use "./sticks";
 @use "./top-bar";
+@use "./who-goes-first-page";

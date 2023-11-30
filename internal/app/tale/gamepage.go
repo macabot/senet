@@ -11,7 +11,7 @@ import (
 
 func GamePage() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
-	game.TurnMode = state.IsPlayer1
+	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
 		"GamePage",
 		&state.State{

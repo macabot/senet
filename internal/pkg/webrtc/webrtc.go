@@ -209,3 +209,7 @@ func (c DataChannel) SetOnMessage(onMessage func(e js.Value)) {
 func (c DataChannel) Send(data string) {
 	c.Value.Call("send", data)
 }
+
+func (c DataChannel) ReadyState() string {
+	return c.Value.Get("readyState").String()
+}

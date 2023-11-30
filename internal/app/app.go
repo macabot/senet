@@ -15,7 +15,6 @@ func Run(element window.Element) {
 		},
 		View: component.Senet,
 		Node: element,
-		// FIXME this causes error: Uncaught InternalError: too much recursion
 		Subscriptions: func(s *state.State) []hypp.Subscription {
 			initialized := s.Signaling != nil && s.Signaling.Initialized
 			return []hypp.Subscription{

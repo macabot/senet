@@ -41,9 +41,9 @@ func Piece() *fairytale.Tale[*state.State] {
 					s.Game.Selected = nil
 				}
 				if s.Game.Turn == 0 {
-					s.Game.TurnMode = state.IsPlayer1
+					s.Game.TurnMode = state.IsPlayer0
 				} else if s.Game.Turn == 1 {
-					s.Game.TurnMode = state.IsPlayer2
+					s.Game.TurnMode = state.IsPlayer1
 				}
 				s.Game.Sticks.HasThrown = canSelect
 				return s

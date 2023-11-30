@@ -13,6 +13,7 @@ type SticksProps struct {
 	Sticks        *state.Sticks
 	DrawAttention bool
 	NoValidMoves  bool
+	IsLoading     bool
 }
 
 func Sticks(props SticksProps) *hypp.VNode {
@@ -24,7 +25,8 @@ func Sticks(props SticksProps) *hypp.VNode {
 		Stick(props.Sticks.Flips[1]),
 		Stick(props.Sticks.Flips[2]),
 		Stick(props.Sticks.Flips[3]),
-		throwButton(!props.DrawAttention),
+		throwButton(!props.DrawAttention || props.IsLoading),
+		Loader(!props.IsLoading),
 		steps(props.Sticks, props.NoValidMoves),
 	)
 }

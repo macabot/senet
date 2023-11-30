@@ -7,21 +7,12 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-type Status int
-
-const (
-	Created Status = iota
-	Ready
-	InProgress
-	Finished
-)
-
 type TurnMode int
 
 const (
 	IsBothPlayers TurnMode = iota
+	IsPlayer0
 	IsPlayer1
-	IsPlayer2
 )
 
 type Game struct {
@@ -33,7 +24,6 @@ type Game struct {
 	Turn                  int
 	TurnMode              TurnMode
 	OverwriteHasTurn      *bool
-	Status                Status
 	ValidMoves            map[Position]Position
 	InvalidMoves          map[Position]set.Set[Position]
 	HasMoved              bool
@@ -61,7 +51,6 @@ func (g *Game) Clone() *Game {
 		Turn:                  g.Turn,
 		TurnMode:              g.TurnMode,
 		OverwriteHasTurn:      g.OverwriteHasTurn,
-		Status:                g.Status,
 		ValidMoves:            maps.Clone(g.ValidMoves),
 		InvalidMoves:          maps.Clone(g.InvalidMoves),
 		HasMoved:              g.HasMoved,
@@ -90,9 +79,9 @@ func (g Game) HasTurn() bool {
 	switch g.TurnMode {
 	case IsBothPlayers:
 		return true
-	case IsPlayer1:
+	case IsPlayer0:
 		return g.Turn == 0
-	case IsPlayer2:
+	case IsPlayer1:
 		return g.Turn == 1
 	default:
 		panic(fmt.Errorf("Invalid TurnMode %v", g.TurnMode))
@@ -146,7 +135,7 @@ func (g Game) PieceIsSelected(piece *Piece) bool {
 	return g.Selected != nil && g.Selected.Position == piece.Position
 }
 
-func (g Game) SticksDrawAttention() bool {
+func (g Game) CanThrow() bool {
 	return !g.Sticks.HasThrown && g.HasTurn()
 }
 
@@ -281,6 +270,18 @@ type NextMove struct {
 	To     Position
 }
 
+func (g Game) FindValidFromPosition(toPosition Position) (Position, bool) {
+	fromPositionFound := false
+	var fromPosition Position
+	for from, to := range g.ValidMoves {
+		if to == toPosition {
+			fromPosition = from
+			fromPositionFound = true
+		}
+	}
+	return fromPosition, fromPositionFound
+}
+
 func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
@@ -363,7 +364,7 @@ func (g *Game) NoMove(player int) error {
 	return nil
 }
 
-func (g *Game) ThrowSticks() {
-	g.Sticks.Throw()
+func (g *Game) ThrowSticks(s *State) {
+	g.Sticks.Throw(s)
 	g.CalcValidMoves()
 }

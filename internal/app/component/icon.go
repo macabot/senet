@@ -10,7 +10,6 @@ func ProtectedIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
-			"height":  "auto",
 			"viewBox": "0 96 960 960",
 			"class":   "icon protected",
 		},
@@ -27,7 +26,6 @@ func BlockingIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
-			"height":  "auto",
 			"viewBox": "0 96 960 960",
 			"class":   "icon blocking",
 		},
@@ -44,7 +42,6 @@ func ReturnToStartIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon return-to-start",
 		},
@@ -61,7 +58,6 @@ func StartIcon() *hypp.VNode {
 	return svg.Svg(
 		hypp.HProps{
 			"width":   "80%",
-			"height":  "auto",
 			"viewBox": "0 -960 960 960",
 			"class":   "icon start",
 		},

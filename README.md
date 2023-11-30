@@ -110,3 +110,46 @@ app --> state
 classDef syscallJS fill:#f00;
 class client-hypp,fairytale,tale,control syscallJS;
 ```
+
+## Online player vs players
+
+When playing an online game, two players use [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API) to connect directly to one another.
+This means there is no trusted third party to generate a random throw of the sticks.
+Instead a [commitment scheme](https://en.wikipedia.org/wiki/Coin_flipping#Telecommunications) is used:
+
+```mermaid
+sequenceDiagram
+    Note right of Flipper: Flipper is player whose turn it is
+    loop Until end of game
+        par Wait for opponent to be ready
+            Flipper->>Caller: Send is ready
+        and
+            Caller->>Flipper: Send is ready
+        end
+        Flipper-->>Flipper: Generate Flipper secret
+        Flipper->>Caller: Send Flipper secret
+        Caller-->>Caller: Generate Caller secret
+        Caller-->>Caller: Generate Caller predictions
+        Caller-->>Caller: Generate commitment
+        Caller->>Flipper: Send commitment
+        Flipper-->>Flipper: Generate Flipper results
+        Flipper->>Caller: Send Flipper results
+        Caller->>Flipper: Send Caller secret and predictions
+        Flipper-->>Flipper: Verify commitment
+        Flipper-->>Flipper: Player throws sticks
+        Flipper->>Caller: Send sticks are thrown
+        Flipper-->>Flipper: Player moves piece
+        Flipper->>Caller: Send piece is moved
+    end
+    Note right of Flipper: Depending on throw, Flipper and Caller switch roles
+```
+
+The throw of the sticks is based on the [NXOR](https://en.wikipedia.org/wiki/XNOR_gate) operation on every prediction and result pair.
+E.g.
+| Caller predictions | Flipper results | Throw flips |
+| ------------------ | --------------- | ----------- |
+| 1 | 1 | 1 |
+| 0 | 1 | 0 |
+| 0 | 1 | 0 |
+| 0 | 0 | 1 |
+| | Throw | 2 |

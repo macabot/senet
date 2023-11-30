@@ -20,6 +20,7 @@ func initSignaling(s *state.State) {
 	s.Signaling.Initialized = true
 	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
 	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
+	s.Signaling.ReadyState = state.DataChannel.ReadyState()
 }
 
 func resetSignaling(s *state.State) {
@@ -30,62 +31,85 @@ func resetSignaling(s *state.State) {
 	}
 }
 
-func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		iceConnectionState := state.PeerConnection.ICEConnectionState()
-		window.Console().Log("PeerConnection.ICEConnectionState", iceConnectionState)
-		dispatch(SetICEConnectionStateAction(iceConnectionState), nil)
-	})
-	return func() {
-		dispatch(SetICEConnectionStateAction(""), nil)
-	}
-}
-
-func SetICEConnectionStateAction(iceConnectionState string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func SetSignalingStatesAction(iceConnectionState, connectionState, readyState string) hypp.Action[*state.State] {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
 		newState.Signaling.ICEConnectionState = iceConnectionState
+		newState.Signaling.ConnectionState = connectionState
+		newState.Signaling.ReadyState = readyState
+
 		return newState
 	}
+}
+
+func onSignalingStateChange(dispatch hypp.Dispatch) {
+	iceConnectionState := state.PeerConnection.ICEConnectionState()
+	connectionState := state.PeerConnection.ConnectionState()
+	readyState := state.DataChannel.ReadyState()
+	dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+}
+
+func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+	state.PeerConnection.SetOnICEConnectionStateChange(func() {
+		onSignalingStateChange(dispatch)
+	})
+	return func() {}
 }
 
 func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.PeerConnection.SetOnConnectionStateChange(func() {
-		connectionState := state.PeerConnection.ConnectionState()
-		window.Console().Log("PeerConnection.ConnectionState", connectionState)
-		dispatch(SetConnectionStateAction(connectionState), nil)
+		onSignalingStateChange(dispatch)
 	})
-	return func() {
-		dispatch(SetConnectionStateAction(""), nil)
-	}
-}
-
-func SetConnectionStateAction(connectionState string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.ConnectionState = connectionState
-		return newState
-	}
+	return func() {}
 }
 
 func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnOpen(func() {
-		window.Console().Log("DataChannel open event")
+		onSignalingStateChange(dispatch)
 	})
 	return func() {}
 }
 
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
-		window.Console().Log("DataChannel message event", e.Get("data"))
+		data := e.Get("data")
+		window.Console().Log("<<< Receive DataChannel message", data)
+		message := ParseCommitmentSchemeMessage(data.String())
+		switch message.Kind {
+		case SendIsReadyKind:
+			dispatch(ReceiveIsReadyAction(), nil)
+		case SendFlipperSecretKind:
+			flipperSecret := message.Data.String()
+			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)
+		case SendCommitmentKind:
+			commitment := message.Data.String()
+			dispatch(ReceiveCommitmentAction(commitment), nil)
+		case SendFlipperResultsKind:
+			flipperResults := parseFlips(message.Data)
+			dispatch(ReceiveFlipperResultsAction(flipperResults), nil)
+		case SendCallerSecretAndPredictionsKind:
+			callerSecretAndPredictions := parseCallerSecretAndPredictions(message.Data)
+			dispatch(ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions), nil)
+		case SendHasThrownKind:
+			dispatch(ReceiveHasThrownAction(), nil)
+		case SendMoveKind:
+			move := parseMove(message.Data)
+			dispatch(ReceiveMoveAction(move), nil)
+		case SendNoMoveKind:
+			dispatch(ReceiveNoMoveAction(), nil)
+		default:
+			window.Console().Warn("Data message has unknown kind %d", int(message.Kind))
+		}
 	})
 	return func() {}
+}
+
+func sendDataChannelMessage(data string) {
+	window.Console().Log(">>> Send DataChannel message", data)
+	state.DataChannel.Send(data)
 }
 
 func CreatePeerConnectionOfferEffect() hypp.Effect {

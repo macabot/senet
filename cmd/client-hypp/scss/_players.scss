@@ -1,3 +1,5 @@
+@use "./vars" as vars;
+
 @mixin player-points-incrementer($points) {
   @keyframes player-points-increment-to-#{$points} {
     0% {
@@ -33,9 +35,6 @@
   }
 }
 
-$player-0-color: rgb(204, 255, 253);
-$player-1-color: rgb(248, 206, 204);
-
 .players {
   width: 100%;
   display: flex;
@@ -50,7 +49,7 @@ $player-1-color: rgb(248, 206, 204);
 
   &.player-0 {
     .player {
-      background-color: $player-0-color;
+      background-color: vars.$player-0-color;
     }
 
     @include speech-bubble-color(#00aabb);
@@ -62,7 +61,7 @@ $player-1-color: rgb(248, 206, 204);
 
   &.player-1 {
     .player {
-      background-color: $player-1-color;
+      background-color: vars.$player-1-color;
     }
     @include speech-bubble-color(#dc6464);
 
@@ -127,9 +126,9 @@ $player-1-color: rgb(248, 206, 204);
 }
 
 .player-icon.player-0 {
-  background-color: $player-0-color;
+  background-color: vars.$player-0-color;
 }
 
 .player-icon.player-1 {
-  background-color: $player-1-color;
+  background-color: vars.$player-1-color;
 }

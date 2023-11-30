@@ -7,6 +7,10 @@
   grid-template-rows: 1fr 1fr;
   place-items: center;
   position: relative;
+
+  .loader-wrapper {
+    position: absolute;
+  }
 }
 
 .sticks-icon {

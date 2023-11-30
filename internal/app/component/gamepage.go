@@ -7,6 +7,8 @@ import (
 )
 
 func GamePage(s *state.State) *hypp.VNode {
+	gameCanThrow := s.Game.CanThrow()
+	sticksCanThrow := s.Game.Sticks.CanThrow(s)
 	return html.Main(
 		hypp.HProps{
 			"class": "game-page",
@@ -15,8 +17,9 @@ func GamePage(s *state.State) *hypp.VNode {
 		Board(s),
 		Sticks(SticksProps{
 			Sticks:        s.Game.Sticks,
-			DrawAttention: s.Game.SticksDrawAttention(),
+			DrawAttention: gameCanThrow && sticksCanThrow,
 			NoValidMoves:  len(s.Game.ValidMoves) == 0,
+			IsLoading:     gameCanThrow && !sticksCanThrow,
 		}),
 		GameOver(s),
 		OrientationTip(s),

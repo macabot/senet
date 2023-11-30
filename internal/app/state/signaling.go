@@ -18,6 +18,7 @@ type Signaling struct {
 	Initialized        bool
 	ICEConnectionState string
 	ConnectionState    string
+	ReadyState         string
 	// Loading Offer or Answer.
 	Loading bool
 	Offer   string
@@ -33,6 +34,7 @@ func (s *Signaling) Clone() *Signaling {
 		Initialized:        s.Initialized,
 		ICEConnectionState: s.ICEConnectionState,
 		ConnectionState:    s.ConnectionState,
+		ReadyState:         s.ReadyState,
 		Loading:            s.Loading,
 		Offer:              s.Offer,
 		Answer:             s.Answer,
