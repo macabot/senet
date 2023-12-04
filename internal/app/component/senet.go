@@ -10,7 +10,7 @@ import (
 
 func Senet(s *state.State) *hypp.VNode {
 	return html.Html(
-		nil,
+		hypp.HProps{"lang": "en"},
 		head(),
 		body(s),
 	)
