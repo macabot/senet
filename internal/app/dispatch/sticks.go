@@ -9,7 +9,7 @@ var onThrowSticks = []func(s, newState *state.State) []hypp.Effect{}
 
 func ThrowSticks(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
-	newState.Game.ThrowSticks(s)
+	newState.Game.ThrowSticks(newState)
 	var effects []hypp.Effect
 	for _, f := range onThrowSticks {
 		fEffects := f(s, newState)

@@ -27,6 +27,7 @@ func ToTutorialAction() hypp.Action[*state.State] {
 			Kind: state.TutorialStart,
 		}
 		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
+		newState.TutorialIndex = 0
 		resetListeners()
 		registerTutorial()
 		return newState

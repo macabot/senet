@@ -70,17 +70,7 @@ var defaultRNG = rand.New(cryptoSource{})
 
 var _ ThrowSticksGenerator = &TutorialSticksGenerator{}
 
-type TutorialSticksGenerator struct {
-	index int
-}
-
-func NewTutorialSticksGenerator(index int) *TutorialSticksGenerator {
-	return &TutorialSticksGenerator{
-		index: index,
-	}
-}
-
-var defaultTutorialSticksGenerator = NewTutorialSticksGenerator(0)
+type TutorialSticksGenerator struct{}
 
 // tutorialThrownSticks must only contain values 1, 2, 3, 4 or 6.
 var tutorialThrownSticks = [...]int{
@@ -99,9 +89,9 @@ func (g TutorialSticksGenerator) CanThrow(_ *State) bool {
 	return true
 }
 
-func (g *TutorialSticksGenerator) Throw(_ *State) int {
-	steps := tutorialThrownSticks[g.index%len(tutorialThrownSticks)]
-	g.index++
+func (g TutorialSticksGenerator) Throw(s *State) int {
+	steps := tutorialThrownSticks[s.TutorialIndex%len(tutorialThrownSticks)]
+	s.TutorialIndex++
 	return steps
 }
 

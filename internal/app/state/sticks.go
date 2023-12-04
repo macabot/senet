@@ -75,7 +75,7 @@ func (s Sticks) generator() ThrowSticksGenerator {
 	case CryptoSticksGeneratorKind:
 		return defaultCryptoSticksGenerator
 	case TutorialSticksGeneratorKind:
-		return defaultTutorialSticksGenerator
+		return TutorialSticksGenerator{}
 	case CommitmentSchemeGeneratorKind:
 		return CommitmentSchemeGenerator{}
 	default:

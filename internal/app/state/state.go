@@ -19,6 +19,7 @@ type State struct {
 	HideOrientationTip bool
 	Signaling          *Signaling
 	CommitmentScheme   CommitmentScheme
+	TutorialIndex      int
 }
 
 func (s *State) Clone() *State {
@@ -32,5 +33,6 @@ func (s *State) Clone() *State {
 		HideOrientationTip: s.HideOrientationTip,
 		Signaling:          s.Signaling.Clone(),
 		CommitmentScheme:   s.CommitmentScheme.Clone(),
+		TutorialIndex:      s.TutorialIndex,
 	}
 }
