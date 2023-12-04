@@ -1,3 +1,5 @@
+@use "./vars" as vars;
+
 .game-page {
   display: flex;
   flex-direction: column;
@@ -32,7 +34,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 5;
+  z-index: vars.$z-index-orientation-tip;
   padding: 1rem;
 
   button {

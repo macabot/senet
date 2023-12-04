@@ -1,3 +1,5 @@
+@use "./vars" as vars;
+
 .menu-button {
   width: 2rem;
   border-radius: 50%;
@@ -10,7 +12,7 @@
   width: 100vw;
   height: 100vh;
   backdrop-filter: blur(10px);
-  z-index: 10;
+  z-index: vars.$z-index-menu-wrapper;
   display: flex;
   justify-content: center;
   align-items: center;
