@@ -44,6 +44,11 @@ func Piece(props PieceProps) *hypp.VNode {
 				},
 				"disabled": !props.CanClick,
 				"type":     "button",
+				"aria-label": fmt.Sprintf(
+					"piece %d of player %d",
+					((props.Piece.ID-1)%5)+1,
+					props.Player+1,
+				),
 			},
 			BlockingIcon(),
 			ProtectedIcon(),

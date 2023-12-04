@@ -15,8 +15,9 @@ func TopBar(s *state.State) *hypp.VNode {
 		Players(CreatePlayersProps(s)),
 		html.Button(
 			hypp.HProps{
-				"class":   "menu-button",
-				"onclick": dispatch.ToggleMenuAction(),
+				"class":      "menu-button",
+				"onclick":    dispatch.ToggleMenuAction(),
+				"aria-label": "menu button",
 			},
 			MenuIcon(),
 		),
