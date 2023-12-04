@@ -1,8 +1,6 @@
 package webrtc
 
 import (
-	"errors"
-
 	"github.com/macabot/hypp/js"
 )
 
@@ -119,7 +117,7 @@ func (c PeerConnection) ConnectionState() string {
 func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) {
 	promise := c.Value.Call("setLocalDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
-		panic(errors.New(err.String()))
+		panic(err.String())
 	}
 }
 
@@ -130,7 +128,7 @@ func (c PeerConnection) LocalDescription() SessionDescription {
 func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) {
 	promise := c.Value.Call("setRemoteDescription", description.Value)
 	if _, err := await(promise); !err.IsNull() {
-		panic(errors.New(err.String()))
+		panic(err.String())
 	}
 }
 
@@ -138,7 +136,7 @@ func (c PeerConnection) AwaitCreateOffer() SessionDescription {
 	promise := c.Value.Call("createOffer")
 	v, err := await(promise)
 	if !err.IsNull() {
-		panic(errors.New(err.String()))
+		panic(err.String())
 	}
 	return SessionDescription{v}
 }
@@ -147,7 +145,7 @@ func (c PeerConnection) AwaitCreateAnswer() SessionDescription {
 	promise := c.Value.Call("createAnswer")
 	v, err := await(promise)
 	if !err.IsNull() {
-		panic(errors.New(err.String()))
+		panic(err.String())
 	}
 	return SessionDescription{v}
 }
