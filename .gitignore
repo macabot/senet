@@ -6,6 +6,10 @@
 *.dylib
 *.wasm
 
+# Compressed files
+*.gz
+*.br
+
 # Go version specific files
 wasm_exec.js
 
