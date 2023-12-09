@@ -11,19 +11,46 @@ import (
 	"github.com/macabot/senet/internal/pkg/localstorage"
 )
 
-func Run(element window.Element) {
+func loadState() *state.State {
 	s := &state.State{
 		Page: state.StartPage,
 	}
 	v, ok := localstorage.GetItem("state")
-	if ok {
-		if err := json.Unmarshal([]byte(v), s); err != nil {
+	if !ok {
+		return s
+	}
+	if err := json.Unmarshal([]byte(v), s); err != nil {
+		panic(err)
+	}
+	if s.Game != nil && s.Game.Sticks.GeneratorKind == state.TutorialSticksGeneratorKind {
+		dispatch.RegisterTutorial()
+	}
+	return s
+}
+
+func persistState(dispatch hypp.Dispatch) hypp.Dispatch {
+	return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
+		dispatch(dispatchable, payload)
+		var s *state.State
+		switch v := dispatchable.(type) {
+		case hypp.StateAndEffects[*state.State]:
+			s = v.State
+		case *state.State:
+			s = v
+		default:
+			return
+		}
+		b, err := json.Marshal(s)
+		if err != nil {
 			panic(err)
 		}
+		localstorage.SetItem("state", string(b))
 	}
+}
 
+func Run(element window.Element) {
 	hypp.App(hypp.AppProps[*state.State]{
-		Init: s,
+		Init: loadState(),
 		View: component.Senet,
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {
@@ -47,24 +74,6 @@ func Run(element window.Element) {
 				},
 			}
 		},
-		DispatchWrapper: func(dispatch hypp.Dispatch) hypp.Dispatch {
-			return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
-				dispatch(dispatchable, payload)
-				var s *state.State
-				switch v := dispatchable.(type) {
-				case hypp.StateAndEffects[*state.State]:
-					s = v.State
-				case *state.State: // State
-					s = v
-				default:
-					return
-				}
-				b, err := json.Marshal(s)
-				if err != nil {
-					panic(err)
-				}
-				localstorage.SetItem("state", string(b))
-			}
-		},
+		DispatchWrapper: persistState,
 	})
 }
