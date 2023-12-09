@@ -52,7 +52,7 @@ func stepsToUps(steps int) [4]bool {
 	case 6:
 		return [4]bool{false, false, false, false}
 	default:
-		panic(fmt.Errorf("Cannot convert %d steps to ups.", steps))
+		panic(fmt.Errorf("cannot convert %d steps to ups", steps))
 	}
 }
 
@@ -79,7 +79,7 @@ func (s Sticks) generator() ThrowSticksGenerator {
 	case CommitmentSchemeGeneratorKind:
 		return CommitmentSchemeGenerator{}
 	default:
-		panic(fmt.Errorf("Cannot get sticks generator for kind %v.", s.GeneratorKind))
+		panic(fmt.Errorf("cannot get sticks generator for kind %v", s.GeneratorKind))
 	}
 }
 

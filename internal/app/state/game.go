@@ -84,7 +84,7 @@ func (g Game) HasTurn() bool {
 	case IsPlayer1:
 		return g.Turn == 1
 	default:
-		panic(fmt.Errorf("Invalid TurnMode %v", g.TurnMode))
+		panic(fmt.Errorf("invalid TurnMode %v", g.TurnMode))
 	}
 }
 
@@ -286,11 +286,11 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
 	if !ok {
-		return nil, fmt.Errorf("Cannot move. Piece not found on '%d' for player '%d'", from, player)
+		return nil, fmt.Errorf("cannot move. Piece not found on '%d' for player '%d'", from, player)
 	}
 
 	if validMovesTo, ok := g.ValidMoves[from]; !ok || to != validMovesTo {
-		return nil, fmt.Errorf("Cannot move. Move is not valid from '%d' to '%d' for player '%d'", from, to, player)
+		return nil, fmt.Errorf("cannot move. Move is not valid from '%d' to '%d' for player '%d'", from, to, player)
 	}
 	piece.Position = to
 	delete(piecesByPos, from)
@@ -351,7 +351,7 @@ func (g *Game) UpdateWinner() {
 
 func (g *Game) NoMove(player int) error {
 	if len(g.ValidMoves) > 0 {
-		return fmt.Errorf("Cannot perform no-move. There are valid moves.")
+		return fmt.Errorf("cannot perform no-move. There are valid moves")
 	}
 
 	g.Selected = nil
