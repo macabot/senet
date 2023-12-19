@@ -6,7 +6,7 @@ import (
 
 // await awaits a Promise.
 // Based on https://stackoverflow.com/a/68427221
-func await(awaitable js.Value) (js.Value, js.Value) {
+func await(awaitable js.Value) (js.Value, error) {
 	then := make(chan js.Value)
 	defer close(then)
 	thenFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
@@ -27,9 +27,9 @@ func await(awaitable js.Value) (js.Value, js.Value) {
 
 	select {
 	case result := <-then:
-		return result, js.Null()
+		return result, nil
 	case err := <-catch:
-		return js.Null(), err
+		return js.Null(), js.Error{Value: err}
 	}
 }
 
@@ -116,8 +116,8 @@ func (c PeerConnection) ConnectionState() string {
 
 func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) {
 	promise := c.Value.Call("setLocalDescription", description.Value)
-	if _, err := await(promise); !err.IsNull() {
-		panic(err.String())
+	if _, err := await(promise); err != nil {
+		panic(err)
 	}
 }
 
@@ -127,16 +127,16 @@ func (c PeerConnection) LocalDescription() SessionDescription {
 
 func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) {
 	promise := c.Value.Call("setRemoteDescription", description.Value)
-	if _, err := await(promise); !err.IsNull() {
-		panic(err.String())
+	if _, err := await(promise); err != nil {
+		panic(err)
 	}
 }
 
 func (c PeerConnection) AwaitCreateOffer() SessionDescription {
 	promise := c.Value.Call("createOffer")
 	v, err := await(promise)
-	if !err.IsNull() {
-		panic(err.String())
+	if err != nil {
+		panic(err)
 	}
 	return SessionDescription{v}
 }
@@ -144,8 +144,8 @@ func (c PeerConnection) AwaitCreateOffer() SessionDescription {
 func (c PeerConnection) AwaitCreateAnswer() SessionDescription {
 	promise := c.Value.Call("createAnswer")
 	v, err := await(promise)
-	if !err.IsNull() {
-		panic(err.String())
+	if err != nil {
+		panic(err)
 	}
 	return SessionDescription{v}
 }
