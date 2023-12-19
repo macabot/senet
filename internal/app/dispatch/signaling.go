@@ -87,7 +87,7 @@ func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Un
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
 		data := e.Get("data")
-		window.Console().Log("<<< Receive DataChannel message", data)
+		window.Console().Debug("<<< Receive DataChannel message", data)
 		message := ParseCommitmentSchemeMessage(data.String())
 		switch message.Kind {
 		case SendIsReadyKind:
@@ -119,7 +119,7 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 }
 
 func sendDataChannelMessage(data string) {
-	window.Console().Log(">>> Send DataChannel message", data)
+	window.Console().Debug(">>> Send DataChannel message", data)
 	state.DataChannel.Send(data)
 }
 
