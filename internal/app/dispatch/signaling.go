@@ -37,6 +37,17 @@ func SetSignalingStatesAction(iceConnectionState, connectionState, readyState st
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
+
+		if newState.Signaling.ICEConnectionState != iceConnectionState {
+			window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, iceConnectionState)
+		}
+		if newState.Signaling.ConnectionState != connectionState {
+			window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, connectionState)
+		}
+		if newState.Signaling.ReadyState != readyState {
+			window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, readyState)
+		}
+
 		newState.Signaling.ICEConnectionState = iceConnectionState
 		newState.Signaling.ConnectionState = connectionState
 		newState.Signaling.ReadyState = readyState
