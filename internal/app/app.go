@@ -22,9 +22,18 @@ func loadState() *state.State {
 	if err := json.Unmarshal([]byte(v), s); err != nil {
 		panic(err)
 	}
+
 	if s.Game != nil && s.Game.Sticks.GeneratorKind == state.TutorialSticksGeneratorKind {
 		dispatch.RegisterTutorial()
 	}
+
+	if s.Signaling != nil && s.Signaling.Initialized {
+		s.Signaling.Initialized = false
+		s.Signaling.ICEConnectionState = "disconnected"
+		s.Signaling.ConnectionState = "failed"
+		s.Signaling.ReadyState = "closed"
+	}
+
 	return s
 }
 
