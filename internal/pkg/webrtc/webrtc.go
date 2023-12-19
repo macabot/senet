@@ -175,6 +175,8 @@ type SessionDescription struct {
 	js.Value
 }
 
+// NewSessionDescription creates a SessionDescription.
+// Kind must be "offer" or "answer".
 func NewSessionDescription(kind string, sdp string) SessionDescription {
 	return SessionDescription{js.ValueOf(map[string]any{
 		"type": kind,
