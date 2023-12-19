@@ -24,8 +24,8 @@ func initSignaling(s *state.State) {
 }
 
 func resetSignaling(s *state.State) {
-	state.PeerConnection = webrtc.PeerConnection{}
-	state.DataChannel = webrtc.DataChannel{}
+	state.PeerConnection = webrtc.PeerConnection{Value: js.Undefined()}
+	state.DataChannel = webrtc.DataChannel{Value: js.Undefined()}
 	if s.Signaling != nil {
 		s.Signaling.Initialized = false
 	}
