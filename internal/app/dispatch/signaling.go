@@ -7,7 +7,6 @@ import (
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
-	"github.com/macabot/senet/internal/pkg/exception"
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
@@ -128,7 +127,7 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
-				defer exception.Handle()
+				defer RecoverPanic(dispatch)
 
 				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("answer", "foo")) // TODO should throw
 

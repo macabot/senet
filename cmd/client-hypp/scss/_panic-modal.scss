@@ -1,0 +1,16 @@
+.panic-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  details {
+    max-width: 80%;
+  }
+
+  button {
+    font-size: 3rem;
+    padding: 10px;
+    margin: 20px;
+  }
+}

@@ -33,6 +33,10 @@ func head() *hypp.VNode {
 }
 
 func body(s *state.State) *hypp.VNode {
+	if s.PanicTrace != nil {
+		return PanicModal(s)
+	}
+
 	var page *hypp.VNode
 	switch s.Page {
 	case state.StartPage:

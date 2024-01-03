@@ -2,6 +2,8 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
+	"runtime/debug"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/window"
@@ -12,15 +14,20 @@ import (
 )
 
 func loadState() *state.State {
-	s := &state.State{
+	defaultState := &state.State{
 		Page: state.StartPage,
 	}
 	v, ok := localstorage.GetItem("state")
 	if !ok {
-		return s
+		return defaultState
 	}
+	s := &state.State{}
 	if err := json.Unmarshal([]byte(v), s); err != nil {
-		panic(err)
+		window.Console().Error("Could not JSON decode state from localstorage.\nResetting to default state.")
+		return defaultState
+	}
+	if s.PanicTrace != nil {
+		return defaultState
 	}
 
 	if s.Game != nil && s.Game.Sticks.GeneratorKind == state.TutorialSticksGeneratorKind {
@@ -57,7 +64,15 @@ func persistState(dispatch hypp.Dispatch) hypp.Dispatch {
 	}
 }
 
-func Run(element window.Element) {
+func runApp(element window.Element, panicTrace *string) (nextPanicTrace *string) {
+	defer func() {
+		if r := recover(); r != nil {
+			s := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+			window.Console().Error(s)
+			nextPanicTrace = &s
+		}
+	}()
+
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: loadState(),
 		View: component.Senet,
@@ -85,4 +100,15 @@ func Run(element window.Element) {
 		},
 		DispatchWrapper: persistState,
 	})
+
+	select {} // run app until it panics
+}
+
+func Run(element window.Element) {
+	var panicTrace *string
+	const maxRuns = 2
+	for i := 0; i < maxRuns; i++ {
+		panicTrace = runApp(element, panicTrace)
+	}
+	panic("Reached maximum runs.")
 }
