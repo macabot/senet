@@ -27,3 +27,7 @@ body {
 button:not(:disabled) {
   cursor: pointer;
 }
+
+details summary {
+  cursor: pointer;
+}
