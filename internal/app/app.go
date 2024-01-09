@@ -64,18 +64,21 @@ func persistState(dispatch hypp.Dispatch) hypp.Dispatch {
 	}
 }
 
-func runApp(element window.Element, panicTrace *string) (nextPanicTrace *string) {
-	defer func() {
-		if r := recover(); r != nil {
-			s := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-			window.Console().Error(s)
-			nextPanicTrace = &s
-		}
-	}()
-
+func Run(element window.Element) {
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: loadState(),
-		View: component.Senet,
+		View: func(s *state.State) (out *hypp.VNode) {
+			defer func() {
+				if r := recover(); r != nil {
+					panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+					window.Console().Error(panicTrace)
+					s.PanicTrace = &panicTrace
+					out = component.Senet(s)
+				}
+			}()
+
+			return component.Senet(s)
+		},
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {
 			initialized := s.Signaling != nil && s.Signaling.Initialized
@@ -101,14 +104,5 @@ func runApp(element window.Element, panicTrace *string) (nextPanicTrace *string)
 		DispatchWrapper: persistState,
 	})
 
-	select {} // run app until it panics
-}
-
-func Run(element window.Element) {
-	var panicTrace *string
-	const maxRuns = 2
-	for i := 0; i < maxRuns; i++ {
-		panicTrace = runApp(element, panicTrace)
-	}
-	panic("Reached maximum runs.")
+	select {} // keep app running
 }
