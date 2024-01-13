@@ -44,23 +44,42 @@ func loadState() *state.State {
 	return s
 }
 
-func dispatchWrapper(dispatch hypp.Dispatch) hypp.Dispatch {
+func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 	return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
-		dispatch(dispatchable, payload)
 		var s *state.State
+		stateFound := false
 		switch v := dispatchable.(type) {
 		case hypp.StateAndEffects[*state.State]:
 			s = v.State
+			stateFound = true
+			wrappedEffects := make([]hypp.Effect, len(v.Effects))
+			for i, e := range v.Effects {
+				wrappedEffects[i] = hypp.Effect{
+					Effecter: func(dispatchFunc hypp.Dispatch, payload hypp.Payload) {
+						defer dispatch.RecoverPanic(dispatchFunc)
+						e.Effecter(dispatchFunc, payload)
+					},
+					Payload: e.Payload,
+				}
+			}
+			dispatchable = hypp.StateAndEffects[*state.State]{
+				State:   v.State,
+				Effects: wrappedEffects,
+			}
 		case *state.State:
 			s = v
-		default:
-			return
+			stateFound = true
 		}
-		b, err := json.Marshal(s)
-		if err != nil {
-			panic(err)
+
+		dispatchFunc(dispatchable, payload)
+
+		if stateFound {
+			b, err := json.Marshal(s)
+			if err != nil {
+				panic(err)
+			}
+			localstorage.SetItem("state", string(b))
 		}
-		localstorage.SetItem("state", string(b))
 	}
 }
 
