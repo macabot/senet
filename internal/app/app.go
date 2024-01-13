@@ -2,8 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
-	"runtime/debug"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/window"
@@ -80,17 +78,8 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 func Run(element window.Element) {
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: loadState(),
-		View: func(s *state.State) (out *hypp.VNode) {
-			defer func() {
-				if r := recover(); r != nil {
-					panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-					window.Console().Error(panicTrace)
-					s.PanicTrace = &panicTrace
-					out = component.Senet(s)
-				}
-			}()
-
-			return component.Senet(s)
+		View: func(s *state.State) *hypp.VNode {
+			return component.RecoverPanic(component.Senet, s)
 		},
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {
