@@ -44,7 +44,7 @@ func loadState() *state.State {
 	return s
 }
 
-func persistState(dispatch hypp.Dispatch) hypp.Dispatch {
+func dispatchWrapper(dispatch hypp.Dispatch) hypp.Dispatch {
 	return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
 		dispatch(dispatchable, payload)
 		var s *state.State
@@ -101,7 +101,7 @@ func Run(element window.Element) {
 				},
 			}
 		},
-		DispatchWrapper: persistState,
+		DispatchWrapper: dispatchWrapper,
 	})
 
 	select {} // keep app running
