@@ -12,7 +12,7 @@ func SelectPieceAction(id int) hypp.Action[*state.State] {
 		newState := s.Clone()
 		piece := newState.Game.Board.FindPieceByID(id)
 		if piece == nil {
-			panic(fmt.Errorf("Could not find piece by id '%d'", id))
+			panic(fmt.Errorf("could not find piece by id '%d'", id))
 		}
 		if newState.Game.Selected != nil && newState.Game.Selected.ID == piece.ID {
 			newState.Game.SetSelected(nil)

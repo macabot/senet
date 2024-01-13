@@ -12,15 +12,20 @@ import (
 )
 
 func loadState() *state.State {
-	s := &state.State{
+	defaultState := &state.State{
 		Page: state.StartPage,
 	}
 	v, ok := localstorage.GetItem("state")
 	if !ok {
-		return s
+		return defaultState
 	}
+	s := &state.State{}
 	if err := json.Unmarshal([]byte(v), s); err != nil {
-		panic(err)
+		window.Console().Error("Could not JSON decode state from localstorage.\nResetting to default state.")
+		return defaultState
+	}
+	if s.PanicStackTrace != nil {
+		return defaultState
 	}
 
 	if s.Game != nil && s.Game.Sticks.GeneratorKind == state.TutorialSticksGeneratorKind {
@@ -37,30 +42,45 @@ func loadState() *state.State {
 	return s
 }
 
-func persistState(dispatch hypp.Dispatch) hypp.Dispatch {
+func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 	return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
-		dispatch(dispatchable, payload)
 		var s *state.State
+		stateFound := false
 		switch v := dispatchable.(type) {
 		case hypp.StateAndEffects[*state.State]:
 			s = v.State
+			stateFound = true
+			dispatchable = dispatch.RecoverWrapStateAndEffects(v)
+		case hypp.Action[*state.State]:
+			dispatchable = dispatch.RecoverWrapAction(v)
+		case hypp.ActionAndPayload[*state.State]:
+			dispatchable = hypp.ActionAndPayload[*state.State]{
+				Action:  dispatch.RecoverWrapAction(v.Action),
+				Payload: v.Payload,
+			}
 		case *state.State:
 			s = v
-		default:
-			return
+			stateFound = true
 		}
-		b, err := json.Marshal(s)
-		if err != nil {
-			panic(err)
+
+		dispatchFunc(dispatchable, payload)
+
+		if stateFound {
+			b, err := json.Marshal(s)
+			if err != nil {
+				panic(err)
+			}
+			localstorage.SetItem("state", string(b))
 		}
-		localstorage.SetItem("state", string(b))
 	}
 }
 
 func Run(element window.Element) {
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: loadState(),
-		View: component.Senet,
+		View: func(s *state.State) *hypp.VNode {
+			return component.RecoverPanic(component.Senet, s)
+		},
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {
 			initialized := s.Signaling != nil && s.Signaling.Initialized
@@ -83,6 +103,8 @@ func Run(element window.Element) {
 				},
 			}
 		},
-		DispatchWrapper: persistState,
+		DispatchWrapper: dispatchWrapper,
 	})
+
+	select {} // keep app running
 }

@@ -15,6 +15,8 @@ func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
+				defer RecoverEffectPanic(dispatch)
+
 				time.Sleep(delay)
 				dispatch(dispatchable, payload)
 			}()

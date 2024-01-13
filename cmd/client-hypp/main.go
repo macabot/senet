@@ -12,8 +12,5 @@ func main() {
 		panic("Could not find <html> element.")
 	}
 
-	app.Run(
-		el,
-	)
-	select {} // run Go forever
+	app.Run(el)
 }
