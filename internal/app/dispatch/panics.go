@@ -19,11 +19,41 @@ func SetPanicTraceAction(panicTrace *string) hypp.Action[*state.State] {
 	}
 }
 
-func RecoverPanic(dispatch hypp.Dispatch) {
+func RecoverEffectPanic(dispatch hypp.Dispatch) {
 	if r := recover(); r != nil {
-		s := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-		window.Console().Error(s)
-		dispatch(SetPanicTraceAction(&s), nil)
+		panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+		window.Console().Error(panicTrace)
+		dispatch(SetPanicTraceAction(&panicTrace), nil)
+	}
+}
+
+func RecoverWrapStateAndEffects(stateAndEffects hypp.StateAndEffects[*state.State]) hypp.StateAndEffects[*state.State] {
+	wrappedEffects := make([]hypp.Effect, len(stateAndEffects.Effects))
+	for i, e := range stateAndEffects.Effects {
+		wrappedEffects[i] = hypp.Effect{
+			Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+				defer RecoverEffectPanic(dispatch)
+				e.Effecter(dispatch, payload)
+			},
+			Payload: e.Payload,
+		}
+	}
+	return hypp.StateAndEffects[*state.State]{
+		State:   stateAndEffects.State,
+		Effects: wrappedEffects,
+	}
+}
+
+func RecoverWrapAction(action hypp.Action[*state.State]) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) (dispatchable hypp.Dispatchable) {
+		defer func() {
+			if r := recover(); r != nil {
+				panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+				window.Console().Error(panicTrace)
+				dispatchable = SetPanicTraceAction(&panicTrace)
+			}
+		}()
+		return action(s, payload)
 	}
 }
 

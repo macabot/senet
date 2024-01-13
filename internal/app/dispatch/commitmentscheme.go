@@ -233,7 +233,7 @@ func SendIsReadyEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[struct{}]{
 					Kind: SendIsReadyKind,
@@ -275,7 +275,7 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[string]{
 					Kind: SendFlipperSecretKind,
@@ -317,7 +317,7 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[string]{
 					Kind: SendCommitmentKind,
@@ -357,7 +357,7 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[[4]bool]{
 					Kind: SendFlipperResultsKind,
@@ -402,7 +402,7 @@ func SendCallerSecretAndPredictionsEffect(
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
 					Kind: SendCallerSecretAndPredictionsKind,
@@ -447,7 +447,7 @@ func SendHasThrownEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[struct{}]{
 					Kind: SendHasThrownKind,
@@ -470,7 +470,7 @@ func SendMoveEffect(from, to state.Position) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[Move]{
 					Kind: SendMoveKind,
@@ -514,7 +514,7 @@ func SendNoMoveEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				message := CommitmentSchemeMessage[struct{}]{
 					Kind: SendNoMoveKind,

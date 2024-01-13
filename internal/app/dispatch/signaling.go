@@ -127,7 +127,7 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				state.PeerConnection.AwaitSetLocalDescription(state.PeerConnection.AwaitCreateOffer())
 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
@@ -158,7 +158,7 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				if state.PeerConnection.SignalingState() != "stable" {
 					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
@@ -284,7 +284,7 @@ func ConnectNewGameEffect(answer string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
-				defer RecoverPanic(dispatch)
+				defer RecoverEffectPanic(dispatch)
 
 				signalingState := state.PeerConnection.SignalingState()
 				if signalingState != "have-local-offer" {
