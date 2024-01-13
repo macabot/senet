@@ -12,9 +12,9 @@ import (
 func RecoverPanic(component func(s *state.State) *hypp.VNode, s *state.State) (vNode *hypp.VNode) {
 	defer func() {
 		if r := recover(); r != nil {
-			panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-			window.Console().Error(panicTrace)
-			s.PanicTrace = &panicTrace
+			panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+			window.Console().Error(panicStackTrace)
+			s.PanicStackTrace = &panicStackTrace
 			vNode = Senet(s)
 		}
 	}()

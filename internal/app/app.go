@@ -24,7 +24,7 @@ func loadState() *state.State {
 		window.Console().Error("Could not JSON decode state from localstorage.\nResetting to default state.")
 		return defaultState
 	}
-	if s.PanicTrace != nil {
+	if s.PanicStackTrace != nil {
 		return defaultState
 	}
 

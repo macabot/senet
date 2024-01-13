@@ -11,19 +11,19 @@ import (
 	"github.com/macabot/senet/internal/pkg/localstorage"
 )
 
-func SetPanicTraceAction(panicTrace *string) hypp.Action[*state.State] {
+func SetPanicStackTraceAction(panicStackTrace *string) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		newState.PanicTrace = panicTrace
+		newState.PanicStackTrace = panicStackTrace
 		return newState
 	}
 }
 
 func RecoverEffectPanic(dispatch hypp.Dispatch) {
 	if r := recover(); r != nil {
-		panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-		window.Console().Error(panicTrace)
-		dispatch(SetPanicTraceAction(&panicTrace), nil)
+		panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+		window.Console().Error(panicStackTrace)
+		dispatch(SetPanicStackTraceAction(&panicStackTrace), nil)
 	}
 }
 
@@ -48,9 +48,9 @@ func RecoverWrapAction(action hypp.Action[*state.State]) hypp.Action[*state.Stat
 	return func(s *state.State, payload hypp.Payload) (dispatchable hypp.Dispatchable) {
 		defer func() {
 			if r := recover(); r != nil {
-				panicTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
-				window.Console().Error(panicTrace)
-				dispatchable = SetPanicTraceAction(&panicTrace)
+				panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+				window.Console().Error(panicStackTrace)
+				dispatchable = SetPanicStackTraceAction(&panicStackTrace)
 			}
 		}()
 		return action(s, payload)

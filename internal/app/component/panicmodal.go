@@ -10,14 +10,14 @@ import (
 )
 
 func PanicModal(s *state.State) *hypp.VNode {
-	panicTrace := "[Unknown error]"
-	if s.PanicTrace != nil {
-		panicTrace = "[Error]\n" + *s.PanicTrace
+	panicStackTrace := "[Unknown error]"
+	if s.PanicStackTrace != nil {
+		panicStackTrace = "[Error]\n" + *s.PanicStackTrace
 	}
 
 	newState := s.Clone()
 	seeAbove := "[See above]"
-	newState.PanicTrace = &seeAbove
+	newState.PanicStackTrace = &seeAbove
 	var stateJSON string
 	if b, err := json.MarshalIndent(newState, "", "  "); err == nil {
 		stateJSON = "[State]\n" + string(b)
@@ -25,7 +25,7 @@ func PanicModal(s *state.State) *hypp.VNode {
 		stateJSON = "[Could not JSON encode state]\n" + err.Error()
 	}
 
-	details := panicTrace + "\n\n" + stateJSON
+	details := panicStackTrace + "\n\n" + stateJSON
 
 	return html.Div(
 		hypp.HProps{

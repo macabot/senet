@@ -33,7 +33,7 @@ func head() *hypp.VNode {
 }
 
 func body(s *state.State) *hypp.VNode {
-	if s.PanicTrace != nil {
+	if s.PanicStackTrace != nil {
 		return PanicModal(s)
 	}
 

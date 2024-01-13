@@ -15,7 +15,7 @@ const (
 
 type State struct {
 	hypp.EmptyState
-	PanicTrace         *string
+	PanicStackTrace    *string
 	Game               *Game
 	Page               Page
 	ShowMenu           bool
@@ -29,13 +29,13 @@ func (s *State) Clone() *State {
 	if s == nil {
 		return nil
 	}
-	var panicTraceClone *string
-	if s.PanicTrace != nil {
-		p := *s.PanicTrace
-		panicTraceClone = &p
+	var panicStackTraceClone *string
+	if s.PanicStackTrace != nil {
+		p := *s.PanicStackTrace
+		panicStackTraceClone = &p
 	}
 	return &State{
-		PanicTrace:         panicTraceClone,
+		PanicStackTrace:    panicStackTraceClone,
 		Game:               s.Game.Clone(),
 		Page:               s.Page,
 		ShowMenu:           s.ShowMenu,
