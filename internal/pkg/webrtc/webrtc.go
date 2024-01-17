@@ -150,14 +150,16 @@ func (c PeerConnection) AwaitCreateAnswer() SessionDescription {
 	return SessionDescription{v}
 }
 
-type ICECandidate js.Value
+type ICECandidate struct {
+	js.Value
+}
 
 type PeerConnectionICEEvent struct {
 	js.Value
 }
 
 func (e PeerConnectionICEEvent) Candidate() ICECandidate {
-	return ICECandidate(e.Value.Get("candidate"))
+	return ICECandidate{e.Value.Get("candidate")}
 }
 
 func (c PeerConnection) SetOnICECandidate(onICECandidate func(PeerConnectionICEEvent)) {
