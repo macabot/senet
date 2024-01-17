@@ -20,6 +20,7 @@ type PieceProps struct {
 func Piece(props PieceProps) *hypp.VNode {
 	coordinate := props.Piece.Position.Coordinate()
 	hProps := hypp.HProps{
+		"id": fmt.Sprintf("piece-%d", props.Piece.ID),
 		"class": map[string]bool{
 			"piece-wrapper":                             true,
 			fmt.Sprintf("row-%d", coordinate.Row):       true,

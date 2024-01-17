@@ -1,7 +1,6 @@
 package state
 
 import (
-	"github.com/macabot/hypp/js"
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
@@ -44,5 +43,5 @@ func (s *Signaling) Clone() *Signaling {
 	}
 }
 
-var PeerConnection webrtc.PeerConnection = webrtc.PeerConnection{Value: js.Undefined()}
-var DataChannel webrtc.DataChannel = webrtc.DataChannel{Value: js.Undefined()}
+var PeerConnection webrtc.PeerConnection = webrtc.PeerConnection{}
+var DataChannel webrtc.DataChannel = webrtc.DataChannel{}
