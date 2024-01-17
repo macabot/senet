@@ -193,9 +193,10 @@ func (b Board) Equal(other *Board) bool {
 }
 
 // NewBoard creates a new board where the squares and pieces are layed out as follows:
-//     _ p p x p _ _ _ _ _
-//     _ _ _ _ _ _ _ _ _ _
-//     B R B R B R B R B R
+//
+//	_ p p x p _ _ _ _ _
+//	_ _ _ _ _ _ _ _ _ _
+//	B R B R B R B R B R
 //
 // The underscores correspond to empty squares and the letters have the following meaning:
 // - B: blue piece
@@ -225,9 +226,10 @@ func NewBoard() *Board {
 
 // NeighborSquares returns the positions of the neighboring squares.
 // The squares are layed out as follows:
-//     29 28 27 26 25 24 23 22 21 20
-//     10 11 12 13 14 15 16 17 18 19
-//      9  8  7  6  5  4  3  2  1  0
+//
+//	29 28 27 26 25 24 23 22 21 20
+//	10 11 12 13 14 15 16 17 18 19
+//	 9  8  7  6  5  4  3  2  1  0
 //
 // For example, position 12 has neighbors 27 (north), 13 (east), 7 (south) and
 // 11 (west).
@@ -247,7 +249,7 @@ func (b Board) NeighborSquares(position Position) set.Set[Position] {
 	if position > 0 {
 		neighbors.Add(position - 1)
 	}
-	if position < 30 {
+	if position < 29 {
 		neighbors.Add(position + 1)
 	}
 	return neighbors

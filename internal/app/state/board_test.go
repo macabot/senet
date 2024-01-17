@@ -46,6 +46,14 @@ func TestBoardNeighborSquares(t *testing.T) {
 		),
 		state.Board{}.NeighborSquares(20),
 	)
+	assert.Equal(
+		t,
+		set.New[state.Position](
+			10,
+			28,
+		),
+		state.Board{}.NeighborSquares(29),
+	)
 }
 
 func TestBoardFindGroupsForNineAndTen(t *testing.T) {
