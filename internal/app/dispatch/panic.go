@@ -8,7 +8,6 @@ import (
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
-	"github.com/macabot/senet/internal/pkg/localstorage"
 )
 
 func SetPanicStackTraceAction(panicStackTrace *string) hypp.Action[*state.State] {
@@ -57,23 +56,20 @@ func RecoverWrapAction(action hypp.Action[*state.State]) hypp.Action[*state.Stat
 	}
 }
 
-func ResetAction() hypp.Action[*state.State] {
-	return func(_ *state.State, payload hypp.Payload) hypp.Dispatchable {
+func ReloadPageAction() hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		return hypp.StateAndEffects[*state.State]{
-			State: &state.State{
-				Page: state.StartPage,
-			},
+			State: s,
 			Effects: []hypp.Effect{
-				ResetEffect(),
+				ReloadPageEffect(),
 			},
 		}
 	}
 }
 
-func ResetEffect() hypp.Effect {
+func ReloadPageEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(_ hypp.Dispatch, _ hypp.Payload) {
-			localstorage.RemoveItem("state")
 			js.Global().Get("location").Call("reload")
 		},
 	}

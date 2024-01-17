@@ -1,55 +1,20 @@
 package app
 
 import (
-	"encoding/json"
-
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
-	"github.com/macabot/senet/internal/pkg/localstorage"
 )
 
-func loadState() *state.State {
-	defaultState := &state.State{
-		Page: state.StartPage,
-	}
-	v, ok := localstorage.GetItem("state")
-	if !ok {
-		return defaultState
-	}
-	s := &state.State{}
-	if err := json.Unmarshal([]byte(v), s); err != nil {
-		window.Console().Error("Could not JSON decode state from localstorage.\nResetting to default state.")
-		return defaultState
-	}
-	if s.PanicStackTrace != nil {
-		return defaultState
-	}
-
-	if s.Game != nil && s.Game.Sticks.GeneratorKind == state.TutorialSticksGeneratorKind {
-		dispatch.RegisterTutorial()
-	}
-
-	if s.Signaling != nil && s.Signaling.Initialized {
-		s.Signaling.Initialized = false
-		s.Signaling.ICEConnectionState = "disconnected"
-		s.Signaling.ConnectionState = "failed"
-		s.Signaling.ReadyState = "closed"
-	}
-
-	return s
-}
-
+// dispatchWrapper recovers panics throws in effects and actions.
+// An effect that starts a new go routine will not recover from a panic.
+// The effect can defer [dispatch.RecoverEffectPanic] inside the go routine to recover any panic.
 func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 	return func(dispatchable hypp.Dispatchable, payload hypp.Payload) {
-		var s *state.State
-		stateFound := false
 		switch v := dispatchable.(type) {
 		case hypp.StateAndEffects[*state.State]:
-			s = v.State
-			stateFound = true
 			dispatchable = dispatch.RecoverWrapStateAndEffects(v)
 		case hypp.Action[*state.State]:
 			dispatchable = dispatch.RecoverWrapAction(v)
@@ -58,26 +23,17 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 				Action:  dispatch.RecoverWrapAction(v.Action),
 				Payload: v.Payload,
 			}
-		case *state.State:
-			s = v
-			stateFound = true
 		}
 
 		dispatchFunc(dispatchable, payload)
-
-		if stateFound {
-			b, err := json.Marshal(s)
-			if err != nil {
-				panic(err)
-			}
-			localstorage.SetItem("state", string(b))
-		}
 	}
 }
 
 func Run(element window.Element) {
 	hypp.App(hypp.AppProps[*state.State]{
-		Init: loadState(),
+		Init: &state.State{
+			Page: state.StartPage,
+		},
 		View: func(s *state.State) *hypp.VNode {
 			return component.RecoverPanic(component.Senet, s)
 		},
