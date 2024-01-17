@@ -38,7 +38,7 @@ You can visit the fairytale app on http://localhost:8000/.
 ## Test
 
 ```sh
-go test $(go list ./... | grep -vE 'cmd|tale')
+go test $(go list ./... 2>/dev/null | grep -vE 'cmd|tale')
 ```
 
 ## Build
