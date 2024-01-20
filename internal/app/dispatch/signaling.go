@@ -135,7 +135,9 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 						return
 					}
 					offer := state.PeerConnection.LocalDescription().SDP()
-					dispatch(setOfferAction(offer), nil)
+					window.RequestAnimationFrame(func() {
+						dispatch(setOfferAction(offer), nil)
+					})
 				})
 			}()
 		},
@@ -171,7 +173,9 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 						return
 					}
 					answer := state.PeerConnection.LocalDescription().SDP()
-					dispatch(setAnswerAction(answer), nil)
+					window.RequestAnimationFrame(func() {
+						dispatch(setAnswerAction(answer), nil)
+					})
 				})
 			}()
 		},
@@ -292,7 +296,9 @@ func ConnectNewGameEffect(answer string) hypp.Effect {
 					return
 				}
 				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("answer", answer))
-				dispatch(setSignalingLoadingAction(false), nil)
+				window.RequestAnimationFrame(func() {
+					dispatch(setSignalingLoadingAction(false), nil)
+				})
 			}()
 		},
 	}

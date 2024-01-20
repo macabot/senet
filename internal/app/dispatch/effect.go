@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -18,7 +19,9 @@ func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 				defer RecoverEffectPanic(dispatch)
 
 				time.Sleep(delay)
-				dispatch(dispatchable, payload)
+				window.RequestAnimationFrame(func() {
+					dispatch(dispatchable, payload)
+				})
 			}()
 		},
 	}
