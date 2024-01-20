@@ -232,14 +232,10 @@ func sendIsReady(newState *state.State, isCaller bool) []hypp.Effect {
 func SendIsReadyEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[struct{}]{
-					Kind: SendIsReadyKind,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[struct{}]{
+				Kind: SendIsReadyKind,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -274,15 +270,11 @@ func sendFlipperSecret(newState *state.State) []hypp.Effect {
 func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[string]{
-					Kind: SendFlipperSecretKind,
-					Data: flipperSecret,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[string]{
+				Kind: SendFlipperSecretKind,
+				Data: flipperSecret,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -316,15 +308,11 @@ func sendCommitment(newState *state.State) hypp.StateAndEffects[*state.State] {
 func SendCommitmentEffect(commitment string) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[string]{
-					Kind: SendCommitmentKind,
-					Data: commitment,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[string]{
+				Kind: SendCommitmentKind,
+				Data: commitment,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -356,15 +344,11 @@ func sendFlipperResults(newState *state.State) hypp.StateAndEffects[*state.State
 func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[[4]bool]{
-					Kind: SendFlipperResultsKind,
-					Data: flipperResults,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[[4]bool]{
+				Kind: SendFlipperResultsKind,
+				Data: flipperResults,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -401,18 +385,14 @@ func SendCallerSecretAndPredictionsEffect(
 ) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
-					Kind: SendCallerSecretAndPredictionsKind,
-					Data: CallerSecretAndPredictions{
-						Secret:      callerSecret,
-						Predictions: callerPredictions,
-					},
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
+				Kind: SendCallerSecretAndPredictionsKind,
+				Data: CallerSecretAndPredictions{
+					Secret:      callerSecret,
+					Predictions: callerPredictions,
+				},
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -446,14 +426,10 @@ func ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions CallerSe
 func SendHasThrownEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[struct{}]{
-					Kind: SendHasThrownKind,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[struct{}]{
+				Kind: SendHasThrownKind,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -469,18 +445,14 @@ func ReceiveHasThrownAction() hypp.Action[*state.State] {
 func SendMoveEffect(from, to state.Position) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[Move]{
-					Kind: SendMoveKind,
-					Data: Move{
-						From: from,
-						To:   to,
-					},
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[Move]{
+				Kind: SendMoveKind,
+				Data: Move{
+					From: from,
+					To:   to,
+				},
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
@@ -513,14 +485,10 @@ func ReceiveMoveAction(move Move) hypp.Action[*state.State] {
 func SendNoMoveEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				message := CommitmentSchemeMessage[struct{}]{
-					Kind: SendNoMoveKind,
-				}
-				sendDataChannelMessage(jsonStringify(message.ToValue()))
-			}()
+			message := CommitmentSchemeMessage[struct{}]{
+				Kind: SendNoMoveKind,
+			}
+			sendDataChannelMessage(jsonStringify(message.ToValue()))
 		},
 	}
 }
