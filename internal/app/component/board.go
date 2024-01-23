@@ -37,6 +37,7 @@ func Board(props *state.State) *hypp.VNode {
 			children[i] = With(
 				Square(SquareProps{
 					Position:           position,
+					Selected:           props.Game.Selected,
 					CanClick:           canClick,
 					InvalidDestination: invalidDestinations.Has(position),
 					IsStart:            isStart,

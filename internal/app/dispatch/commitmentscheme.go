@@ -2,7 +2,6 @@ package dispatch
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
@@ -338,20 +337,14 @@ func SendMoveEffect(from, to state.Position) hypp.Effect {
 func ReceiveMoveAction(move Move) hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		nextMove, err := newState.Game.Move(newState.Game.Turn, move.From, move.To)
+		// Ignore the nextMove, because we will receive a separate message for it.
+		_, err := newState.Game.Move(newState.Game.Turn, move.From, move.To)
 		if err != nil {
 			panic(err)
 		}
-		var effects []hypp.Effect
-		if nextMove != nil {
-			effects = append(effects, DelayedAction(
-				MoveToSquareAction(nextMove.To),
-				time.Second,
-			))
-		}
 
 		isCaller := !newState.Game.HasTurn()
-		effects = append(effects, sendIsReady(newState, isCaller)...)
+		effects := sendIsReady(newState, isCaller)
 
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,

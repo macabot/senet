@@ -1,7 +1,6 @@
 package dispatch
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/macabot/hypp"
@@ -10,13 +9,9 @@ import (
 
 var onMoveToSquare = []func(s, newState *state.State, from, to state.Position) []hypp.Effect{}
 
-func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
+func MoveToSquareAction(fromPosition, toPosition state.Position) hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		newState := s.Clone()
-		fromPosition, fromPositionFound := newState.Game.FindValidFromPosition(toPosition)
-		if !fromPositionFound {
-			panic(fmt.Errorf("MoveToSquare failed: could not find valid 'from' position corresponding to 'to' position '%d'", toPosition))
-		}
 		nextMove, err := newState.Game.Move(newState.Game.Turn, fromPosition, toPosition)
 		if err != nil {
 			panic(err)
@@ -24,7 +19,7 @@ func MoveToSquareAction(toPosition state.Position) hypp.Action[*state.State] {
 		var effects []hypp.Effect
 		if nextMove != nil {
 			effects = append(effects, DelayedAction(
-				MoveToSquareAction(nextMove.To),
+				MoveToSquareAction(nextMove.From, nextMove.To),
 				time.Second,
 			))
 		}

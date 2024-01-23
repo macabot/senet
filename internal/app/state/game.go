@@ -270,18 +270,6 @@ type NextMove struct {
 	To     Position
 }
 
-func (g Game) FindValidFromPosition(toPosition Position) (Position, bool) {
-	fromPositionFound := false
-	var fromPosition Position
-	for from, to := range g.ValidMoves {
-		if to == toPosition {
-			fromPosition = from
-			fromPositionFound = true
-		}
-	}
-	return fromPosition, fromPositionFound
-}
-
 func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	piecesByPos := g.Board.PlayerPieces[player]
 	piece, ok := piecesByPos[from]
@@ -292,10 +280,13 @@ func (g *Game) Move(player int, from, to Position) (*NextMove, error) {
 	if validMovesTo, ok := g.ValidMoves[from]; !ok || to != validMovesTo {
 		return nil, fmt.Errorf("cannot move. Move is not valid from '%d' to '%d' for player '%d'", from, to, player)
 	}
+
+	// Move piece from 'from' to 'to'.
 	piece.Position = to
 	delete(piecesByPos, from)
 	piecesByPos[to] = piece
 
+	// If 'to' position is occupied by a piece of the other player, move that piece from 'to' to 'from', thus swapping the pieces.
 	otherPiecesByPos := g.Board.PlayerPieces[(player+1)%2]
 	if otherPiece, ok := otherPiecesByPos[to]; ok {
 		otherPiece.Position = from

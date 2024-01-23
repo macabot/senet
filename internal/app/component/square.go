@@ -11,6 +11,7 @@ import (
 
 type SquareProps struct {
 	Position           state.Position
+	Selected           *state.Piece
 	CanClick           bool
 	InvalidDestination bool
 	IsStart            bool
@@ -52,8 +53,11 @@ func Square(props SquareProps) *hypp.VNode {
 			fmt.Sprintf("pos-%d", props.Position):       true,
 		},
 	}
-	if props.CanClick {
-		hProps["onclick"] = dispatch.MoveToSquareAction(props.Position)
+	if props.CanClick && props.Selected != nil {
+		hProps["onclick"] = dispatch.MoveToSquareAction(
+			props.Selected.Position,
+			props.Position,
+		)
 	}
 
 	validReturnToStart := false
