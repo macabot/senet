@@ -3,6 +3,8 @@ package dispatch
 // This file is based on https://stackoverflow.com/a/54985729
 
 import (
+	"encoding/json"
+
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
@@ -88,31 +90,37 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 	state.DataChannel.SetOnMessage(func(e js.Value) {
 		data := e.Get("data")
 		window.Console().Debug("<<< Receive DataChannel message", data)
-		message := ParseCommitmentSchemeMessage(data.String())
+		var message CommitmentSchemeMessage[json.RawMessage]
+		mustJSONUnmarshal([]byte(data.String()), &message)
 		switch message.Kind {
 		case SendIsReadyKind:
 			dispatch(ReceiveIsReadyAction(), nil)
 		case SendFlipperSecretKind:
-			flipperSecret := message.Data.String()
+			var flipperSecret string
+			mustJSONUnmarshal(message.Data, &flipperSecret)
 			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)
 		case SendCommitmentKind:
-			commitment := message.Data.String()
+			var commitment string
+			mustJSONUnmarshal(message.Data, &commitment)
 			dispatch(ReceiveCommitmentAction(commitment), nil)
 		case SendFlipperResultsKind:
-			flipperResults := parseFlips(message.Data)
+			var flipperResults [4]bool
+			mustJSONUnmarshal(message.Data, &flipperResults)
 			dispatch(ReceiveFlipperResultsAction(flipperResults), nil)
 		case SendCallerSecretAndPredictionsKind:
-			callerSecretAndPredictions := parseCallerSecretAndPredictions(message.Data)
+			var callerSecretAndPredictions CallerSecretAndPredictions
+			mustJSONUnmarshal(message.Data, &callerSecretAndPredictions)
 			dispatch(ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions), nil)
 		case SendHasThrownKind:
 			dispatch(ReceiveHasThrownAction(), nil)
 		case SendMoveKind:
-			move := parseMove(message.Data)
+			var move Move
+			mustJSONUnmarshal(message.Data, &move)
 			dispatch(ReceiveMoveAction(move), nil)
 		case SendNoMoveKind:
 			dispatch(ReceiveNoMoveAction(), nil)
 		default:
-			window.Console().Warn("Data message has unknown kind %d", int(message.Kind))
+			window.Console().Warn("Data message has unknown kind %v", message.Kind)
 		}
 	})
 	return func() {}
