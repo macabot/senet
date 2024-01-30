@@ -21,6 +21,7 @@ func GamePage(s *state.State) *hypp.VNode {
 			NoValidMoves:  len(s.Game.ValidMoves) == 0,
 			IsLoading:     gameCanThrow && !sticksCanThrow,
 		}),
+		Disconnected(s),
 		GameOver(s),
 		OrientationTip(s),
 	)

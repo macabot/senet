@@ -54,6 +54,22 @@ func GamePage() *fairytale.Tale[*state.State] {
 				{Label: "Player 2", Value: 2},
 			},
 		),
+		control.NewCheckbox(
+			"Disconnected",
+			func(s *state.State, disconnected bool) hypp.Dispatchable {
+				if disconnected {
+					s.Signaling = &state.Signaling{
+						ConnectionState: "disconnected",
+					}
+				} else {
+					s.Signaling = nil
+				}
+				return s
+			},
+			func(s *state.State) bool {
+				return s.Signaling != nil && s.Signaling.ConnectionState != "connected"
+			},
+		),
 	).WithSettings(fairytale.TaleSettings{
 		Target: fairytale.TaleAsHTML,
 	})
