@@ -6,6 +6,7 @@ import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/senet/internal/app/component"
 	"github.com/macabot/senet/internal/app/state"
+	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
 func WhoGoesFirstPage() *fairytale.Tale[*state.State] {
@@ -55,5 +56,6 @@ func WhoGoesFirstPage() *fairytale.Tale[*state.State] {
 				{Label: "You are player 2", Value: 2},
 			},
 		),
+		mycontrol.Disconnected(),
 	)
 }

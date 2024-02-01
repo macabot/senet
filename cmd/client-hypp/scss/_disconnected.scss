@@ -14,10 +14,10 @@
   z-index: vars.$z-index-disconnected;
 
   button {
-    font-size: 1rem;
-    margin: 10px;
-    border-radius: 10px;
-    padding: 10px;
+    font-size: 1rem !important;
+    margin: 10px !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
   }
 
   .warning {

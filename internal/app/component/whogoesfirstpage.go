@@ -64,6 +64,7 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 				hypp.Text("Play"),
 			),
 		),
+		Disconnected(s),
 	)
 }
 
