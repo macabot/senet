@@ -25,6 +25,7 @@ type Signaling struct {
 	Loading bool
 	Offer   string
 	Answer  string
+	Error   error
 }
 
 func (s *Signaling) Clone() *Signaling {

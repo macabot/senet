@@ -131,13 +131,37 @@ func sendDataChannelMessage(data string) {
 	state.DataChannel.Send(data)
 }
 
+func setSignalingError(err error) hypp.Action[*state.State] {
+	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		newState := s.Clone()
+		if newState.Signaling == nil {
+			newState.Signaling = &state.Signaling{}
+		}
+		newState.Signaling.Error = err
+		newState.Signaling.Loading = false
+		return newState
+	}
+}
+
 func CreatePeerConnectionOfferEffect() hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 			go func() {
 				defer RecoverEffectPanic(dispatch)
 
-				state.PeerConnection.AwaitSetLocalDescription(state.PeerConnection.AwaitCreateOffer())
+				offer, err := state.PeerConnection.AwaitCreateOffer()
+				if err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
+				if err := state.PeerConnection.AwaitSetLocalDescription(offer); err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
 					if pci.Candidate().Truthy() {
 						return
@@ -174,8 +198,26 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
 					return
 				}
-				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("offer", offer))
-				state.PeerConnection.AwaitSetLocalDescription(state.PeerConnection.AwaitCreateAnswer())
+				offer := webrtc.NewSessionDescription("offer", offer)
+				if err := state.PeerConnection.AwaitSetRemoteDescription(offer); err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
+				answer, err := state.PeerConnection.AwaitCreateAnswer()
+				if err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
+				if err := state.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
 					if pci.Candidate().Truthy() {
 						return
@@ -196,6 +238,7 @@ func setAnswerAction(answer string) hypp.Action[*state.State] {
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
+		newState.Signaling.Step = state.SignalingStepJoinGameAnswer
 		newState.Signaling.Answer = answer
 		newState.Signaling.Loading = false
 		return newState
@@ -210,6 +253,7 @@ func SetSignalingStepNewGameOfferAction() hypp.Action[*state.State] {
 		}
 		newState.Signaling.Step = state.SignalingStepNewGameOffer
 		newState.Signaling.Loading = true
+		newState.Signaling.Error = nil
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
@@ -245,8 +289,8 @@ func SetSignalingStepJoinGameAnswerAction() hypp.Action[*state.State] {
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
-		newState.Signaling.Step = state.SignalingStepJoinGameAnswer
 		newState.Signaling.Loading = true
+		newState.Signaling.Error = nil
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
@@ -285,6 +329,7 @@ func ConnectNewGameAction() hypp.Action[*state.State] {
 			newState.Signaling = &state.Signaling{}
 		}
 		newState.Signaling.Loading = true
+		newState.Signaling.Error = nil
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
@@ -303,7 +348,13 @@ func ConnectNewGameEffect(answer string) hypp.Effect {
 					window.Console().Log("ConnectNewGameEffect expected signaling state 'have-local-offer', got '%s'.", signalingState)
 					return
 				}
-				state.PeerConnection.AwaitSetRemoteDescription(webrtc.NewSessionDescription("answer", answer))
+				answer := webrtc.NewSessionDescription("answer", answer)
+				if err := state.PeerConnection.AwaitSetRemoteDescription(answer); err != nil {
+					window.RequestAnimationFrame(func() {
+						dispatch(setSignalingError(err), nil)
+					})
+					return
+				}
 				window.RequestAnimationFrame(func() {
 					dispatch(setSignalingLoadingAction(false), nil)
 				})
@@ -319,6 +370,7 @@ func setSignalingLoadingAction(loading bool) hypp.Action[*state.State] {
 			newState.Signaling = &state.Signaling{}
 		}
 		newState.Signaling.Loading = loading
+		newState.Signaling.Error = nil
 		return newState
 	}
 }

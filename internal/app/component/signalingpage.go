@@ -95,6 +95,22 @@ func connectionStates(s *state.State) *hypp.VNode {
 	)
 }
 
+func signalingError(signaling *state.Signaling, isOffer bool) *hypp.VNode {
+	if signaling == nil || signaling.Error == nil {
+		return nil
+	}
+
+	summary := "Invalid answer"
+	if isOffer {
+		summary = "Invalid offer"
+	}
+	return html.Details(
+		hypp.HProps{"class": "error"},
+		html.Summary(nil, hypp.Text(summary)),
+		html.P(nil, hypp.Text(signaling.Error.Error())),
+	)
+}
+
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
 	nextDisabled := true
@@ -108,12 +124,13 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			nextDisabled = false
 		}
 	}
+
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
-		html.P(nil, hypp.Text("Copy the text below and send it to your opponent.")),
+		html.P(nil, hypp.Text("Copy the offer below and send it to your opponent.")),
 		html.Textarea(
 			hypp.HProps{
 				"id":       "offer-textarea",
@@ -178,6 +195,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the answer of your opponent below.")),
+		signalingError(s.Signaling, false),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "answer-textarea",
@@ -209,6 +227,7 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the offer of your opponent below.")),
+		signalingError(s.Signaling, true),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "offer-textarea",
@@ -254,7 +273,7 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 			"class": "signaling-page",
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
-		html.P(nil, hypp.Text("Copy the text below and send it to your opponent.")),
+		html.P(nil, hypp.Text("Copy the answer below and send it to your opponent.")),
 		html.Textarea(
 			hypp.HProps{
 				"id":       "answer-textarea",

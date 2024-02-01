@@ -114,40 +114,32 @@ func (c PeerConnection) ConnectionState() string {
 	return c.Value.Get("connectionState").String()
 }
 
-func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) {
+func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) error {
 	promise := c.Value.Call("setLocalDescription", description.Value)
-	if _, err := await(promise); err != nil {
-		panic(err)
-	}
+	_, err := await(promise)
+	return err
 }
 
 func (c PeerConnection) LocalDescription() SessionDescription {
 	return SessionDescription{c.Value.Get("localDescription")}
 }
 
-func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) {
+func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) error {
 	promise := c.Value.Call("setRemoteDescription", description.Value)
-	if _, err := await(promise); err != nil {
-		panic(err)
-	}
+	_, err := await(promise)
+	return err
 }
 
-func (c PeerConnection) AwaitCreateOffer() SessionDescription {
+func (c PeerConnection) AwaitCreateOffer() (SessionDescription, error) {
 	promise := c.Value.Call("createOffer")
 	v, err := await(promise)
-	if err != nil {
-		panic(err)
-	}
-	return SessionDescription{v}
+	return SessionDescription{v}, err
 }
 
-func (c PeerConnection) AwaitCreateAnswer() SessionDescription {
+func (c PeerConnection) AwaitCreateAnswer() (SessionDescription, error) {
 	promise := c.Value.Call("createAnswer")
 	v, err := await(promise)
-	if err != nil {
-		panic(err)
-	}
-	return SessionDescription{v}
+	return SessionDescription{v}, err
 }
 
 type ICECandidate struct {
