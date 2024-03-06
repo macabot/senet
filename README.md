@@ -111,6 +111,65 @@ classDef syscallJS fill:#f00;
 class client-hypp,fairytale,tale,control syscallJS;
 ```
 
+## Pages
+
+```mermaid
+graph LR
+    subgraph start
+        tutorial
+        local
+        online
+    end
+
+    subgraph signaling
+        subgraph signaling-choices
+            new
+            join
+            signaling-back["back"]
+        end
+        subgraph NewGameOffer
+            NewGameOffer-next["next"]
+            NewGameOffer-back["back"]
+        end
+        subgraph NewGameAnswer
+            NewGameAnswer-next["next"]
+            NewGameAnswer-back["back"]
+        end
+        subgraph JoinGameOffer
+            JoinGameOffer-next["next"]
+            JoinGameOffer-back["back"]
+        end
+        subgraph JoinGameAnswer
+            JoinGameAnswer-next["next"]
+            JoinGameAnswer-back["back"]
+        end
+    end
+
+    subgraph WhoGoesFirst
+        WhoGoesFirst-play["play"]
+        WhoGoesFirst-back["back"]
+    end
+
+    game
+
+    online --> signaling-choices
+    signaling-back --> start
+    tutorial --> game
+    local --> game
+    new --> NewGameOffer
+    join --> JoinGameOffer
+    NewGameOffer-next --> NewGameAnswer
+    NewGameOffer-back --> signaling-choices
+    JoinGameOffer-next --> JoinGameAnswer
+    JoinGameOffer-back --> signaling-choices
+    NewGameAnswer-next --> WhoGoesFirst
+    NewGameAnswer-back --> NewGameOffer
+    JoinGameAnswer-next --> WhoGoesFirst
+    JoinGameAnswer-back --> JoinGameOffer
+    WhoGoesFirst-play --> game
+    WhoGoesFirst-back --> signaling-choices
+```
+
 ## Online player vs players
 
 When playing an online game, two players use [WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API) to connect directly to one another.
