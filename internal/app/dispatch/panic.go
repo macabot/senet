@@ -29,13 +29,12 @@ func RecoverEffectPanic(dispatch hypp.Dispatch) {
 func RecoverWrapStateAndEffects(stateAndEffects hypp.StateAndEffects[*state.State]) hypp.StateAndEffects[*state.State] {
 	wrappedEffects := make([]hypp.Effect, len(stateAndEffects.Effects))
 	for i, e := range stateAndEffects.Effects {
-		eCopy := e // Can probably be removed in Go 1.22.
 		wrappedEffects[i] = hypp.Effect{
 			Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
 				defer RecoverEffectPanic(dispatch)
-				eCopy.Effecter(dispatch, payload)
+				e.Effecter(dispatch, payload)
 			},
-			Payload: eCopy.Payload,
+			Payload: e.Payload,
 		}
 	}
 	return hypp.StateAndEffects[*state.State]{

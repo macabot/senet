@@ -1,6 +1,6 @@
 module github.com/macabot/senet
 
-go 1.18
+go 1.22
 
 require (
 	github.com/macabot/fairytale v0.0.0
