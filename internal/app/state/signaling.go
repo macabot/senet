@@ -1,6 +1,9 @@
 package state
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
@@ -13,6 +16,40 @@ const (
 	SignalingStepJoinGameOffer
 	SignalingStepJoinGameAnswer
 )
+
+func (s SignalingStep) String() string {
+	signalingSteps := [...]string{"Default", "NewGameOffer", "NewGameAnswer", "JoinGameOffer", "JoinGameAnswer"}
+	return signalingSteps[s]
+}
+
+func ToSignalingStep(s string) (SignalingStep, error) {
+	var step SignalingStep
+	switch s {
+	case "Default":
+		step = SignalingStepDefault
+	case "NewGameOfer":
+		step = SignalingStepNewGameOffer
+	case "NewGameAnswer":
+		step = SignalingStepNewGameAnswer
+	case "JoinGameOffer":
+		step = SignalingStepJoinGameOffer
+	case "JoinGameAnswer":
+		step = SignalingStepJoinGameAnswer
+	default:
+		return step, fmt.Errorf("invalid SignalingStep '%s'", s)
+	}
+	return step, nil
+}
+
+func (s SignalingStep) MarshalJSON() ([]byte, error) {
+	return json.Marshal(s.String())
+}
+
+func (s *SignalingStep) UnmarshalJSON(data []byte) error {
+	var err error
+	*s, err = ToSignalingStep(string(data))
+	return err
+}
 
 type Signaling struct {
 	Step SignalingStep
