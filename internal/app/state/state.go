@@ -1,6 +1,9 @@
 package state
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/macabot/hypp"
 )
 
@@ -12,6 +15,38 @@ const (
 	WhoGoesFirstPage
 	GamePage
 )
+
+func (p Page) String() string {
+	pages := [...]string{"Start", "Signaling", "WhoGoesFirst", "Game"}
+	return pages[p]
+}
+
+func ToPage(s string) (Page, error) {
+	var page Page
+	switch s {
+	case "Start":
+		page = StartPage
+	case "Signaling":
+		page = SignalingPage
+	case "WhoGoesFirst":
+		page = WhoGoesFirstPage
+	case "Game":
+		page = GamePage
+	default:
+		return page, fmt.Errorf("invalid Page '%s'", s)
+	}
+	return page, nil
+}
+
+func (p Page) MarshalJSON() ([]byte, error) {
+	return json.Marshal(p.String())
+}
+
+func (p *Page) UnmarshalJSON(data []byte) error {
+	var err error
+	*p, err = ToPage(string(data))
+	return err
+}
 
 type State struct {
 	hypp.EmptyState
