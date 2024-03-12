@@ -63,6 +63,12 @@ func Run(element window.Element) {
 	debugParam := urlParams.Call("get", "debug")
 	debug = !debugParam.IsNull() && debugParam.String() == "true"
 
+	if !debug {
+		window.AddEventListener("beforeunload", func(e window.Event) {
+			e.PreventDefault()
+		})
+	}
+
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: &state.State{
 			Page: state.StartPage,
