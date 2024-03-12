@@ -141,7 +141,7 @@ func setSignalingError(err error) hypp.Action[*state.State] {
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
-		newState.Signaling.Error = err
+		newState.Signaling.Error = &state.JSONSerializableErr{Err: err}
 		newState.Signaling.Loading = false
 		return newState
 	}

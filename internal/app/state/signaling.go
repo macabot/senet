@@ -62,7 +62,7 @@ type Signaling struct {
 	Loading bool
 	Offer   string
 	Answer  string
-	Error   error
+	Error   JSONSerializableError
 }
 
 func (s *Signaling) Clone() *Signaling {
