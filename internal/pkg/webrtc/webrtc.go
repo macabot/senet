@@ -165,6 +165,12 @@ func (c PeerConnection) SignalingState() string {
 	return c.Value.Get("signalingState").String()
 }
 
+// Close terminates the RTCPeerConnection's ICE agent, ending any ongoing ICE processing and any active streams.
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
+func (c PeerConnection) Close() {
+	c.Value.Call("close")
+}
+
 type SessionDescription struct {
 	js.Value
 }
@@ -206,4 +212,10 @@ func (c DataChannel) Send(data string) {
 
 func (c DataChannel) ReadyState() string {
 	return c.Value.Get("readyState").String()
+}
+
+// Close closes the RTCDataChannel. Closure of the data channel is not instantaneous.
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/close
+func (c DataChannel) Close() {
+	c.Value.Call("close")
 }

@@ -26,11 +26,15 @@ func initSignaling(s *state.State) {
 }
 
 func resetSignaling(s *state.State) {
+	if !state.DataChannel.IsUndefined() {
+		state.DataChannel.Close()
+	}
+	if !state.PeerConnection.IsUndefined() {
+		state.PeerConnection.Close()
+	}
 	state.PeerConnection = webrtc.PeerConnection{}
 	state.DataChannel = webrtc.DataChannel{}
-	if s.Signaling != nil {
-		s.Signaling.Initialized = false
-	}
+	s.Signaling = nil
 }
 
 func SetSignalingStatesAction(iceConnectionState, connectionState, readyState string) hypp.Action[*state.State] {

@@ -129,19 +129,19 @@ graph LR
         end
         subgraph NewGameOffer
             NewGameOffer-next["next"]
-            NewGameOffer-back["back"]
+            NewGameOffer-cancel["cancel"]
         end
         subgraph NewGameAnswer
             NewGameAnswer-next["next"]
-            NewGameAnswer-back["back"]
+            NewGameAnswer-cancel["cancel"]
         end
         subgraph JoinGameOffer
             JoinGameOffer-next["next"]
-            JoinGameOffer-back["back"]
+            JoinGameOffer-cancel["cancel"]
         end
         subgraph JoinGameAnswer
             JoinGameAnswer-next["next"]
-            JoinGameAnswer-back["back"]
+            JoinGameAnswer-cancel["cancel"]
         end
     end
 
@@ -151,7 +151,7 @@ graph LR
     end
 
     subgraph game
-        game-start["start"]
+        game-quit["quit"]
     end
 
     online --> signaling-choices
@@ -161,16 +161,16 @@ graph LR
     new --> NewGameOffer
     join --> JoinGameOffer
     NewGameOffer-next --> NewGameAnswer
-    NewGameOffer-back --> signaling-choices
+    NewGameOffer-cancel --> start
     JoinGameOffer-next --> JoinGameAnswer
-    JoinGameOffer-back --> signaling-choices
+    JoinGameOffer-cancel --> start
     NewGameAnswer-next --> WhoGoesFirst
-    NewGameAnswer-back --> NewGameOffer
+    NewGameAnswer-cancel --> start
     JoinGameAnswer-next --> WhoGoesFirst
-    JoinGameAnswer-back --> JoinGameOffer
+    JoinGameAnswer-cancel --> start
     WhoGoesFirst-play --> game
     WhoGoesFirst-back --> signaling-choices
-    game-start --> start
+    game-quit --> start
 ```
 
 ## Online player vs players

@@ -19,7 +19,7 @@ func Menu() *hypp.VNode {
 				hypp.HProps{
 					"onclick": dispatch.ToStartPageAction(),
 				},
-				hypp.Text("Start page"),
+				hypp.Text("Quit game"),
 			),
 			html.Button(
 				hypp.HProps{

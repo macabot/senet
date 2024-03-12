@@ -144,9 +144,9 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToSignalingPageAction(),
+					"onclick": dispatch.ToStartPageAction(),
 				},
-				hypp.Text("Back"),
+				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{
@@ -207,9 +207,9 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.SetSignalingStepNewGameOfferAction(),
+					"onclick": dispatch.ToStartPageAction(),
 				},
-				hypp.Text("Back"),
+				hypp.Text("Cancel"),
 			),
 			ctaButton,
 		),
@@ -239,9 +239,9 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToSignalingPageAction(),
+					"onclick": dispatch.ToStartPageAction(),
 				},
-				hypp.Text("Back"),
+				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{
@@ -287,9 +287,9 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.SetSignalingStepJoinGameOfferAction(),
+					"onclick": dispatch.ToStartPageAction(),
 				},
-				hypp.Text("Back"),
+				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{

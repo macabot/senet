@@ -78,6 +78,7 @@ func (s *Signaling) Clone() *Signaling {
 		Loading:            s.Loading,
 		Offer:              s.Offer,
 		Answer:             s.Answer,
+		Error:              s.Error,
 	}
 }
 
