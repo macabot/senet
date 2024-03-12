@@ -17,7 +17,7 @@ func OrientationTip(s *state.State) *hypp.VNode {
 		},
 		html.P(
 			nil,
-			hypp.Text("Rotate your screen for a better experience."),
+			hypp.Text("Rotate or enlarge your screen for a better experience."),
 		),
 		html.Button(
 			hypp.HProps{
