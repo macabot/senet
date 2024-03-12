@@ -150,7 +150,9 @@ graph LR
         WhoGoesFirst-back["back"]
     end
 
-    game
+    subgraph game
+        game-start["start"]
+    end
 
     online --> signaling-choices
     signaling-back --> start
@@ -168,6 +170,7 @@ graph LR
     JoinGameAnswer-back --> JoinGameOffer
     WhoGoesFirst-play --> game
     WhoGoesFirst-back --> signaling-choices
+    game-start --> start
 ```
 
 ## Online player vs players
@@ -203,7 +206,7 @@ sequenceDiagram
     Note right of Flipper: Depending on throw, Flipper and Caller switch roles
 ```
 
-The throw of the sticks is based on the [NXOR](https://en.wikipedia.org/wiki/XNOR_gate) operation on every prediction and result pair.
+The throw of the sticks is based on the [XNOR](https://en.wikipedia.org/wiki/XNOR_gate) operation on every prediction and result pair.
 E.g.
 | Caller predictions | Flipper results | Throw flips |
 | ------------------ | --------------- | ----------- |
