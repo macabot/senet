@@ -131,6 +131,10 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Copy the offer below and send it to your opponent.")),
+		html.P(
+			hypp.HProps{"class": "warning"},
+			hypp.Text("The offer contains your public IP. Only send the offer to someone you trust."),
+		),
 		html.Textarea(
 			hypp.HProps{
 				"id":       "offer-textarea",
@@ -274,6 +278,10 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Copy the answer below and send it to your opponent.")),
+		html.P(
+			hypp.HProps{"class": "warning"},
+			hypp.Text("The answer contains your public IP. Only send the answer to someone you trust."),
+		),
 		html.Textarea(
 			hypp.HProps{
 				"id":       "answer-textarea",

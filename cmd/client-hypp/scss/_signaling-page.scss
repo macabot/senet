@@ -25,6 +25,10 @@
     height: 10rem;
     flex: 1;
   }
+
+  > p {
+    max-width: 90%;
+  }
 }
 
 .signaling-modal {
