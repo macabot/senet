@@ -43,5 +43,13 @@ func gameModes() *hypp.VNode {
 			},
 			hypp.Text("Online - Player vs. Player"),
 		),
+		html.A(
+			hypp.HProps{
+				"class":  "game-mode",
+				"href":   "https://github.com/macabot/senet",
+				"target": "_blank",
+			},
+			hypp.Text("Source code"),
+		),
 	)
 }
