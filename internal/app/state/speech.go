@@ -5,6 +5,7 @@ type SpeechBubbleKind int
 const (
 	DefaultSpeechBubble SpeechBubbleKind = iota
 	TutorialStart
+	TutorialGoal
 	TutorialPlayers1
 	TutorialPlayers2
 	TutorialBoard1

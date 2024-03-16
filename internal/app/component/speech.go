@@ -21,6 +21,8 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 		speechVNodes = DefaultSpeechBubble()
 	case state.TutorialStart:
 		speechVNodes = TutorialStart(player)
+	case state.TutorialGoal:
+		speechVNodes = TutorialGoal(player)
 	case state.TutorialPlayers1:
 		speechVNodes = TutorialPlayers1(player)
 	case state.TutorialPlayers2:

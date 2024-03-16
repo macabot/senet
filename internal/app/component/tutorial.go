@@ -13,6 +13,19 @@ func TutorialStart(player int) []*hypp.VNode {
 		spokenParagraph("Hi, I'm the Tutor. Today I will teach you how to play Senet.", "TutorialStart"),
 		html.Button(
 			hypp.HProps{
+				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialGoal),
+			},
+			hypp.Text("Next"),
+		),
+	}
+}
+
+func TutorialGoal(player int) []*hypp.VNode {
+	return []*hypp.VNode{
+		html.H3(nil, hypp.Text("Goal")),
+		spokenParagraph("The goal of Senet is to be the first player to move all of their pieces off the board.", "TutorialGoal"),
+		html.Button(
+			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPlayers1),
 			},
 			hypp.Text("Next"),
@@ -294,7 +307,7 @@ func TutorialOffTheBoard2() []*hypp.VNode {
 func TutorialOffTheBoard3() []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Off the board")),
-		spokenParagraph("The goal of Senet is to be the first player to move all of your pieces off the board. Keep playing until all of your pieces have been moved off the board.", "TutorialOffTheBoard3"),
+		spokenParagraph("The goal of Senet is to be the first player to move all of their pieces off the board. Keep playing until all of your pieces have been moved off the board.", "TutorialOffTheBoard3"),
 	}
 }
 
