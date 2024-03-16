@@ -47,6 +47,8 @@ func body(s *state.State) *hypp.VNode {
 		page = WhoGoesFirstPage(s)
 	case state.GamePage:
 		page = GamePage(s)
+	case state.RulesPage:
+		page = RulesPage()
 	default:
 		panic(fmt.Errorf("component not implemented for page %d", s.Page))
 	}
