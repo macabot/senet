@@ -49,8 +49,7 @@ func gameModes() *hypp.VNode {
 				"href":   "https://github.com/macabot/senet",
 				"target": "_blank",
 			},
-			html.Span(nil, hypp.Text("Source code")),
-			ExternalLink(),
+			hypp.Text("Source code"),
 		),
 	)
 }
