@@ -161,7 +161,7 @@ func speechBubbleIcon(s string) *hypp.VNode {
 			hypp.Text("Tutor"),
 		)
 	default:
-		panic(fmt.Errorf("Speech bubble icon not implemented for '%s'.", s))
+		panic(fmt.Errorf("speech bubble icon not implemented for '%s'", s))
 	}
 }
 
