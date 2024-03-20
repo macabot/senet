@@ -1,0 +1,18 @@
+.rules-page {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0 2rem 2rem;
+  margin: auto;
+  max-width: 900px;
+  background-color: #dc6464;
+
+  h1 {
+    text-align: center;
+  }
+
+  .sticks {
+    width: 250px;
+    margin: auto;
+  }
+}
