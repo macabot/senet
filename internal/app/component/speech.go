@@ -78,7 +78,7 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
-		panic(fmt.Errorf("Component not implemented for SpeechBubbleKind %v", bubble.Kind))
+		panic(fmt.Errorf("component not implemented for SpeechBubbleKind '%v'", bubble.Kind))
 	}
 	return html.Div(
 		hypp.HProps{
