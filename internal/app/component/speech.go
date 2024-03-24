@@ -178,7 +178,7 @@ func linkNode(s string) *hypp.VNode {
 			hypp.HProps{"href": "/play"},
 			html.Span(nil, hypp.Text("interactive tutorial ")),
 			// TODO get size from environment variable.
-			html.Span(hypp.HProps{"class": "wasm-size"}, hypp.Text("5MB")),
+			html.Span(hypp.HProps{"class": "wasm-size"}, hypp.Text("5 MB")),
 		)
 	default:
 		panic(fmt.Errorf("link node not implemented for '%s'", s))
