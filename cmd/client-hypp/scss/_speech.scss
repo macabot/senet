@@ -9,7 +9,9 @@
   padding: 5px;
   z-index: vars.$z-index-speech-bubble;
   text-align: center;
+}
 
+p {
   .icon.blocking,
   .icon.no-move,
   .icon.protected,
