@@ -62,7 +62,7 @@ func RulesPage() *hypp.VNode {
 		html.H2(hypp.HProps{"id": "return-to-start"}, hypp.Text("Return to start")),
 		html.P(nil, replaceIcons("The top row shows the return-to-start square [return-to-start-icon]. If you move a piece to the return-to-start square [return-to-start-icon], then your piece is immediately moved to the start of the board: the first unoccupied square, starting in the bottom right of the board.")...),
 
-		html.H2(hypp.HProps{"id": "move-backwards"}, hypp.Text("Move bakwards")),
+		html.H2(hypp.HProps{"id": "move-backwards"}, hypp.Text("Move backwards")),
 		html.P(nil, replaceIcons("If none of your pieces have a valid move forwards, then they must move backwards. When moving backwards, you are not allowed to trade places with another piece. You are still not allowed to move a piece if it passes over another player's blocking piece [blocking-icon].")...),
 
 		html.H2(hypp.HProps{"id": "no-move"}, hypp.Text("No move")),
