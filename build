@@ -2,23 +2,30 @@
 
 rootDir=$(dirname "$0")
 
-for arg in "$@"; do
-    if [ "$arg" = "wasm_exec.js" ] || [ "$arg" = "all" ]; then
-        cp \
-            "$(go env GOROOT)/misc/wasm/wasm_exec.js" \
-            "${rootDir}/cmd/client-hypp/public/wasm_exec.js"
-    elif [ "$arg" = "sass" ] || [ "$arg" = "all" ]; then
-        sass "${rootDir}/cmd/client-hypp/scss:${rootDir}/cmd/client-hypp/public"
-    elif [ "$arg" = "client-hypp" ] || [ "$arg" = "all" ]; then
-        GOOS=js GOARCH=wasm go build \
-            -o "${rootDir}/cmd/client-hypp/public/main.wasm" \
-            "${rootDir}/cmd/client-hypp/main.go"
-    elif [ "$arg" = "fairytale" ] || [ "$arg" = "all" ]; then
-        GOOS=js GOARCH=wasm go build \
-            -o "${rootDir}/cmd/fairytale/main.wasm" \
-            "${rootDir}/cmd/fairytale/main.go"
-    else
-        echo "Unknown argument '$arg'." >&2
-        exit 1
-    fi
-done
+env="$1"
+if [ -z "$env" ]; then
+    echo "Environment is required." >&2
+    exit 1
+fi
+if [ "$env" != "development" ] && [ "$env" != "production" ]; then
+    echo "Environment must be 'development' or 'production'." >&2
+    exit 1
+fi
+
+cp \
+    "$(go env GOROOT)/misc/wasm/wasm_exec.js" \
+    "${rootDir}/public/wasm_exec.js"
+
+GOOS=js GOARCH=wasm go build \
+    -o "${rootDir}/public/main.wasm" \
+    "${rootDir}/cmd/client-hypp/main.go"
+
+go run "${rootDir}/cmd/static/main.go" "${rootDir}/public"
+
+GOOS=js GOARCH=wasm go build \
+    -o "${rootDir}/cmd/fairytale/main.wasm" \
+    "${rootDir}/cmd/fairytale/main.go"
+
+if [ "$env" = "production" ]; then
+    sass "${rootDir}/cmd/client-hypp/scss:${rootDir}/public"
+fi
