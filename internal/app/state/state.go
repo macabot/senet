@@ -14,6 +14,7 @@ const (
 	SignalingPage
 	WhoGoesFirstPage
 	GamePage
+	HomePage
 	RulesPage
 )
 

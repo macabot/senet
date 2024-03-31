@@ -4,6 +4,7 @@
 @use "./disconnected";
 @use "./game-over";
 @use "./game-page";
+@use "./home-page";
 @use "./loader";
 @use "./menu";
 @use "./panic-modal";
@@ -13,6 +14,7 @@
 @use "./signaling-page";
 @use "./speech";
 @use "./square";
+@use "./senet-header";
 @use "./start-page";
 @use "./stick";
 @use "./sticks";

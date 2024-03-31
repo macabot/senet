@@ -6,12 +6,11 @@ import (
 	"github.com/macabot/hypp"
 	_ "github.com/macabot/hypp/jsd"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/app/tale"
 )
 
 func main() {
-	app.Run[*state.State](
+	app.Run(
 		&app.Options{
 			Assets: []*hypp.VNode{
 				html.Link(hypp.HProps{
@@ -24,7 +23,7 @@ func main() {
 				Orientation: fairytale.Landscape,
 			},
 		},
-		fairytale.NewBundle[*state.State](
+		fairytale.NewBundle(
 			"Components",
 			tale.Board(),
 			tale.Piece(),
@@ -32,9 +31,10 @@ func main() {
 			tale.Stick(),
 			tale.Sticks(),
 		),
-		fairytale.NewBundle[*state.State](
+		fairytale.NewBundle(
 			"Pages",
 			tale.GamePage(),
+			tale.HomePage(),
 			tale.RulesPage(),
 			tale.StartPage(),
 			tale.WhoGoesFirstPage(),

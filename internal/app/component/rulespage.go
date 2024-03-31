@@ -11,7 +11,7 @@ func RulesPage() *hypp.VNode {
 		hypp.HProps{
 			"class": "rules-page",
 		},
-		html.H1(nil, hypp.Text("Senet")),
+		SenetHeader(),
 		html.P(nil, replaceLinks("This page will explain the rules of Senet. You can also learn the rules with the [interactive-tutorial-link].")...),
 		html.Ul(
 			nil,
