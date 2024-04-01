@@ -2,7 +2,7 @@
 
 ## Setup
 
-The setup requires 3 terminals.
+The setup requires the following terminals.
 
 ### Terminal 1
 
@@ -33,7 +33,17 @@ fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets cmd/client-hypp/p
 ```
 
 `fairytale` will watch the WASM file and assets. Whenever any changes are made it will reload the web page.
-You can visit the fairytale app on http://localhost:8000/.
+You can visit the fairytale app on <http://localhost:8000/>.
+
+### Terminal 4
+
+Run the static file server
+
+```shell
+go run cmd/server/main.go -d ./public
+```
+
+You can visit the Senet app on <http://localhost:8001/>.
 
 ## Test
 
