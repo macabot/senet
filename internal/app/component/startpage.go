@@ -45,9 +45,8 @@ func gameModes() *hypp.VNode {
 		),
 		html.A(
 			hypp.HProps{
-				"class":  "game-mode",
-				"href":   "/rules",
-				"target": "_blank",
+				"class": "game-mode",
+				"href":  "/rules",
 			},
 			hypp.Text("Rules"),
 		),
