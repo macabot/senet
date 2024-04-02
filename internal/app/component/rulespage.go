@@ -31,7 +31,7 @@ func RulesPage() *hypp.VNode {
 		html.P(nil, hypp.Text("Senet is a two player game. The goal of Senet is to be the first player to move all of their pieces off the board.")),
 
 		html.H2(hypp.HProps{"id": "board"}, hypp.Text("Board")),
-		html.P(nil, replaceIcons("Below you see the board and pieces. Player 1 plays with the blue pieces [piece-0-icon]. Player 2 plays with the red pieces [piece-1-icon].")...),
+		html.P(nil, replaceIcons("Below you see the board and pieces. Player 1 plays with the blue pieces [piece-0-icon]. Player 2 plays with the red pieces [piece-1-icon]. Use a coinflip to decide who becomes player 1. Player 1 goes first.")...),
 		Board(&state.State{
 			Game: state.NewGame(),
 		}),
