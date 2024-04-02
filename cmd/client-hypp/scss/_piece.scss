@@ -61,8 +61,8 @@
   background: rgb(204, 255, 253);
   background: radial-gradient(
     ellipse at 10% 20%,
-    rgba(204, 255, 253, 1) 0%,
-    rgba(86, 122, 121, 1) 100%
+    rgb(204, 255, 253) 0%,
+    rgb(86, 123, 120) 100%
   );
 }
 
@@ -100,8 +100,8 @@
   background: rgb(248, 206, 204);
   background: radial-gradient(
     ellipse at 10% 20%,
-    rgba(248, 206, 204, 1) 0%,
-    rgba(110, 47, 59, 1) 100%
+    rgb(248, 206, 204) 0%,
+    rgb(152, 103, 110) 100%
   );
 }
 
