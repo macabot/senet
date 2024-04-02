@@ -69,7 +69,7 @@ func TutorialBoard1(player int) []*hypp.VNode {
 func TutorialBoard2(player int) []*hypp.VNode {
 	return []*hypp.VNode{
 		html.H3(nil, hypp.Text("Board")),
-		spokenParagraph("At the bottom of the board are the pieces. You will play with the blue pieces [piece-0-icon]. I will play with the red pieces [piece-1-icon]. Blue will go first.", "TutorialBoard2"),
+		spokenParagraph("At the bottom of the board are the pieces. You will play with the blue quares [piece-0-icon]. I will play with the red circles [piece-1-icon]. The blue squares will go first.", "TutorialBoard2"),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard3),
