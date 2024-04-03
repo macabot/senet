@@ -48,7 +48,7 @@ You can visit the Senet app on <http://localhost:8001/>.
 ## Test
 
 ```sh
-go test $(go list ./... 2>/dev/null | grep -vE 'cmd|tale')
+go test $(go list ./... 2>/dev/null | grep -v 'cmd')
 ```
 
 ## Build
@@ -118,7 +118,7 @@ app --> component
 app --> state
 
 classDef syscallJS fill:#f00;
-class client-hypp,fairytale,tale,control syscallJS;
+class client-hypp,fairytale syscallJS;
 ```
 
 ## Pages
