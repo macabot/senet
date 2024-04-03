@@ -4,11 +4,14 @@
 @use "./disconnected";
 @use "./game-over";
 @use "./game-page";
+@use "./home-page";
 @use "./loader";
 @use "./menu";
 @use "./panic-modal";
 @use "./piece";
 @use "./players";
+@use "./rules-page";
+@use "./senet-header";
 @use "./signaling-page";
 @use "./speech";
 @use "./square";

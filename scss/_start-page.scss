@@ -3,17 +3,11 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-
-  h1 {
-    font-size: 4rem;
-    margin: 20px;
-  }
 }
 
 .game-modes {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .game-mode {

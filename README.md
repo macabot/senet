@@ -2,7 +2,7 @@
 
 ## Setup
 
-The setup requires 3 terminals.
+The setup requires the following terminals.
 
 ### Terminal 1
 
@@ -19,7 +19,7 @@ air
 Install [sass](https://sass-lang.com/) and run it in the root directory:
 
 ```shell
-sass --watch cmd/client-hypp/scss:cmd/client-hypp/public
+sass --watch scss:public
 ```
 
 `sass` will watch the scss files and recompile the css file whenever you make any changes.
@@ -29,11 +29,21 @@ sass --watch cmd/client-hypp/scss:cmd/client-hypp/public
 Install the [fairytale cli](https://github.com/macabot/fairytale#cli) and run it in the root directory:
 
 ```shell
-fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets cmd/client-hypp/public
+fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets public
 ```
 
 `fairytale` will watch the WASM file and assets. Whenever any changes are made it will reload the web page.
-You can visit the fairytale app on http://localhost:8000/.
+You can visit the fairytale app on <http://localhost:8000/>.
+
+### Terminal 4
+
+Run the static file server
+
+```shell
+go run cmd/server/main.go -d ./public
+```
+
+You can visit the Senet app on <http://localhost:8001/>.
 
 ## Test
 

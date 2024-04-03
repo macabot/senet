@@ -14,6 +14,8 @@ const (
 	SignalingPage
 	WhoGoesFirstPage
 	GamePage
+	HomePage
+	RulesPage
 )
 
 func (p Page) String() string {

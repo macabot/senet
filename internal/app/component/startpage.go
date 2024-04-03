@@ -12,7 +12,7 @@ func StartPage(s *state.State) *hypp.VNode {
 		hypp.HProps{
 			"class": "start-page",
 		},
-		html.H1(nil, hypp.Text("Senet")),
+		SenetHeader(),
 		gameModes(),
 	)
 }
@@ -42,6 +42,13 @@ func gameModes() *hypp.VNode {
 				"onclick": dispatch.ToSignalingPageAction(),
 			},
 			hypp.Text("Online - Player vs. Player"),
+		),
+		html.A(
+			hypp.HProps{
+				"class": "game-mode",
+				"href":  "/rules",
+			},
+			hypp.Text("Rules"),
 		),
 		html.A(
 			hypp.HProps{

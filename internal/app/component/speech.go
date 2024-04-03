@@ -78,7 +78,7 @@ func SpeechBubble(player int, bubble *state.SpeechBubble) *hypp.VNode {
 	case state.TutorialEnd:
 		speechVNodes = TutorialEnd()
 	default:
-		panic(fmt.Errorf("Component not implemented for SpeechBubbleKind %v", bubble.Kind))
+		panic(fmt.Errorf("component not implemented for SpeechBubbleKind '%v'", bubble.Kind))
 	}
 	return html.Div(
 		hypp.HProps{
@@ -161,14 +161,38 @@ func speechBubbleIcon(s string) *hypp.VNode {
 			hypp.Text("Tutor"),
 		)
 	default:
-		panic(fmt.Errorf("Speech bubble icon not implemented for '%s'.", s))
+		panic(fmt.Errorf("speech bubble icon not implemented for '%s'", s))
 	}
 }
 
 var iconPattern = regexp.MustCompile(`\[[a-z0-9-]+-icon\]`)
 
 func replaceIcons(text string) []*hypp.VNode {
-	pairs := iconPattern.FindAllStringIndex(text, -1)
+	return replacePlaceholders(text, iconPattern, speechBubbleIcon)
+}
+
+func linkNode(s string) *hypp.VNode {
+	switch s {
+	case "[interactive-tutorial-link]":
+		return html.A(
+			hypp.HProps{"href": "/play"},
+			html.Span(nil, hypp.Text("interactive tutorial ")),
+			// TODO get size from environment variable.
+			html.Span(hypp.HProps{"class": "wasm-size"}, hypp.Text("5 MB")),
+		)
+	default:
+		panic(fmt.Errorf("link node not implemented for '%s'", s))
+	}
+}
+
+var linkPattern = regexp.MustCompile(`\[[a-z0-9-]+-link]`)
+
+func replaceLinks(text string) []*hypp.VNode {
+	return replacePlaceholders(text, linkPattern, linkNode)
+}
+
+func replacePlaceholders(text string, pattern *regexp.Regexp, mapper func(string) *hypp.VNode) []*hypp.VNode {
+	pairs := pattern.FindAllStringIndex(text, -1)
 	var nodes []*hypp.VNode
 	lastEnd := 0
 	for _, pair := range pairs {
@@ -178,7 +202,7 @@ func replaceIcons(text string) []*hypp.VNode {
 		if lastEnd < start {
 			nodes = append(nodes, html.Span(nil, hypp.Text(text[lastEnd:start])))
 		}
-		nodes = append(nodes, speechBubbleIcon(text[start:end]))
+		nodes = append(nodes, mapper(text[start:end]))
 
 		lastEnd = end
 	}

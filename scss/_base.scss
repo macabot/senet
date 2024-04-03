@@ -77,3 +77,12 @@ a[target="_blank"]::after {
   background: no-repeat var(--icon-external-link);
   padding-right: 1em;
 }
+
+.wasm-size {
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 5px;
+  background-color: white;
+  padding: 0px 3px;
+  border-left: none;
+}

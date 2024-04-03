@@ -11,12 +11,22 @@ import (
 func Senet(s *state.State) *hypp.VNode {
 	return html.Html(
 		hypp.HProps{"lang": "en"},
-		head(),
+		head(s.Page),
 		body(s),
 	)
 }
 
-func head() *hypp.VNode {
+func head(page state.Page) *hypp.VNode {
+	var title string
+	switch page {
+	case state.HomePage:
+		title = "Senet"
+	case state.RulesPage:
+		title = "Senet Rules"
+	default:
+		title = "Play Senet"
+	}
+
 	return html.Head(
 		nil,
 		html.Link(hypp.HProps{
@@ -28,7 +38,7 @@ func head() *hypp.VNode {
 			"name":    "viewport",
 			"content": "width=device-width, initial-scale=1.0",
 		}),
-		html.Title(nil, hypp.Text("Senet")),
+		html.Title(nil, hypp.Text(title)),
 	)
 }
 
@@ -47,6 +57,10 @@ func body(s *state.State) *hypp.VNode {
 		page = WhoGoesFirstPage(s)
 	case state.GamePage:
 		page = GamePage(s)
+	case state.HomePage:
+		page = HomePage()
+	case state.RulesPage:
+		page = RulesPage()
 	default:
 		panic(fmt.Errorf("component not implemented for page %d", s.Page))
 	}

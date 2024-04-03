@@ -1,0 +1,29 @@
+.rules-page {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0 2rem 2rem;
+  margin: auto;
+  max-width: 900px;
+  background-color: #dc6464;
+
+  .senet-header {
+    margin: auto;
+  }
+
+  h2 {
+    margin: 1rem 0 0 0;
+  }
+
+  .sticks {
+    width: 250px;
+    margin: auto;
+  }
+
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
+    color: black;
+  }
+}
