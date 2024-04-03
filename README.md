@@ -125,10 +125,25 @@ class client-hypp,fairytale syscallJS;
 
 ```mermaid
 graph LR
+    GitHub
+
+    subgraph home
+        home-play["play"]
+        home-rules["rules"]
+        home-sourceCode["source-code"]
+    end
+
+    subgraph rules
+        rules-home["home"]
+        rules-start["start"]
+    end
+
     subgraph start
         tutorial
         local
         online
+        start-rules["rules"]
+        start-sourceCode["source-code"]
     end
 
     subgraph signaling
@@ -164,6 +179,15 @@ graph LR
         game-quit["quit"]
     end
 
+    home-play --> start
+    home-rules --> rules
+    home-sourceCode --> GitHub
+
+    rules-home --> home
+    rules-start --> start
+
+    start-rules --> rules
+    start-sourceCode --> GitHub
     online --> signaling-choices
     signaling-back --> start
     tutorial --> game
