@@ -27,5 +27,5 @@ GOOS=js GOARCH=wasm go build \
     "${rootDir}/cmd/fairytale/main.go"
 
 if [ "$env" = "production" ]; then
-    sass "${rootDir}/cmd/client-hypp/scss:${rootDir}/public"
+    sass "${rootDir}/scss:${rootDir}/public"
 fi

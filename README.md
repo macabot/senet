@@ -19,7 +19,7 @@ air
 Install [sass](https://sass-lang.com/) and run it in the root directory:
 
 ```shell
-sass --watch cmd/client-hypp/scss:public
+sass --watch scss:public
 ```
 
 `sass` will watch the scss files and recompile the css file whenever you make any changes.
