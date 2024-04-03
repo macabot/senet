@@ -2,6 +2,7 @@ package dispatch
 
 import (
 	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -12,6 +13,31 @@ func resetListeners() {
 	onMoveToSquare = []func(s, newState *state.State, from, to state.Position) []hypp.Effect{}
 	onNoMove = []func(s, newState *state.State) []hypp.Effect{}
 	onThrowSticks = []func(s, newState *state.State) []hypp.Effect{}
+}
+
+var beforeUnloadListenerID window.EventListenerID
+
+// addBeforeUnloadListener triggers a browser-generated confirmation dialog that asks users to confirm if they really want to leave the page when they try to close or reload it, or navigate somewhere else.
+// See https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
+// It will do nothing if the event listener is already registered.
+// Use removeBeforeUnloadListener to remove the event listener.
+func addBeforeUnloadListener() {
+	if !beforeUnloadListenerID.IsUndefined() {
+		return
+	}
+	beforeUnloadListenerID = window.AddEventListener("beforeunload", func(e window.Event) {
+		e.PreventDefault()
+	})
+}
+
+// removeBeforeUnloadListener removes the event listener set by addBeforeUnloadListener.
+// It will do nothing if no event listener is registered.
+func removeBeforeUnloadListener() {
+	if beforeUnloadListenerID.IsUndefined() {
+		return
+	}
+	window.RemoveEventListener("beforeunload", beforeUnloadListenerID)
+	beforeUnloadListenerID = window.EventListenerID{}
 }
 
 func ToTutorialAction() hypp.Action[*state.State] {
@@ -30,6 +56,7 @@ func ToTutorialAction() hypp.Action[*state.State] {
 		newState.TutorialIndex = 0
 		resetListeners()
 		RegisterTutorial()
+		addBeforeUnloadListener()
 		return newState
 	}
 }
@@ -40,6 +67,7 @@ func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
 		newState.Page = state.GamePage
 		newState.Game = state.NewGame()
 		newState.Game.TurnMode = state.IsBothPlayers
+		addBeforeUnloadListener()
 		return newState
 	}
 }
@@ -51,6 +79,7 @@ func ToStartPageAction() hypp.Action[*state.State] {
 		}
 		resetListeners()
 		resetSignaling(newState)
+		removeBeforeUnloadListener()
 		return newState
 	}
 }
@@ -62,6 +91,7 @@ func ToSignalingPageAction() hypp.Action[*state.State] {
 		}
 		resetSignaling(newState)
 		initSignaling(newState)
+		addBeforeUnloadListener()
 		return newState
 	}
 }
@@ -83,6 +113,7 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 		newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
 		isCaller := !newState.Game.HasTurn()
 		effects := sendIsReady(newState, isCaller)
+		addBeforeUnloadListener()
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: effects,
@@ -98,6 +129,7 @@ func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 		resetListeners()
 		registerCommitmentScheme()
 		effects := sendIsReady(newState, isCaller)
+		addBeforeUnloadListener()
 		return hypp.StateAndEffects[*state.State]{
 			State:   newState,
 			Effects: effects,
