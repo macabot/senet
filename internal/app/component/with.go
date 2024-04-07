@@ -11,7 +11,7 @@ func patchHProps(node *hypp.VNode, patch hypp.HProps) *hypp.VNode {
 	if node == nil {
 		return node
 	}
-	if node.Kind() != hypp.SSRNode {
+	if node.Kind() != hypp.ElementNode {
 		return node
 	}
 	props := node.Props()
