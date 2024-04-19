@@ -113,7 +113,6 @@ func signalingError(signaling *state.Signaling, isOffer bool) *hypp.VNode {
 
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
-	nextDisabled := true
 	if s.Signaling != nil {
 		if s.Signaling.Loading {
 			offer = "[Loading...]"
@@ -121,7 +120,6 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			offer = "[error: Signaling.Offer is empty]"
 		} else {
 			offer = s.Signaling.Offer
-			nextDisabled = false
 		}
 	}
 
@@ -154,9 +152,8 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": nextDisabled,
-					"onclick":  dispatch.SetSignalingStepNewGameAnswerAction(),
+					"class":   "cta",
+					"onclick": dispatch.SetSignalingStepNewGameAnswerAction(),
 				},
 				hypp.Text("Next"),
 			),
@@ -165,30 +162,30 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 }
 
 func signalingNewGameAnswer(s *state.State) *hypp.VNode {
-	connectDisabled := true
 	connectionState := ""
 	readyState := ""
 	if s.Signaling != nil {
-		connectDisabled = s.Signaling.Answer == ""
 		connectionState = s.Signaling.ConnectionState
 		readyState = s.Signaling.ReadyState
 	}
 	var ctaButton *hypp.VNode
 	if connectionState == "connecting" || connectionState == "connected" {
+		buttonText := "Next"
+		if connectionState != "connected" || readyState != "open" {
+			buttonText = "Connecting..."
+		}
 		ctaButton = html.Button(
 			hypp.HProps{
-				"class":    "cta",
-				"disabled": connectionState != "connected" || readyState != "open",
-				"onclick":  dispatch.ToWhoGoesFirstPageAction(true),
+				"class":   "cta",
+				"onclick": dispatch.ToWhoGoesFirstPageAction(true),
 			},
-			hypp.Text("Next"),
+			hypp.Text(buttonText),
 		)
 	} else {
 		ctaButton = html.Button(
 			hypp.HProps{
-				"class":    "cta",
-				"disabled": connectDisabled,
-				"onclick":  dispatch.ConnectNewGameAction(),
+				"class":   "cta",
+				"onclick": dispatch.ConnectNewGameAction(),
 			},
 			hypp.Text("Connect"),
 		)
@@ -221,10 +218,6 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 }
 
 func signalingJoinGameOffer(s *state.State) *hypp.VNode {
-	nextDisabled := true
-	if s.Signaling != nil {
-		nextDisabled = s.Signaling.Offer == ""
-	}
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
@@ -249,9 +242,8 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": nextDisabled,
-					"onclick":  dispatch.SetSignalingStepJoinGameAnswerAction(),
+					"class":   "cta",
+					"onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
 				},
 				hypp.Text("Next"),
 			),
@@ -261,7 +253,7 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 
 func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 	answer := "[error: Signaling is nil]"
-	playDisabled := true
+	buttonText := "Next"
 	if s.Signaling != nil {
 		if s.Signaling.Loading {
 			answer = "[Loading...]"
@@ -270,7 +262,9 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 		} else {
 			answer = s.Signaling.Answer
 		}
-		playDisabled = s.Signaling.ConnectionState != "connected" || s.Signaling.ReadyState != "open"
+		if s.Signaling.ConnectionState != "connected" || s.Signaling.ReadyState != "open" {
+			buttonText = "Connecting..."
+		}
 	}
 	return html.Main(
 		hypp.HProps{
@@ -301,11 +295,10 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": playDisabled,
-					"onclick":  dispatch.ToWhoGoesFirstPageAction(false),
+					"class":   "cta",
+					"onclick": dispatch.ToWhoGoesFirstPageAction(false),
 				},
-				hypp.Text("Next"),
+				hypp.Text(buttonText),
 			),
 		),
 	)
