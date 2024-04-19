@@ -125,11 +125,13 @@ func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		connectionState := ""
 		readyState := ""
+		loading := false
 		if s.Signaling != nil {
 			connectionState = s.Signaling.ConnectionState
 			readyState = s.Signaling.ReadyState
+			loading = s.Signaling.Loading
 		}
-		if connectionState != "connected" || readyState != "open" {
+		if connectionState != "connected" || readyState != "open" || loading {
 			return s
 		}
 
