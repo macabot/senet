@@ -218,10 +218,6 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 }
 
 func signalingJoinGameOffer(s *state.State) *hypp.VNode {
-	nextDisabled := true
-	if s.Signaling != nil {
-		nextDisabled = s.Signaling.Offer == ""
-	}
 	return html.Main(
 		hypp.HProps{
 			"class": "signaling-page",
@@ -246,9 +242,8 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": nextDisabled,
-					"onclick":  dispatch.SetSignalingStepJoinGameAnswerAction(),
+					"class":   "cta",
+					"onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
 				},
 				hypp.Text("Next"),
 			),
