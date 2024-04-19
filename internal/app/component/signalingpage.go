@@ -113,7 +113,6 @@ func signalingError(signaling *state.Signaling, isOffer bool) *hypp.VNode {
 
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
-	nextDisabled := true
 	if s.Signaling != nil {
 		if s.Signaling.Loading {
 			offer = "[Loading...]"
@@ -121,7 +120,6 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			offer = "[error: Signaling.Offer is empty]"
 		} else {
 			offer = s.Signaling.Offer
-			nextDisabled = false
 		}
 	}
 
@@ -154,9 +152,8 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			),
 			html.Button(
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": nextDisabled,
-					"onclick":  dispatch.SetSignalingStepNewGameAnswerAction(),
+					"class":   "cta",
+					"onclick": dispatch.SetSignalingStepNewGameAnswerAction(),
 				},
 				hypp.Text("Next"),
 			),

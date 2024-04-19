@@ -271,6 +271,9 @@ func SetSignalingStepNewGameAnswerAction() hypp.Action[*state.State] {
 		if newState.Signaling == nil {
 			newState.Signaling = &state.Signaling{}
 		}
+		if s.Signaling.Loading {
+			return s
+		}
 		newState.Signaling.Step = state.SignalingStepNewGameAnswer
 		return newState
 	}
