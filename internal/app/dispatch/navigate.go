@@ -123,6 +123,16 @@ func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
 
 func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
 	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+		connectionState := ""
+		readyState := ""
+		if s.Signaling != nil {
+			connectionState = s.Signaling.ConnectionState
+			readyState = s.Signaling.ReadyState
+		}
+		if connectionState != "connected" || readyState != "open" {
+			return s
+		}
+
 		newState := s.Clone()
 		newState.Page = state.WhoGoesFirstPage
 		newState.CommitmentScheme.IsCaller = isCaller
