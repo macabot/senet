@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rootDir=$(dirname "$0")
+root_dir=$(dirname "$0")
 
 env="$1"
 if [ -z "$env" ]; then
@@ -12,20 +12,31 @@ if [ "$env" != "development" ] && [ "$env" != "production" ]; then
     exit 1
 fi
 
+public_dir="$2"
+if [ -z "$public_dir" ]; then
+    public_dir="${root_dir}/public"
+fi
+
+cp "${root_dir}/static"/* "$public_dir"
+
 cp \
     "$(go env GOROOT)/misc/wasm/wasm_exec.js" \
-    "${rootDir}/public/wasm_exec.js"
+    "${public_dir}/wasm_exec.js"
 
 GOOS=js GOARCH=wasm go build \
-    -o "${rootDir}/public/main.wasm" \
-    "${rootDir}/cmd/client-hypp/main.go"
+    -o "${public_dir}/main.wasm" \
+    "${root_dir}/cmd/client-hypp/main.go"
 
-go run "${rootDir}/cmd/static/main.go" "${rootDir}/public"
+go run "${root_dir}/cmd/static/main.go" "$public_dir"
 
 GOOS=js GOARCH=wasm go build \
-    -o "${rootDir}/cmd/fairytale/main.wasm" \
-    "${rootDir}/cmd/fairytale/main.go"
+    -o "${root_dir}/cmd/fairytale/main.wasm" \
+    "${root_dir}/cmd/fairytale/main.go"
 
 if [ "$env" = "production" ]; then
-    sass "${rootDir}/scss:${rootDir}/public"
+    sass "${root_dir}/scss:${public_dir}"
 fi
+
+readarray -t files_to_compress < <(find "$public_dir" -type f ! -name '*.gz' ! -name '*.br')
+gzip --best --force --keep "${files_to_compress[@]}"
+brotli --best --force --keep "${files_to_compress[@]}"
