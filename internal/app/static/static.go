@@ -30,6 +30,8 @@ func GeneratePages(outputDir string) error {
 	return nil
 }
 
+const doctype = "<!DOCTYPE html>"
+
 func generatePage(outputDir string, path string, nodeFunc func() *hypp.VNode) error {
 	dir := filepath.Dir(path)
 	pageOutputDir := filepath.Join(outputDir, dir)
@@ -47,6 +49,9 @@ func generatePage(outputDir string, path string, nodeFunc func() *hypp.VNode) er
 	node := nodeFunc()
 	if node == nil {
 		return fmt.Errorf("nodeFunc for page '%s' returned nil node", path)
+	}
+	if _, err := fileHandle.WriteString(doctype); err != nil {
+		return fmt.Errorf("failed to render DOCTYPE for page '%s': %w", path, err)
 	}
 	if err := tag.Render(fileHandle, node); err != nil {
 		return fmt.Errorf("failed to render page '%s': %w", path, err)
