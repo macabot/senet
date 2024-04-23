@@ -30,5 +30,3 @@ tmp
 
 # Generated website
 public/*
-!public/favicon.ico
-!public/play.html
