@@ -22,6 +22,13 @@ func gameModes() *hypp.VNode {
 		hypp.HProps{
 			"class": "game-modes",
 		},
+		html.A(
+			hypp.HProps{
+				"class": "game-mode",
+				"href":  "/",
+			},
+			hypp.Text("Home"),
+		),
 		html.Button(
 			hypp.HProps{
 				"class":   "game-mode tutorial",
