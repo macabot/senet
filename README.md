@@ -121,7 +121,7 @@ classDef syscallJS fill:#f00;
 class client-hypp,fairytale syscallJS;
 ```
 
-## Pages
+## Page navigation
 
 ```mermaid
 graph LR
@@ -138,45 +138,50 @@ graph LR
         rules-start["start"]
     end
 
-    subgraph start
-        tutorial
-        local
-        online
-        start-rules["rules"]
-        start-sourceCode["source-code"]
-    end
+    subgraph SPA
 
-    subgraph signaling
-        subgraph signaling-choices
-            new
-            join
-            signaling-back["back"]
+        subgraph start
+            start-home["home"]
+            tutorial
+            local
+            online
+            start-rules["rules"]
+            start-sourceCode["source-code"]
         end
-        subgraph NewGameOffer
-            NewGameOffer-next["next"]
-            NewGameOffer-cancel["cancel"]
-        end
-        subgraph NewGameAnswer
-            NewGameAnswer-next["next"]
-            NewGameAnswer-cancel["cancel"]
-        end
-        subgraph JoinGameOffer
-            JoinGameOffer-next["next"]
-            JoinGameOffer-cancel["cancel"]
-        end
-        subgraph JoinGameAnswer
-            JoinGameAnswer-next["next"]
-            JoinGameAnswer-cancel["cancel"]
-        end
-    end
 
-    subgraph WhoGoesFirst
-        WhoGoesFirst-play["play"]
-        WhoGoesFirst-back["back"]
-    end
+        subgraph signaling
+            subgraph signaling-choices
+                new
+                join
+                signaling-back["back"]
+            end
+            subgraph NewGameOffer
+                NewGameOffer-next["next"]
+                NewGameOffer-cancel["cancel"]
+            end
+            subgraph NewGameAnswer
+                NewGameAnswer-next["next"]
+                NewGameAnswer-cancel["cancel"]
+            end
+            subgraph JoinGameOffer
+                JoinGameOffer-next["next"]
+                JoinGameOffer-cancel["cancel"]
+            end
+            subgraph JoinGameAnswer
+                JoinGameAnswer-next["next"]
+                JoinGameAnswer-cancel["cancel"]
+            end
+        end
 
-    subgraph game
-        game-quit["quit"]
+        subgraph WhoGoesFirst
+            WhoGoesFirst-play["play"]
+            WhoGoesFirst-back["back"]
+        end
+
+        subgraph game
+            game-quit["quit"]
+        end
+
     end
 
     home-play --> start
@@ -186,6 +191,7 @@ graph LR
     rules-home --> home
     rules-start --> start
 
+    start-home --> home
     start-rules --> rules
     start-sourceCode --> GitHub
     online --> signaling-choices
