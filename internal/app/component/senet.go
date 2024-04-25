@@ -29,16 +29,16 @@ func head(page state.Page) *hypp.VNode {
 
 	return html.Head(
 		nil,
-		html.Link(hypp.HProps{
-			"rel":  "stylesheet",
-			"href": "/senet.css",
-		}),
 		html.Meta(hypp.HProps{"charset": "utf-8"}),
 		html.Meta(hypp.HProps{
 			"name":    "viewport",
 			"content": "width=device-width, initial-scale=1.0",
 		}),
 		html.Title(nil, hypp.Text(title)),
+		html.Link(hypp.HProps{
+			"rel":  "stylesheet",
+			"href": "/senet.css",
+		}),
 	)
 }
 
