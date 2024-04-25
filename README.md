@@ -1,32 +1,30 @@
 # senet
 
+## Dependencies
+
+- [Go](https://go.dev/)
+- [Sass](https://sass-lang.com/)
+- [Air](https://github.com/cosmtrek/air)
+- [Fairytale cli](https://github.com/macabot/fairytale#cli)
+- [Brotli](https://github.com/google/brotli)
+
 ## Setup
 
 The setup requires the following terminals.
 
 ### Terminal 1
 
-Install [air](https://github.com/cosmtrek/air) and run it in the root directory:
+Run `air` in the root directory:
 
 ```shell
 air
 ```
 
-`air` will watch the Go files and rebuild the fairytale WASM file whenever you make any changes.
+`air` will watch the files and run the [build script](#build) whenever you make any changes.
 
 ### Terminal 2
 
-Install [sass](https://sass-lang.com/) and run it in the root directory:
-
-```shell
-sass --watch scss:public
-```
-
-`sass` will watch the scss files and recompile the css file whenever you make any changes.
-
-### Terminal 3
-
-Install the [fairytale cli](https://github.com/macabot/fairytale#cli) and run it in the root directory:
+Run the fairytale cli in the root directory:
 
 ```shell
 fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets public
@@ -35,7 +33,7 @@ fairytale serve :8000 cmd/fairytale/main.wasm --watch --assets public
 `fairytale` will watch the WASM file and assets. Whenever any changes are made it will reload the web page.
 You can visit the fairytale app on <http://localhost:8000/>.
 
-### Terminal 4
+### Terminal 3
 
 Run the static file server
 
@@ -53,9 +51,14 @@ go test $(go list ./... 2>/dev/null | grep -v 'cmd')
 
 ## Build
 
+Run the build script as follows:
+
 ```sh
-./cmd/client-hypp/build
+./build $environment [$public_dir]
 ```
+
+The `$environment` must be either 'development' or 'production'.
+The `$public_dir` is optional and defaults to './public'.
 
 ## Development
 
