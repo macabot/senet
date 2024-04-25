@@ -17,8 +17,8 @@ if [ -z "$public_dir" ]; then
     public_dir="${root_dir}/public"
 fi
 
-rm -rf "$public_dir"
-mkdir "$public_dir"
+mkdir -p "$public_dir"
+rm -rf "${public_dir:?}"/*
 
 cp "${root_dir}/static"/* "$public_dir"
 
@@ -41,7 +41,7 @@ sass "${root_dir}/scss:${public_dir}"
 readarray -t files_to_compress < <(find "$public_dir" -type f ! -name '*.gz' ! -name '*.br')
 gzip --best --force --keep "${files_to_compress[@]}"
 
-# It takes a long time to compress main.wasm.
+# It takes a long time to compress main.wasm with brotli, so we only do it for production.
 if [ "$env" = "production" ]; then
     brotli --best --force --keep "${files_to_compress[@]}"
 fi
