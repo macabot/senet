@@ -35,10 +35,7 @@ func homePageOptions() *hypp.VNode {
 			hypp.Text("Rules"),
 		),
 		html.A(
-			hypp.HProps{
-				"href":   "https://github.com/macabot/senet",
-				"target": "_blank",
-			},
+			hypp.HProps{"href": "https://github.com/macabot/senet"},
 			hypp.Text("Source code"),
 		),
 	)

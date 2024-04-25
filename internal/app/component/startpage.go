@@ -52,9 +52,8 @@ func gameModes() *hypp.VNode {
 		),
 		html.A(
 			hypp.HProps{
-				"class":  "game-mode",
-				"href":   "https://github.com/macabot/senet",
-				"target": "_blank",
+				"class": "game-mode",
+				"href":  "https://github.com/macabot/senet",
 			},
 			hypp.Text("Source code"),
 		),
