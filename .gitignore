@@ -29,6 +29,4 @@ wasm_exec.js
 tmp
 
 # Generated website
-public/*
-!public/favicon.ico
-!public/play.html
+public
