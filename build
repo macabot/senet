@@ -17,6 +17,9 @@ if [ -z "$public_dir" ]; then
     public_dir="${root_dir}/public"
 fi
 
+rm -rf "$public_dir"
+mkdir "$public_dir"
+
 cp "${root_dir}/static"/* "$public_dir"
 
 cp \
@@ -33,10 +36,12 @@ GOOS=js GOARCH=wasm go build \
     -o "${root_dir}/cmd/fairytale/main.wasm" \
     "${root_dir}/cmd/fairytale/main.go"
 
-if [ "$env" = "production" ]; then
-    sass "${root_dir}/scss:${public_dir}"
-fi
+sass "${root_dir}/scss:${public_dir}"
 
 readarray -t files_to_compress < <(find "$public_dir" -type f ! -name '*.gz' ! -name '*.br')
 gzip --best --force --keep "${files_to_compress[@]}"
-brotli --best --force --keep "${files_to_compress[@]}"
+
+# It takes a long time to compress main.wasm.
+if [ "$env" = "production" ]; then
+    brotli --best --force --keep "${files_to_compress[@]}"
+fi
