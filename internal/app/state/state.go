@@ -45,8 +45,12 @@ func (p Page) MarshalJSON() ([]byte, error) {
 }
 
 func (p *Page) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
 	var err error
-	*p, err = ToPage(string(data))
+	*p, err = ToPage(s)
 	return err
 }
 
