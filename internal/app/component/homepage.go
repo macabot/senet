@@ -11,6 +11,10 @@ func HomePage() *hypp.VNode {
 			"class": "home-page",
 		},
 		SenetHeader(),
+		html.P(
+			hypp.HProps{"class": "description"},
+			hypp.Text("Senet is a two-player board game. Block your opponent's moves and be the first player to move all of their pieces off the board."),
+		),
 		homePageOptions(),
 	)
 }

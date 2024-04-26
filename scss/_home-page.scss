@@ -4,6 +4,10 @@
   align-items: center;
   position: relative;
 
+  .description {
+    max-width: 20rem;
+  }
+
   .links {
     display: flex;
     flex-direction: column;
