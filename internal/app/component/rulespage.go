@@ -13,7 +13,7 @@ func RulesPage() *hypp.VNode {
 		},
 		SenetHeader(),
 		html.P(nil, html.A(hypp.HProps{"href": "/"}, hypp.Text("Home"))),
-		html.P(nil, replaceLinks("This page will explain the rules of Senet. You can also learn the rules with the [interactive-tutorial-link].")...),
+		html.P(nil, replaceLinks("This page contains the rules of Senet. You can also learn the rules with the [interactive-tutorial-link].")...),
 		html.Ul(
 			nil,
 			html.Li(nil, html.A(hypp.HProps{"href": "#goal"}, hypp.Text("Goal"))),
