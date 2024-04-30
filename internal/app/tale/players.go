@@ -97,7 +97,7 @@ func speechBubbleKind(player int) *control.Select[*state.State, int] {
 
 func drawAttention(player int) *control.Checkbox[*state.State] {
 	return control.NewCheckbox(
-		fmt.Sprintf("Player %d draw attention", player),
+		fmt.Sprintf("Player %d draw attention", player+1),
 		func(s *state.State, drawAttention bool) hypp.Dispatchable {
 			s.Game.Players[player].DrawAttention = drawAttention
 			return s
