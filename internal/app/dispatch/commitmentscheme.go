@@ -108,7 +108,7 @@ func SendIsReadyEffect() hypp.Effect {
 	}
 }
 
-func ReceiveIsReady(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func ReceiveIsReady(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 	newState.CommitmentScheme.OpponentIsReady = true
 	var effects []hypp.Effect
