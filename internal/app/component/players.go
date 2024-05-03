@@ -87,7 +87,10 @@ func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
 					"has-turn":       hasTurn,
 					"draw-attention": player.DrawAttention,
 				},
-				"onclick": dispatch.ToggleSpeechBubble(playerIndex),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action:  dispatch.ToggleSpeechBubble,
+					Payload: playerIndex,
+				},
 			},
 			html.Span(nil, hypp.Text(player.Name)),
 			pointsIcon(player.Points),

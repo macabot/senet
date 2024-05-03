@@ -9,7 +9,7 @@ var onSetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, play
 
 var onUnsetSpeechBubbleKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 
-func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind) {
+func updateSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind) {
 	currentSpeechBubble := s.Game.Players[player].SpeechBubble
 	currentClosed := false
 	doNotRender := false
@@ -33,41 +33,36 @@ func SetSpeechBubbleKind(s *state.State, player int, kind state.SpeechBubbleKind
 	}
 }
 
-func SetSpeechBubbleKindAction(player int, kind state.SpeechBubbleKind) hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		SetSpeechBubbleKind(newState, player, kind)
-		return newState
-	}
+type PlayerAndKind struct {
+	Player int
+	Kind   state.SpeechBubbleKind
 }
 
-func SetPageAction(page state.Page) hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Page = page
-		return newState
-	}
+func SetSpeechBubbleKind(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	playerAndKind := payload.(PlayerAndKind)
+	newState := s.Clone()
+	updateSpeechBubbleKind(newState, playerAndKind.Player, playerAndKind.Kind)
+	return newState
 }
 
 var onToggleSpeechBubbleByKind = map[state.SpeechBubbleKind]func(s *state.State, player int){}
 
-func ToggleSpeechBubble(player int) hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Game.Players[player].SpeechBubble == nil {
-			newState.Game.Players[player].SpeechBubble = &state.SpeechBubble{
-				Closed: true,
-			}
+func ToggleSpeechBubble(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	player := payload.(int)
+	newState := s.Clone()
+	if newState.Game.Players[player].SpeechBubble == nil {
+		newState.Game.Players[player].SpeechBubble = &state.SpeechBubble{
+			Closed: true,
 		}
-		newState.Game.Players[player].DrawAttention = false
-		currentClosed := newState.Game.Players[player].SpeechBubble.Closed
-		newState.Game.Players[player].SpeechBubble.Closed = !currentClosed
-		newState.Game.Players[player].SpeechBubble.DoNotRender = false
-
-		if onToggle, ok := onToggleSpeechBubbleByKind[newState.Game.Players[player].SpeechBubble.Kind]; ok {
-			onToggle(newState, player)
-		}
-
-		return newState
 	}
+	newState.Game.Players[player].DrawAttention = false
+	currentClosed := newState.Game.Players[player].SpeechBubble.Closed
+	newState.Game.Players[player].SpeechBubble.Closed = !currentClosed
+	newState.Game.Players[player].SpeechBubble.DoNotRender = false
+
+	if onToggle, ok := onToggleSpeechBubbleByKind[newState.Game.Players[player].SpeechBubble.Kind]; ok {
+		onToggle(newState, player)
+	}
+
+	return newState
 }

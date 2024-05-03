@@ -78,7 +78,7 @@ func noMoveButton() *hypp.VNode {
 	return html.Button(
 		hypp.HProps{
 			"class":   "no-move-button",
-			"onclick": dispatch.NoMoveAction(),
+			"onclick": dispatch.NoMove,
 		},
 		NoMoveIcon(),
 	)

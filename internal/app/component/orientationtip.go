@@ -21,7 +21,7 @@ func OrientationTip(s *state.State) *hypp.VNode {
 		),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.ToggleOrientationTipAction(),
+				"onclick": dispatch.ToggleOrientationTip,
 			},
 			hypp.Text("OK"),
 		),

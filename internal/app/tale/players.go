@@ -72,8 +72,13 @@ func speechBubbleKind(player int) *control.Select[*state.State, int] {
 				return s
 			} else {
 				kind := bubbles[option].V
-				dispatch.SetSpeechBubbleKind(s, player, kind)
-				return s
+				return hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   kind,
+					},
+				}
 			}
 		},
 		func(s *state.State) int {

@@ -32,21 +32,21 @@ func gameModes() *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":   "game-mode tutorial",
-				"onclick": dispatch.ToTutorialAction(),
+				"onclick": dispatch.GoToTutorial,
 			},
 			hypp.Text("Tutorial"),
 		),
 		html.Button(
 			hypp.HProps{
 				"class":   "game-mode local-pvp",
-				"onclick": dispatch.ToLocalPlayerVsPlayerAction(),
+				"onclick": dispatch.GoToLocalPlayerVsPlayer,
 			},
 			hypp.Text("Local - Player vs. Player"),
 		),
 		html.Button(
 			hypp.HProps{
 				"class":   "game-mode online-pvp",
-				"onclick": dispatch.ToSignalingPageAction(),
+				"onclick": dispatch.GoToSignalingPage,
 			},
 			hypp.Text("Online - Player vs. Player"),
 		),

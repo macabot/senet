@@ -8,10 +8,6 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func DelayedAction(action hypp.Action[*state.State], delay time.Duration) hypp.Effect {
-	return Delayed(action, delay)
-}
-
 func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 	return hypp.Effect{
 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {

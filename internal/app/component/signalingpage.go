@@ -29,21 +29,21 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":   "cta",
-				"onclick": dispatch.SetSignalingStepNewGameOfferAction(),
+				"onclick": dispatch.SetSignalingStepNewGameOffer,
 			},
 			hypp.Text("New game"),
 		),
 		html.Button(
 			hypp.HProps{
 				"class":   "cta",
-				"onclick": dispatch.SetSignalingStepJoinGameOfferAction(),
+				"onclick": dispatch.SetSignalingStepJoinGameOffer,
 			},
 			hypp.Text("Join game"),
 		),
 		html.Button(
 			hypp.HProps{
 				"class":   "signaling back",
-				"onclick": dispatch.ToStartPageAction(),
+				"onclick": dispatch.GoToStartPage,
 			},
 			hypp.Text("Back"),
 		),
@@ -146,14 +146,14 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToStartPageAction(),
+					"onclick": dispatch.GoToStartPage,
 				},
 				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{
 					"class":   "cta",
-					"onclick": dispatch.SetSignalingStepNewGameAnswerAction(),
+					"onclick": dispatch.SetSignalingStepNewGameAnswer,
 				},
 				hypp.Text("Next"),
 			),
@@ -176,8 +176,11 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		}
 		ctaButton = html.Button(
 			hypp.HProps{
-				"class":   "cta",
-				"onclick": dispatch.ToWhoGoesFirstPageAction(true),
+				"class": "cta",
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action:  dispatch.GoToWhoGoesFirstPage,
+					Payload: true,
+				},
 			},
 			hypp.Text(buttonText),
 		)
@@ -185,7 +188,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		ctaButton = html.Button(
 			hypp.HProps{
 				"class":   "cta",
-				"onclick": dispatch.ConnectNewGameAction(),
+				"onclick": dispatch.ConnectNewGame,
 			},
 			hypp.Text("Connect"),
 		)
@@ -200,7 +203,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		html.Textarea(
 			hypp.HProps{
 				"id":      "answer-textarea",
-				"oninput": dispatch.SetSignalingAnswerAction(),
+				"oninput": dispatch.SetSignalingAnswer,
 			},
 		),
 		connectionStates(s),
@@ -208,7 +211,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToStartPageAction(),
+					"onclick": dispatch.GoToStartPage,
 				},
 				hypp.Text("Cancel"),
 			),
@@ -228,7 +231,7 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 		html.Textarea(
 			hypp.HProps{
 				"id":      "offer-textarea",
-				"oninput": dispatch.SetSignalingOfferAction(),
+				"oninput": dispatch.SetSignalingOffer,
 			},
 		),
 		connectionStates(s),
@@ -236,14 +239,14 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToStartPageAction(),
+					"onclick": dispatch.GoToStartPage,
 				},
 				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{
 					"class":   "cta",
-					"onclick": dispatch.SetSignalingStepJoinGameAnswerAction(),
+					"onclick": dispatch.SetSignalingStepJoinGameAnswer,
 				},
 				hypp.Text("Next"),
 			),
@@ -289,14 +292,17 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToStartPageAction(),
+					"onclick": dispatch.GoToStartPage,
 				},
 				hypp.Text("Cancel"),
 			),
 			html.Button(
 				hypp.HProps{
-					"class":   "cta",
-					"onclick": dispatch.ToWhoGoesFirstPageAction(false),
+					"class": "cta",
+					"onclick": hypp.ActionAndPayload[*state.State]{
+						Action:  dispatch.GoToWhoGoesFirstPage,
+						Payload: false,
+					},
 				},
 				hypp.Text(buttonText),
 			),

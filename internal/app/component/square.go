@@ -54,10 +54,13 @@ func Square(props SquareProps) *hypp.VNode {
 		},
 	}
 	if props.CanClick && props.Selected != nil {
-		hProps["onclick"] = dispatch.MoveToSquareAction(
-			props.Selected.Position,
-			props.Position,
-		)
+		hProps["onclick"] = hypp.ActionAndPayload[*state.State]{
+			Action: dispatch.MoveToSquare,
+			Payload: dispatch.Move{
+				From: props.Selected.Position,
+				To:   props.Position,
+			},
+		}
 	}
 
 	validReturnToStart := false

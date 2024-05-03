@@ -51,7 +51,7 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToSignalingPageAction(),
+					"onclick": dispatch.GoToSignalingPage,
 				},
 				hypp.Text("Back"),
 			),
@@ -59,7 +59,10 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": !hasDecision,
-					"onclick":  dispatch.ToOnlinePlayerVsPlayerAction(isPlayer0),
+					"onclick": hypp.ActionAndPayload[*state.State]{
+						Action:  dispatch.GoToOnlinePlayerVsPlayer,
+						Payload: isPlayer0,
+					},
 				},
 				hypp.Text("Play"),
 			),

@@ -9,7 +9,7 @@ func replaceCurrentBubbleWithNext(current, next state.SpeechBubbleKind) func(s, 
 	return func(_, newState *state.State) []hypp.Effect {
 		bubble := newState.Game.Players[1].SpeechBubble
 		if bubble != nil && bubble.Kind == current {
-			SetSpeechBubbleKind(newState, 1, next)
+			updateSpeechBubbleKind(newState, 1, next)
 		}
 		return nil
 	}
@@ -30,7 +30,7 @@ func RegisterTutorial() {
 		if s.Game.Players[player].SpeechBubble.Closed {
 			s.Game.Players[player].DrawAttention = true
 		} else {
-			SetSpeechBubbleKind(s, player, state.TutorialBoard1)
+			updateSpeechBubbleKind(s, player, state.TutorialBoard1)
 		}
 	}
 	// TutorialBoard3

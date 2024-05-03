@@ -13,7 +13,13 @@ func TutorialStart(player int) []*hypp.VNode {
 		spokenParagraph("Hi, I'm the Tutor. Today I will teach you how to play Senet.", "TutorialStart"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialGoal),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialGoal,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -26,7 +32,13 @@ func TutorialGoal(player int) []*hypp.VNode {
 		spokenParagraph("The goal of Senet is to be the first player to move all of their pieces off the board.", "TutorialGoal"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPlayers1),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialPlayers1,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -39,7 +51,13 @@ func TutorialPlayers1(player int) []*hypp.VNode {
 		spokenParagraph("In the top you see the two players. You can hide or show the speech bubble of a player by clicking on that player.", "TutorialPlayers1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialPlayers2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialPlayers2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -59,7 +77,13 @@ func TutorialBoard1(player int) []*hypp.VNode {
 		spokenParagraph("Below the players is the board on which we play.", "TutorialBoard1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialBoard2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -72,7 +96,13 @@ func TutorialBoard2(player int) []*hypp.VNode {
 		spokenParagraph("At the bottom of the board are the pieces. You will play with the blue quares [piece-0-icon]. I will play with the red circles [piece-1-icon]. The blue squares will go first.", "TutorialBoard2"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBoard3),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialBoard3,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -85,7 +115,13 @@ func TutorialBoard3(player int) []*hypp.VNode {
 		spokenParagraph("The pieces move in a Z shape from bottom right to top left.", "TutorialBoard3"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks1),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialSticks1,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -98,7 +134,13 @@ func TutorialSticks1(player int) []*hypp.VNode {
 		spokenParagraph("At the bottom of the screen we find the sticks. You can move a piece equal to the number of white sides.", "TutorialSticks1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialSticks2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -111,7 +153,13 @@ func TutorialSticks2(player int) []*hypp.VNode {
 		spokenParagraph("You can move a piece 1 step [sticks-1-icon], 2 steps [sticks-2-icon], 3 steps [sticks-3-icon] or 4 steps [sticks-4-icon]. If all sticks are showing the black side, you can move a piece 6 steps [sticks-6-icon].", "TutorialSticks2"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialSticks3),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialSticks3,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -138,7 +186,13 @@ func TutorialMultipleMoves(player int) []*hypp.VNode {
 		spokenParagraph("If you throw 1 step [sticks-1-icon], 4 steps [sticks-4-icon] or 6 steps [sticks-6-icon], you may go again. This goes on until you throw 2 steps [sticks-2-icon] or 3 steps [sticks-3-icon]. Then your turn ends.", "TutorialMultipleMoves"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces1),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialTradingPlaces1,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -151,7 +205,13 @@ func TutorialTradingPlaces1(player int) []*hypp.VNode {
 		spokenParagraph("Let's change the board to learn about trading the places of two pieces.", "TutorialTradingPlaces1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialTradingPlaces2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -164,7 +224,13 @@ func TutorialTradingPlaces2(player int) []*hypp.VNode {
 		spokenParagraph("A piece can move to a square occupied by another player's piece, except if that piece is protected [protected-icon]. If not, the pieces trade places. You are not allowed to trade places with a piece of the same color.", "TutorialTradingPlaces2"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces3),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialTradingPlaces3,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -177,7 +243,13 @@ func TutorialTradingPlaces3(player int) []*hypp.VNode {
 		spokenParagraph("A piece is protected [protected-icon] if at least one neighboring square (left, right, above or below) is occupied by a piece with the same color or if it occupies a square with the protecting icon: [protected-icon].", "TutorialTradingPlaces3"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialTradingPlaces4),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialTradingPlaces4,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -197,7 +269,13 @@ func TutorialBlockingPiece1(player int) []*hypp.VNode {
 		spokenParagraph("Neighboring pieces that form a group of at least 3 pieces of the same color will block [blocking-icon] the movement of pieces of the other color. A piece that is blocking [blocking-icon] is also protected [protected-icon].", "TutorialBlockingPiece1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialBlockingPiece2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialBlockingPiece2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -217,7 +295,13 @@ func TutorialReturnToStart1(player int) []*hypp.VNode {
 		spokenParagraph("The top row shows the return-to-start square [return-to-start-icon]. Let's change the board to learn about it.", "TutorialReturnToStart1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialReturnToStart2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialReturnToStart2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -230,7 +314,13 @@ func TutorialReturnToStart2(player int) []*hypp.VNode {
 		spokenParagraph("If you move a piece to the return-to-start square [return-to-start-icon], then your piece is immediately moved to the start of the board: the first unoccupied square, starting in the bottom right of the board.", "TutorialReturnToStart2"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialReturnToStart3),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialReturnToStart3,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -250,7 +340,13 @@ func TutorialMoveBackwards1(player int) []*hypp.VNode {
 		spokenParagraph("If none of your pieces have a valid move forwards, then they must move backwards. When moving backwards, you are not allowed to trade places with another piece.", "TutorialMoveBackwards1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialMoveBackwards2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialMoveBackwards2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -270,7 +366,13 @@ func TutorialNoMove1(player int) []*hypp.VNode {
 		spokenParagraph("Sometimes no move is possible. Let's change the board to learn more.", "TutorialNoMove1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialNoMove2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialNoMove2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -290,7 +392,13 @@ func TutorialOffTheBoard1(player int) []*hypp.VNode {
 		spokenParagraph("A piece that is located in the top left square of the board will be moved off the board if all pieces of that color are located in the top row. Let's look at an example.", "TutorialOffTheBoard1"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetSpeechBubbleKindAction(player, state.TutorialOffTheBoard2),
+				"onclick": hypp.ActionAndPayload[*state.State]{
+					Action: dispatch.SetSpeechBubbleKind,
+					Payload: dispatch.PlayerAndKind{
+						Player: player,
+						Kind:   state.TutorialOffTheBoard2,
+					},
+				},
 			},
 			hypp.Text("Next"),
 		),
@@ -317,7 +425,7 @@ func TutorialEnd() []*hypp.VNode {
 		spokenParagraph("You now know how to play Senet. Go to the start page to start playing.", "TutorialEnd"),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.SetPageAction(state.StartPage),
+				"onclick": dispatch.GoToStartPage,
 			},
 			hypp.Text("Start page"),
 		),
