@@ -37,36 +37,45 @@ func resetSignaling(s *state.State) {
 	s.Signaling = nil
 }
 
-func SetSignalingStatesAction(iceConnectionState, connectionState, readyState string) hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
+type SignalingStates struct {
+	ICEConnectionState string
+	ConnectionState    string
+	ReadyState         string
+}
 
-		if newState.Signaling.ICEConnectionState != iceConnectionState {
-			window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, iceConnectionState)
-		}
-		if newState.Signaling.ConnectionState != connectionState {
-			window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, connectionState)
-		}
-		if newState.Signaling.ReadyState != readyState {
-			window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, readyState)
-		}
-
-		newState.Signaling.ICEConnectionState = iceConnectionState
-		newState.Signaling.ConnectionState = connectionState
-		newState.Signaling.ReadyState = readyState
-
-		return newState
+func SetSignalingStates(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	signalingStates := payload.(SignalingStates)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+
+	if newState.Signaling.ICEConnectionState != signalingStates.ICEConnectionState {
+		window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, signalingStates.ICEConnectionState)
+	}
+	if newState.Signaling.ConnectionState != signalingStates.ConnectionState {
+		window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, signalingStates.ConnectionState)
+	}
+	if newState.Signaling.ReadyState != signalingStates.ReadyState {
+		window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, signalingStates.ReadyState)
+	}
+
+	newState.Signaling.ICEConnectionState = signalingStates.ICEConnectionState
+	newState.Signaling.ConnectionState = signalingStates.ConnectionState
+	newState.Signaling.ReadyState = signalingStates.ReadyState
+
+	return newState
 }
 
 func onSignalingStateChange(dispatch hypp.Dispatch) {
 	iceConnectionState := state.PeerConnection.ICEConnectionState()
 	connectionState := state.PeerConnection.ConnectionState()
 	readyState := state.DataChannel.ReadyState()
-	dispatch(SetSignalingStatesAction(iceConnectionState, connectionState, readyState), nil)
+	dispatch(SetSignalingStates, SignalingStates{
+		ICEConnectionState: iceConnectionState,
+		ConnectionState:    connectionState,
+		ReadyState:         readyState,
+	})
 }
 
 func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
@@ -98,31 +107,31 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 		mustJSONUnmarshal([]byte(data.String()), &message)
 		switch message.Kind {
 		case SendIsReadyKind:
-			dispatch(ReceiveIsReadyAction(), nil)
+			dispatch(ReceiveIsReady, nil)
 		case SendFlipperSecretKind:
 			var flipperSecret string
 			mustJSONUnmarshal(message.Data, &flipperSecret)
-			dispatch(ReceiveFlipperSecretAction(flipperSecret), nil)
+			dispatch(ReceiveFlipperSecret, flipperSecret)
 		case SendCommitmentKind:
 			var commitment string
 			mustJSONUnmarshal(message.Data, &commitment)
-			dispatch(ReceiveCommitmentAction(commitment), nil)
+			dispatch(ReceiveCommitment, commitment)
 		case SendFlipperResultsKind:
 			var flipperResults [4]bool
 			mustJSONUnmarshal(message.Data, &flipperResults)
-			dispatch(ReceiveFlipperResultsAction(flipperResults), nil)
+			dispatch(ReceiveFlipperResults, flipperResults)
 		case SendCallerSecretAndPredictionsKind:
 			var callerSecretAndPredictions CallerSecretAndPredictions
 			mustJSONUnmarshal(message.Data, &callerSecretAndPredictions)
-			dispatch(ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions), nil)
+			dispatch(ReceiveCallerSecretAndPredictions, callerSecretAndPredictions)
 		case SendHasThrownKind:
-			dispatch(ReceiveHasThrownAction(), nil)
+			dispatch(ReceiveHasThrown, nil)
 		case SendMoveKind:
 			var move Move
 			mustJSONUnmarshal(message.Data, &move)
-			dispatch(ReceiveMoveAction(move), nil)
+			dispatch(ReceiveMove, move)
 		case SendNoMoveKind:
-			dispatch(ReceiveNoMoveAction(), nil)
+			dispatch(ReceiveNoMove, nil)
 		default:
 			window.Console().Warn("Data message has unknown kind %v", message.Kind)
 		}
@@ -135,16 +144,15 @@ func sendDataChannelMessage(data string) {
 	state.DataChannel.Send(data)
 }
 
-func setSignalingError(err error) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Error = &state.JSONSerializableErr{Err: err}
-		newState.Signaling.Loading = false
-		return newState
+func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	err := payload.(error)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Error = &state.JSONSerializableErr{Err: err}
+	newState.Signaling.Loading = false
+	return newState
 }
 
 func CreatePeerConnectionOfferEffect() hypp.Effect {
@@ -156,13 +164,13 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 				offer, err := state.PeerConnection.AwaitCreateOffer()
 				if err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
 				if err := state.PeerConnection.AwaitSetLocalDescription(offer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
@@ -172,7 +180,7 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 					}
 					offer := state.PeerConnection.LocalDescription().SDP()
 					window.RequestAnimationFrame(func() {
-						dispatch(setOfferAction(offer), nil)
+						dispatch(setOffer, offer)
 					})
 				})
 			}()
@@ -180,16 +188,15 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 	}
 }
 
-func setOfferAction(offer string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Offer = offer
-		newState.Signaling.Loading = false
-		return newState
+func setOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	offer := payload.(string)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Offer = offer
+	newState.Signaling.Loading = false
+	return newState
 }
 
 func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
@@ -205,20 +212,20 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 				offer := webrtc.NewSessionDescription("offer", offer)
 				if err := state.PeerConnection.AwaitSetRemoteDescription(offer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
 				answer, err := state.PeerConnection.AwaitCreateAnswer()
 				if err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
 				if err := state.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
@@ -228,7 +235,7 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 					}
 					answer := state.PeerConnection.LocalDescription().SDP()
 					window.RequestAnimationFrame(func() {
-						dispatch(setAnswerAction(answer), nil)
+						dispatch(setAnswer, answer)
 					})
 				})
 			}()
@@ -236,111 +243,96 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 	}
 }
 
-func setAnswerAction(answer string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Step = state.SignalingStepJoinGameAnswer
-		newState.Signaling.Answer = answer
-		newState.Signaling.Loading = false
-		return newState
+func setAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	answer := payload.(string)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
+	newState.Signaling.Answer = answer
+	newState.Signaling.Loading = false
+	return newState
+}
+
+func SetSignalingStepNewGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepNewGameOffer
+	newState.Signaling.Loading = true
+	newState.Signaling.Error = nil
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
 	}
 }
 
-func SetSignalingStepNewGameOfferAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Step = state.SignalingStepNewGameOffer
-		newState.Signaling.Loading = true
-		newState.Signaling.Error = nil
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
-		}
+func SetSignalingStepNewGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	if s.Signaling.Loading {
+		return s
+	}
+	newState.Signaling.Step = state.SignalingStepNewGameAnswer
+	return newState
+}
+
+func SetSignalingStepJoinGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepJoinGameOffer
+	return newState
+}
+
+func SetSignalingStepJoinGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Loading = true
+	newState.Signaling.Error = nil
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
 	}
 }
 
-func SetSignalingStepNewGameAnswerAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		if s.Signaling.Loading {
-			return s
-		}
-		newState.Signaling.Step = state.SignalingStepNewGameAnswer
-		return newState
+func SetSignalingOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Offer = event.Target().Value()
+	return newState
 }
 
-func SetSignalingStepJoinGameOfferAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Step = state.SignalingStepJoinGameOffer
-		return newState
+func SetSignalingAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Answer = event.Target().Value()
+	return newState
 }
 
-func SetSignalingStepJoinGameAnswerAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Loading = true
-		newState.Signaling.Error = nil
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
-		}
+func ConnectNewGame(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
-}
-
-func SetSignalingOfferAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		event := payload.(window.Event)
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Offer = event.Target().Value()
-		return newState
-	}
-}
-
-func SetSignalingAnswerAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		event := payload.(window.Event)
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Answer = event.Target().Value()
-		return newState
-	}
-}
-
-func ConnectNewGameAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Loading = true
-		newState.Signaling.Error = nil
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
-		}
+	newState.Signaling.Loading = true
+	newState.Signaling.Error = nil
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
 	}
 }
 
@@ -358,26 +350,25 @@ func ConnectNewGameEffect(answer string) hypp.Effect {
 				answer := webrtc.NewSessionDescription("answer", answer)
 				if err := state.PeerConnection.AwaitSetRemoteDescription(answer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError(err), nil)
+						dispatch(setSignalingError, err)
 					})
 					return
 				}
 				window.RequestAnimationFrame(func() {
-					dispatch(setSignalingLoadingAction(false), nil)
+					dispatch(setSignalingLoading, false)
 				})
 			}()
 		},
 	}
 }
 
-func setSignalingLoadingAction(loading bool) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if newState.Signaling == nil {
-			newState.Signaling = &state.Signaling{}
-		}
-		newState.Signaling.Loading = loading
-		newState.Signaling.Error = nil
-		return newState
+func setSignalingLoading(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	loading := payload.(bool)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Loading = loading
+	newState.Signaling.Error = nil
+	return newState
 }

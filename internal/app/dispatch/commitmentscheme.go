@@ -59,11 +59,6 @@ type CallerSecretAndPredictions struct {
 	Predictions [4]bool
 }
 
-type Move struct {
-	From state.Position
-	To   state.Position
-}
-
 type CommitmentSchemeMessage[T any] struct {
 	Kind CommitmentMessageKind
 	Data T
@@ -113,22 +108,20 @@ func SendIsReadyEffect() hypp.Effect {
 	}
 }
 
-func ReceiveIsReadyAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.CommitmentScheme.OpponentIsReady = true
-		var effects []hypp.Effect
-		if !newState.CommitmentScheme.IsCaller && newState.CommitmentScheme.IsReady {
-			effects = append(effects, sendFlipperSecret(newState)...)
-		}
-		if newState.CommitmentScheme.IsReady {
-			newState.CommitmentScheme.IsReady = false
-			newState.CommitmentScheme.OpponentIsReady = false
-		}
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+func ReceiveIsReady(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.CommitmentScheme.OpponentIsReady = true
+	var effects []hypp.Effect
+	if !newState.CommitmentScheme.IsCaller && newState.CommitmentScheme.IsReady {
+		effects = append(effects, sendFlipperSecret(newState)...)
+	}
+	if newState.CommitmentScheme.IsReady {
+		newState.CommitmentScheme.IsReady = false
+		newState.CommitmentScheme.OpponentIsReady = false
+	}
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: effects,
 	}
 }
 
@@ -152,13 +145,12 @@ func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
 	}
 }
 
-func ReceiveFlipperSecretAction(flipperSecret string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.CommitmentScheme.IsCaller = true
-		newState.CommitmentScheme.FlipperSecret = flipperSecret
-		return sendCommitment(newState)
-	}
+func ReceiveFlipperSecret(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	flipperSecret := payload.(string)
+	newState := s.Clone()
+	newState.CommitmentScheme.IsCaller = true
+	newState.CommitmentScheme.FlipperSecret = flipperSecret
+	return sendCommitment(newState)
 }
 
 func sendCommitment(newState *state.State) hypp.StateAndEffects[*state.State] {
@@ -190,17 +182,16 @@ func SendCommitmentEffect(commitment string) hypp.Effect {
 	}
 }
 
-func ReceiveCommitmentAction(commitment string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		if s.CommitmentScheme.IsCaller {
-			window.Console().Warn("Caller received commitment")
-			return s
-		}
-
-		newState := s.Clone()
-		newState.CommitmentScheme.Commitment = commitment
-		return sendFlipperResults(newState)
+func ReceiveCommitment(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	if s.CommitmentScheme.IsCaller {
+		window.Console().Warn("Caller received commitment")
+		return s
 	}
+
+	commitment := payload.(string)
+	newState := s.Clone()
+	newState.CommitmentScheme.Commitment = commitment
+	return sendFlipperResults(newState)
 }
 
 func sendFlipperResults(newState *state.State) hypp.StateAndEffects[*state.State] {
@@ -226,18 +217,17 @@ func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
 	}
 }
 
-func ReceiveFlipperResultsAction(flipperResults [4]bool) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		if !s.CommitmentScheme.IsCaller {
-			window.Console().Warn("Flipper received flipperResults")
-			return s
-		}
-
-		newState := s.Clone()
-		newState.CommitmentScheme.FlipperResults = flipperResults
-		newState.CommitmentScheme.HasFlipperResults = true
-		return sendCallerSecretAndPredictions(newState)
+func ReceiveFlipperResults(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	if !s.CommitmentScheme.IsCaller {
+		window.Console().Warn("Flipper received flipperResults")
+		return s
 	}
+
+	flipperResults := payload.([4]bool)
+	newState := s.Clone()
+	newState.CommitmentScheme.FlipperResults = flipperResults
+	newState.CommitmentScheme.HasFlipperResults = true
+	return sendCallerSecretAndPredictions(newState)
 }
 
 func sendCallerSecretAndPredictions(newState *state.State) hypp.StateAndEffects[*state.State] {
@@ -274,30 +264,29 @@ func flipsToValue(flips [4]bool) js.Value {
 	return js.ValueOf([]any{flips[0], flips[1], flips[2], flips[3]})
 }
 
-func ReceiveCallerSecretAndPredictionsAction(callerSecretAndPredictions CallerSecretAndPredictions) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.CommitmentScheme.CallerSecret = callerSecretAndPredictions.Secret
-		newState.CommitmentScheme.CallerPredictions = callerSecretAndPredictions.Predictions
-		newState.CommitmentScheme.HasCallerPredictions = true
-		isExpectedCommitment := state.IsExpectedCommitment(
+func ReceiveCallerSecretAndPredictions(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	callerSecretAndPredictions := payload.(CallerSecretAndPredictions)
+	newState := s.Clone()
+	newState.CommitmentScheme.CallerSecret = callerSecretAndPredictions.Secret
+	newState.CommitmentScheme.CallerPredictions = callerSecretAndPredictions.Predictions
+	newState.CommitmentScheme.HasCallerPredictions = true
+	isExpectedCommitment := state.IsExpectedCommitment(
+		newState.CommitmentScheme.CallerSecret,
+		newState.CommitmentScheme.FlipperSecret,
+		newState.CommitmentScheme.CallerPredictions,
+		newState.CommitmentScheme.Commitment,
+	)
+	if !isExpectedCommitment {
+		window.Console().Warn(
+			"Unexpected commitment",
 			newState.CommitmentScheme.CallerSecret,
 			newState.CommitmentScheme.FlipperSecret,
-			newState.CommitmentScheme.CallerPredictions,
+			flipsToValue(newState.CommitmentScheme.CallerPredictions),
 			newState.CommitmentScheme.Commitment,
 		)
-		if !isExpectedCommitment {
-			window.Console().Warn(
-				"Unexpected commitment",
-				newState.CommitmentScheme.CallerSecret,
-				newState.CommitmentScheme.FlipperSecret,
-				flipsToValue(newState.CommitmentScheme.CallerPredictions),
-				newState.CommitmentScheme.Commitment,
-			)
-		}
-
-		return newState
 	}
+
+	return newState
 }
 
 func SendHasThrownEffect() hypp.Effect {
@@ -311,12 +300,10 @@ func SendHasThrownEffect() hypp.Effect {
 	}
 }
 
-func ReceiveHasThrownAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Game.ThrowSticks(newState)
-		return newState
-	}
+func ReceiveHasThrown(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Game.ThrowSticks(newState)
+	return newState
 }
 
 func SendMoveEffect(from, to state.Position) hypp.Effect {
@@ -334,22 +321,21 @@ func SendMoveEffect(from, to state.Position) hypp.Effect {
 	}
 }
 
-func ReceiveMoveAction(move Move) hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		// Ignore the nextMove, because we will receive a separate message for it.
-		_, err := newState.Game.Move(newState.Game.Turn, move.From, move.To)
-		if err != nil {
-			panic(err)
-		}
+func ReceiveMove(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	move := payload.(Move)
+	newState := s.Clone()
+	// Ignore the nextMove, because we will receive a separate message for it.
+	_, err := newState.Game.Move(newState.Game.Turn, move.From, move.To)
+	if err != nil {
+		panic(err)
+	}
 
-		isCaller := !newState.Game.HasTurn()
-		effects := sendIsReady(newState, isCaller)
+	isCaller := !newState.Game.HasTurn()
+	effects := sendIsReady(newState, isCaller)
 
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: effects,
 	}
 }
 
@@ -364,19 +350,17 @@ func SendNoMoveEffect() hypp.Effect {
 	}
 }
 
-func ReceiveNoMoveAction() hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		if err := newState.Game.NoMove(newState.Game.Turn); err != nil {
-			panic(err)
-		}
+func ReceiveNoMove(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if err := newState.Game.NoMove(newState.Game.Turn); err != nil {
+		panic(err)
+	}
 
-		isCaller := !newState.Game.HasTurn()
-		effects := sendIsReady(newState, isCaller)
+	isCaller := !newState.Game.HasTurn()
+	effects := sendIsReady(newState, isCaller)
 
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: effects,
 	}
 }

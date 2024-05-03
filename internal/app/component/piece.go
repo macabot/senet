@@ -29,7 +29,10 @@ func Piece(props PieceProps) *hypp.VNode {
 		},
 	}
 	if props.CanClick {
-		hProps["onclick"] = dispatch.SelectPieceAction(props.Piece.ID)
+		hProps["onclick"] = hypp.ActionAndPayload[*state.State]{
+			Action:  dispatch.SelectPiece,
+			Payload: props.Piece.ID,
+		}
 	}
 	return html.Div(
 		hProps,

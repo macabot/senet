@@ -10,19 +10,18 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func SetPanicStackTraceAction(panicStackTrace *string) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.PanicStackTrace = panicStackTrace
-		return newState
-	}
+func SetPanicStackTrace(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	panicStackTrace := payload.(*string)
+	newState := s.Clone()
+	newState.PanicStackTrace = panicStackTrace
+	return newState
 }
 
 func RecoverEffectPanic(dispatch hypp.Dispatch) {
 	if r := recover(); r != nil {
 		panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
 		window.Console().Error(panicStackTrace)
-		dispatch(SetPanicStackTraceAction(&panicStackTrace), nil)
+		dispatch(SetPanicStackTrace, &panicStackTrace)
 	}
 }
 
@@ -49,21 +48,22 @@ func RecoverWrapAction(action hypp.Action[*state.State]) hypp.Action[*state.Stat
 			if r := recover(); r != nil {
 				panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
 				window.Console().Error(panicStackTrace)
-				dispatchable = SetPanicStackTraceAction(&panicStackTrace)
+				dispatchable = hypp.ActionAndPayload[*state.State]{
+					Action:  SetPanicStackTrace,
+					Payload: &panicStackTrace,
+				}
 			}
 		}()
 		return action(s, payload)
 	}
 }
 
-func ReloadPageAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		return hypp.StateAndEffects[*state.State]{
-			State: s,
-			Effects: []hypp.Effect{
-				ReloadPageEffect(),
-			},
-		}
+func ReloadPage(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	return hypp.StateAndEffects[*state.State]{
+		State: s,
+		Effects: []hypp.Effect{
+			ReloadPageEffect(),
+		},
 	}
 }
 

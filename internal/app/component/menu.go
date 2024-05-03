@@ -17,13 +17,13 @@ func Menu() *hypp.VNode {
 			},
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToStartPageAction(),
+					"onclick": dispatch.GoToStartPage,
 				},
 				hypp.Text("Quit game"),
 			),
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.ToggleMenuAction(),
+					"onclick": dispatch.ToggleMenu,
 				},
 				hypp.Text("Close"),
 			),

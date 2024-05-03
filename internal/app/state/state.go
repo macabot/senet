@@ -3,8 +3,6 @@ package state
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/macabot/hypp"
 )
 
 type Page int
@@ -55,7 +53,6 @@ func (p *Page) UnmarshalJSON(data []byte) error {
 }
 
 type State struct {
-	hypp.EmptyState
 	PanicStackTrace    *string
 	Game               *Game
 	Page               Page

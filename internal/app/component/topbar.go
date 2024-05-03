@@ -16,7 +16,7 @@ func TopBar(s *state.State) *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":      "menu-button",
-				"onclick":    dispatch.ToggleMenuAction(),
+				"onclick":    dispatch.ToggleMenu,
 				"aria-label": "menu button",
 			},
 			MenuIcon(),

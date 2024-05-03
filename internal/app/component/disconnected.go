@@ -40,7 +40,7 @@ func Disconnected(s *state.State) *hypp.VNode {
 		connectionStates(s),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.ToStartPageAction(),
+				"onclick": dispatch.GoToStartPage,
 			},
 			hypp.Text("Start page"),
 		),

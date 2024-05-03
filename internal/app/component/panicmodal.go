@@ -42,7 +42,7 @@ func PanicModal(s *state.State) *hypp.VNode {
 		),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.ReloadPageAction(),
+				"onclick": dispatch.ReloadPage,
 			},
 			hypp.Text("Reload"),
 		),

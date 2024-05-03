@@ -40,111 +40,101 @@ func removeBeforeUnloadListener() {
 	beforeUnloadListenerID = window.EventListenerID{}
 }
 
-func ToTutorialAction() hypp.Action[*state.State] {
-	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Page = state.GamePage
-		newState.Game = state.NewGame()
-		newState.Game.Players[0].Name = "You"
-		newState.Game.Players[1].Name = "Tutor"
-		newState.Game.Turn = 1
+func GoToTutorial(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Page = state.GamePage
+	newState.Game = state.NewGame()
+	newState.Game.Players[0].Name = "You"
+	newState.Game.Players[1].Name = "Tutor"
+	newState.Game.Turn = 1
+	newState.Game.TurnMode = state.IsPlayer0
+	newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
+		Kind: state.TutorialStart,
+	}
+	newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
+	newState.TutorialIndex = 0
+	resetListeners()
+	RegisterTutorial()
+	addBeforeUnloadListener()
+	return newState
+}
+
+func GoToLocalPlayerVsPlayer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Page = state.GamePage
+	newState.Game = state.NewGame()
+	newState.Game.TurnMode = state.IsBothPlayers
+	addBeforeUnloadListener()
+	return newState
+}
+
+func GoToStartPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := &state.State{
+		Page: state.StartPage,
+	}
+	resetListeners()
+	resetSignaling(newState)
+	removeBeforeUnloadListener()
+	return newState
+}
+
+func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := &state.State{
+		Page: state.SignalingPage,
+	}
+	resetSignaling(newState)
+	initSignaling(newState)
+	addBeforeUnloadListener()
+	return newState
+}
+
+func GoToOnlinePlayerVsPlayer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	isPlayer0 := payload.(bool)
+	newState := s.Clone()
+	newState.Page = state.GamePage
+	newState.Game = state.NewGame()
+	if isPlayer0 {
 		newState.Game.TurnMode = state.IsPlayer0
-		newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
-			Kind: state.TutorialStart,
-		}
-		newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
-		newState.TutorialIndex = 0
-		resetListeners()
-		RegisterTutorial()
-		addBeforeUnloadListener()
-		return newState
+		newState.Game.Players[0].Name = "You"
+		newState.Game.Players[1].Name = "Opponent"
+	} else {
+		newState.Game.TurnMode = state.IsPlayer1
+		newState.Game.Players[0].Name = "Opponent"
+		newState.Game.Players[1].Name = "You"
+	}
+	newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
+	isCaller := !newState.Game.HasTurn()
+	effects := sendIsReady(newState, isCaller)
+	addBeforeUnloadListener()
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: effects,
 	}
 }
 
-func ToLocalPlayerVsPlayerAction() hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Page = state.GamePage
-		newState.Game = state.NewGame()
-		newState.Game.TurnMode = state.IsBothPlayers
-		addBeforeUnloadListener()
-		return newState
+func GoToWhoGoesFirstPage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	isCaller := payload.(bool)
+	connectionState := ""
+	readyState := ""
+	loading := false
+	if s.Signaling != nil {
+		connectionState = s.Signaling.ConnectionState
+		readyState = s.Signaling.ReadyState
+		loading = s.Signaling.Loading
 	}
-}
-
-func ToStartPageAction() hypp.Action[*state.State] {
-	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := &state.State{
-			Page: state.StartPage,
-		}
-		resetListeners()
-		resetSignaling(newState)
-		removeBeforeUnloadListener()
-		return newState
+	if connectionState != "connected" || readyState != "open" || loading {
+		return s
 	}
-}
 
-func ToSignalingPageAction() hypp.Action[*state.State] {
-	return func(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-		newState := &state.State{
-			Page: state.SignalingPage,
-		}
-		resetSignaling(newState)
-		initSignaling(newState)
-		addBeforeUnloadListener()
-		return newState
-	}
-}
-
-func ToOnlinePlayerVsPlayerAction(isPlayer0 bool) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		newState := s.Clone()
-		newState.Page = state.GamePage
-		newState.Game = state.NewGame()
-		if isPlayer0 {
-			newState.Game.TurnMode = state.IsPlayer0
-			newState.Game.Players[0].Name = "You"
-			newState.Game.Players[1].Name = "Opponent"
-		} else {
-			newState.Game.TurnMode = state.IsPlayer1
-			newState.Game.Players[0].Name = "Opponent"
-			newState.Game.Players[1].Name = "You"
-		}
-		newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
-		isCaller := !newState.Game.HasTurn()
-		effects := sendIsReady(newState, isCaller)
-		addBeforeUnloadListener()
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
-	}
-}
-
-func ToWhoGoesFirstPageAction(isCaller bool) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-		connectionState := ""
-		readyState := ""
-		loading := false
-		if s.Signaling != nil {
-			connectionState = s.Signaling.ConnectionState
-			readyState = s.Signaling.ReadyState
-			loading = s.Signaling.Loading
-		}
-		if connectionState != "connected" || readyState != "open" || loading {
-			return s
-		}
-
-		newState := s.Clone()
-		newState.Page = state.WhoGoesFirstPage
-		newState.CommitmentScheme.IsCaller = isCaller
-		resetListeners()
-		registerCommitmentScheme()
-		effects := sendIsReady(newState, isCaller)
-		addBeforeUnloadListener()
-		return hypp.StateAndEffects[*state.State]{
-			State:   newState,
-			Effects: effects,
-		}
+	newState := s.Clone()
+	newState.Page = state.WhoGoesFirstPage
+	newState.CommitmentScheme.IsCaller = isCaller
+	resetListeners()
+	registerCommitmentScheme()
+	effects := sendIsReady(newState, isCaller)
+	addBeforeUnloadListener()
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: effects,
 	}
 }
