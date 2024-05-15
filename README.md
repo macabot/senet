@@ -7,6 +7,7 @@
 - [Air](https://github.com/cosmtrek/air)
 - [Fairytale cli](https://github.com/macabot/fairytale#cli)
 - [Brotli](https://github.com/google/brotli)
+- [wasm-opt](https://github.com/WebAssembly/binaryen)
 
 ## Setup
 

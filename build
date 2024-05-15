@@ -30,6 +30,13 @@ GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
     "${root_dir}/cmd/client-hypp/main.go"
 
+if [ "$env" = "production" ]; then
+    mv "${public_dir}/main.wasm" "${public_dir}/main.wasm.tmp"
+    wasm-opt "${public_dir}/main.wasm.tmp" -Oz -o "${public_dir}/main.wasm"
+    # TODO which flags should be used for wasm-opt?
+    rm "${public_dir}/main.wasm.tmp"
+fi
+
 go run "${root_dir}/cmd/static/main.go" "$public_dir"
 
 GOOS=js GOARCH=wasm go build \
