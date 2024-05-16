@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 root_dir=$(dirname "$0")
 
 env="$1"
@@ -29,6 +31,13 @@ cp \
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
     "${root_dir}/cmd/client-hypp/main.go"
+chmod -x "${public_dir}/main.wasm"
+
+if [ "$env" = "production" ]; then
+    mv "${public_dir}/main.wasm" "${public_dir}/main.wasm.tmp"
+    wasm-opt "${public_dir}/main.wasm.tmp" -Oz --enable-bulk-memory -o "${public_dir}/main.wasm"
+    rm "${public_dir}/main.wasm.tmp"
+fi
 
 go run "${root_dir}/cmd/static/main.go" "$public_dir"
 
