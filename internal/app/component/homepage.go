@@ -28,9 +28,7 @@ func homePageOptions() *hypp.VNode {
 			hypp.HProps{
 				"href": "/play",
 			},
-			html.Span(nil, hypp.Text("Play ")),
-			// TODO get size from environment variable.
-			html.Span(hypp.HProps{"class": "wasm-size"}, hypp.Text("5 MB")),
+			hypp.Text("Play"),
 		),
 		html.A(
 			hypp.HProps{
