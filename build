@@ -31,6 +31,7 @@ cp \
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
     "${root_dir}/cmd/client-hypp/main.go"
+chmod -x "${public_dir}/main.wasm"
 
 if [ "$env" = "production" ]; then
     mv "${public_dir}/main.wasm" "${public_dir}/main.wasm.tmp"
