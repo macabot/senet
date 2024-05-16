@@ -34,8 +34,7 @@ GOOS=js GOARCH=wasm go build \
 
 if [ "$env" = "production" ]; then
     mv "${public_dir}/main.wasm" "${public_dir}/main.wasm.tmp"
-    wasm-opt "${public_dir}/main.wasm.tmp" -Oz -o "${public_dir}/main.wasm"
-    # TODO which flags should be used for wasm-opt?
+    wasm-opt "${public_dir}/main.wasm.tmp" -Oz --enable-bulk-memory -o "${public_dir}/main.wasm"
     rm "${public_dir}/main.wasm.tmp"
 fi
 
