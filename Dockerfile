@@ -2,7 +2,8 @@ FROM golang:1.22.3-alpine3.19
 
 RUN apk add --no-cache \
     bash \
-    brotli
+    brotli \
+    git
 
 RUN wget https://github.com/WebAssembly/binaryen/releases/download/version_117/binaryen-version_117-x86_64-linux.tar.gz && \
     tar -xvzf binaryen-version_117-x86_64-linux.tar.gz && \
