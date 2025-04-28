@@ -25,7 +25,7 @@ rm -rf "${public_dir:?}"/*
 cp "${root_dir}/static"/* "$public_dir"
 
 cp \
-    "$(go env GOROOT)/misc/wasm/wasm_exec.js" \
+    "$(go env GOROOT)/lib/wasm/wasm_exec.js" \
     "${public_dir}/wasm_exec.js"
 
 GOOS=js GOARCH=wasm go build \
