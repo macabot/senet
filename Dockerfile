@@ -1,4 +1,4 @@
-FROM golang:1.22.3-alpine3.19
+FROM golang:1.24.2-alpine3.21
 
 RUN apk add --no-cache \
     bash \
@@ -14,4 +14,5 @@ RUN wget https://github.com/sass/dart-sass/releases/download/1.77.2/dart-sass-1.
     tar -xvzf dart-sass-1.77.2-linux-x64-musl.tar.gz && \
     mv dart-sass / && \
     rm dart-sass-1.77.2-linux-x64-musl.tar.gz
+
 ENV PATH="${PATH}:/dart-sass"
