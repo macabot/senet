@@ -4,6 +4,14 @@
 *.dll
 *.so
 *.dylib
+*.wasm
+
+# Compressed files
+*.gz
+*.br
+
+# Go version specific files
+wasm_exec.js
 
 # Test binary, built with `go test -c`
 *.test
@@ -13,3 +21,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# IDE directories
+.history
+
+# air
+tmp
+
+# Generated website
+public

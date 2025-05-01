@@ -1,0 +1,50 @@
+@use "./vars" as vars;
+
+.game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+  .top-bar {
+    max-width: 1200px;
+  }
+
+  .board {
+    flex: 1 0 100px;
+    max-width: min(100vw, 1200px);
+    max-height: min(calc(100vw * 3 / 10), 360px);
+  }
+
+  .sticks {
+    flex: 0 1 100px;
+    max-width: 1200px;
+  }
+}
+
+.orientation-tip {
+  display: none;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+  position: fixed;
+  background-color: white;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: vars.$z-index-orientation-tip;
+  padding: 1rem;
+
+  button {
+    font-size: 1rem;
+    width: 4rem;
+  }
+}
+
+@media screen and (max-width: 700px) and (orientation: portrait) {
+  .orientation-tip {
+    display: flex;
+  }
+}

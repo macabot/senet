@@ -1,0 +1,19 @@
+@for $row from 0 to 3 {
+  .row-#{$row} {
+    top: calc(100% * $row / 3);
+  }
+}
+
+@for $column from 0 to 10 {
+  .column-#{$column} {
+    left: calc(100% * $column / 10);
+  }
+}
+
+// Positions off the board.
+@for $column from 0 to 10 {
+  .row--1.column-#{$column} {
+    top: calc(100% * -2 / 3);
+    left: calc(100% * $column / 10);
+  }
+}

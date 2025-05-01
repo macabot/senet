@@ -1,0 +1,134 @@
+@use "./vars" as vars;
+
+@mixin player-points-incrementer($points) {
+  @keyframes player-points-increment-to-#{$points} {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+@mixin speech-bubble-color($color) {
+  .speech-bubble {
+    background: $color;
+  }
+  .speech-bubble:after {
+    border-bottom-color: $color;
+  }
+}
+
+@keyframes player-draw-attention {
+  0% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.05, 1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.players {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 2rem;
+}
+
+.player-wrapper {
+  position: relative;
+  min-width: 30%;
+
+  &.player-0 {
+    .player {
+      background-color: vars.$player-0-color;
+    }
+
+    @include speech-bubble-color(#00aabb);
+
+    .speech-bubble:after {
+      border-left: 0;
+    }
+  }
+
+  &.player-1 {
+    .player {
+      background-color: vars.$player-1-color;
+    }
+    @include speech-bubble-color(#dc6464);
+
+    .speech-bubble:after {
+      border-right: 0;
+    }
+  }
+
+  .player.draw-attention {
+    animation: 1s player-draw-attention infinite;
+  }
+}
+
+.player {
+  display: flex;
+  height: 2rem;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  border-radius: 5px;
+  transition: height 500ms;
+  transition-delay: 500ms;
+  font-size: 1rem;
+
+  .points {
+    width: auto;
+    height: 100%;
+    z-index: vars.$z-index-points;
+  }
+
+  @for $points from 1 through 5 {
+    @include player-points-incrementer($points);
+
+    .points.points-#{$points} {
+      animation: 1s player-points-increment-to-#{$points};
+      animation-fill-mode: forwards;
+    }
+  }
+
+  &.has-turn {
+    border: 2px solid black;
+  }
+}
+
+.player-turn-arrow {
+  height: 100%;
+  width: auto;
+  transition: transform 500ms;
+
+  .has-turn-1 & {
+    transform: rotate(180deg);
+  }
+}
+
+.player-icon {
+  display: inline-block;
+  vertical-align: middle;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+
+.player-icon.player-0 {
+  background-color: vars.$player-0-color;
+}
+
+.player-icon.player-1 {
+  background-color: vars.$player-1-color;
+}

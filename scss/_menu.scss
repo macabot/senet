@@ -1,0 +1,36 @@
+@use "./vars" as vars;
+
+.menu-button {
+  width: 2rem;
+  border-radius: 50%;
+}
+
+.menu-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(10px);
+  z-index: vars.$z-index-menu-wrapper;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .menu {
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid;
+    border-radius: 10px;
+
+    button {
+      font-size: 3rem;
+      margin: 5px;
+    }
+  }
+}
