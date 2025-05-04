@@ -25,7 +25,7 @@ jobs:
           cache: true
 
       - name: Run build script
-        run: ./build
+        run: ./build production
 
       - name: Upload 'public' directory as artifact
         uses: actions/upload-artifact@v4
