@@ -69,7 +69,7 @@ docker run --rm \
     -v "$HOME/go/pkg/mod":/go/pkg/mod \
     -v "$HOME/.cache/go-build":/root/.cache/go-build \
     -w /workspace \
-    senet-builder:0.1.0 ./build development
+    macabot/senet-builder:0.1.0 ./build development
 ```
 
 ## Development
