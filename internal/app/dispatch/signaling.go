@@ -297,6 +297,7 @@ func SetSignalingStepJoinGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatc
 	}
 	newState.Signaling.Loading = true
 	newState.Signaling.Error = nil
+	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
 	return hypp.StateAndEffects[*state.State]{
 		State:   newState,
 		Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
