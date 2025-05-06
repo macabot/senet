@@ -61,6 +61,17 @@ Run the build script as follows:
 The `$environment` must be either 'development' or 'production'.
 The `$public_dir` is optional and defaults to './public'.
 
+Alternatively, you may use the Docker `senet-builder` container:
+
+```sh
+docker run --rm \
+    -v "$(pwd)":/workspace \
+    -v "$HOME/go/pkg/mod":/go/pkg/mod \
+    -v "$HOME/.cache/go-build":/root/.cache/go-build \
+    -w /workspace \
+    senet-builder:0.1.0 ./build development
+```
+
 ## Development
 
 ### Package dependency tree

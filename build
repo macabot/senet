@@ -48,7 +48,8 @@ GOOS=js GOARCH=wasm go build \
 sass "${root_dir}/scss:${public_dir}"
 
 readarray -t files_to_compress < <(find "$public_dir" -type f ! -name '*.gz' ! -name '*.br')
-gzip --best --force --keep "${files_to_compress[@]}"
+# -9=--best -f=--force -k=--keep
+gzip -9 -f -k "${files_to_compress[@]}"
 
 # It takes a long time to compress main.wasm with brotli, so we only do it for production.
 if [ "$env" = "production" ]; then
