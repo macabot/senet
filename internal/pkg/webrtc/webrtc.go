@@ -9,7 +9,7 @@ import (
 func await(awaitable js.Value) (js.Value, error) {
 	then := make(chan js.Value)
 	defer close(then)
-	thenFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	thenFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
 		then <- args[0]
 		return nil
 	})
@@ -17,7 +17,7 @@ func await(awaitable js.Value) (js.Value, error) {
 
 	catch := make(chan js.Value)
 	defer close(catch)
-	catchFunc := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	catchFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
 		catch <- args[0]
 		return nil
 	})
