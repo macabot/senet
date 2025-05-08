@@ -6,11 +6,11 @@ root_dir=$(dirname "$0")
 
 env="$1"
 if [ -z "$env" ]; then
-    echo "Environment is required." >&2
+    echo "ERR: Environment is required." >&2
     exit 1
 fi
 if [ "$env" != "development" ] && [ "$env" != "production" ]; then
-    echo "Environment must be 'development' or 'production'." >&2
+    echo "ERR: Environment must be 'development' or 'production'." >&2
     exit 1
 fi
 
@@ -28,10 +28,14 @@ cp \
     "$(go env GOROOT)/lib/wasm/wasm_exec.js" \
     "${public_dir}/wasm_exec.js"
 
-set -a
-# shellcheck disable=SC1091
-source "${root_dir}/.env"
-set +a
+if [[ -f "${root_dir}/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    source "${root_dir}/.env"
+    set +a
+else
+    echo "WARN: ${root_dir}/.env not found." >&2
+fi
 
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
