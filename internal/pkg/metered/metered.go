@@ -10,6 +10,7 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+// Set these variables when building using the -ldflags.
 var (
 	METERED_APP_NAME string
 	METERED_API_KEY  string
