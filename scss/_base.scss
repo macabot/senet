@@ -24,6 +24,10 @@ body {
   }
 }
 
+button {
+  font-size: 2em;
+}
+
 button:not(:disabled) {
   cursor: pointer;
 }
