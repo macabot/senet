@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 root_dir=$(dirname "$0")
 
@@ -14,7 +14,7 @@ if [ "$env" != "development" ] && [ "$env" != "production" ]; then
     exit 1
 fi
 
-public_dir="$2"
+public_dir="${2:-}"
 if [ -z "$public_dir" ]; then
     public_dir="${root_dir}/public"
 fi
@@ -28,8 +28,15 @@ cp \
     "$(go env GOROOT)/lib/wasm/wasm_exec.js" \
     "${public_dir}/wasm_exec.js"
 
+set -a
+# shellcheck disable=SC1091
+source "${root_dir}/.env"
+set +a
+
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
+    -ldflags "-X github.com/macabot/senet/internal/pkg/metered.METERED_APP_NAME=${METERED_APP_NAME:-} \
+              -X github.com/macabot/senet/internal/pkg/metered.METERED_API_KEY=${METERED_API_KEY:-}" \
     "${root_dir}/cmd/client-hypp/main.go"
 chmod -x "${public_dir}/main.wasm"
 
