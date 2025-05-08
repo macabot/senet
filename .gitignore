@@ -30,3 +30,6 @@ tmp
 
 # Generated website
 public
+
+# Environment variables
+.env

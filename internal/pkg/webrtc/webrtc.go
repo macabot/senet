@@ -2,44 +2,20 @@ package webrtc
 
 import (
 	"github.com/macabot/hypp/js"
+	"github.com/macabot/senet/internal/pkg/promise"
 )
 
-// await awaits a Promise.
-// Based on https://stackoverflow.com/a/68427221
-func await(awaitable js.Value) (js.Value, error) {
-	then := make(chan js.Value)
-	defer close(then)
-	thenFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
-		then <- args[0]
-		return nil
-	})
-	defer thenFunc.Release()
-
-	catch := make(chan js.Value)
-	defer close(catch)
-	catchFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
-		catch <- args[0]
-		return nil
-	})
-	defer catchFunc.Release()
-
-	awaitable.Call("then", thenFunc).Call("catch", catchFunc)
-
-	select {
-	case result := <-then:
-		return result, nil
-	case err := <-catch:
-		return js.Null(), js.Error{Value: err}
-	}
-}
-
 type ICEServer struct {
-	URLs string
+	URLs       string
+	Username   string
+	Credential string
 }
 
 func (s ICEServer) Value() map[string]any {
 	return map[string]any{
-		"urls": s.URLs,
+		"urls":       s.URLs,
+		"username":   s.Username,
+		"credential": s.Credential,
 	}
 }
 
@@ -115,8 +91,8 @@ func (c PeerConnection) ConnectionState() string {
 }
 
 func (c PeerConnection) AwaitSetLocalDescription(description SessionDescription) error {
-	promise := c.Value.Call("setLocalDescription", description.Value)
-	_, err := await(promise)
+	p := c.Value.Call("setLocalDescription", description.Value)
+	_, err := promise.Await(p)
 	return err
 }
 
@@ -125,20 +101,20 @@ func (c PeerConnection) LocalDescription() SessionDescription {
 }
 
 func (c PeerConnection) AwaitSetRemoteDescription(description SessionDescription) error {
-	promise := c.Value.Call("setRemoteDescription", description.Value)
-	_, err := await(promise)
+	p := c.Value.Call("setRemoteDescription", description.Value)
+	_, err := promise.Await(p)
 	return err
 }
 
 func (c PeerConnection) AwaitCreateOffer() (SessionDescription, error) {
-	promise := c.Value.Call("createOffer")
-	v, err := await(promise)
+	p := c.Value.Call("createOffer")
+	v, err := promise.Await(p)
 	return SessionDescription{v}, err
 }
 
 func (c PeerConnection) AwaitCreateAnswer() (SessionDescription, error) {
-	promise := c.Value.Call("createAnswer")
-	v, err := await(promise)
+	p := c.Value.Call("createAnswer")
+	v, err := promise.Await(p)
 	return SessionDescription{v}, err
 }
 

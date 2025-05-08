@@ -9,11 +9,19 @@ import (
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/pkg/metered"
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
 func initSignaling(s *state.State) {
-	state.PeerConnection = webrtc.NewPeerConnection(webrtc.DefaultPeerConnectionConfig)
+	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
+	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
+		peerConnectionConfig.ICEServers = metered.FetchedICEServers
+	} else {
+		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
+	}
+
+	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
 	state.DataChannel = state.PeerConnection.CreateDataChannel("chat", webrtc.DefaultDataChannelOptions)
 
 	if s.Signaling == nil {
