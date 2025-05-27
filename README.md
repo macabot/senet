@@ -50,6 +50,15 @@ You can visit the Senet app on <http://localhost:8001/>.
 go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')
 ```
 
+```sh
+docker run --rm \
+    -v "$(pwd)":/workspace \
+    -v "$HOME/go/pkg/mod":/go/pkg/mod \
+    -v "$HOME/.cache/go-build":/root/.cache/go-build \
+    -w /workspace \
+    macabot/senet-builder:0.2.0 go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')
+```
+
 ## Build
 
 Run the build script as follows:
