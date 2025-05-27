@@ -47,7 +47,7 @@ You can visit the Senet app on <http://localhost:8001/>.
 ## Test
 
 ```sh
-go test $(go list ./... 2>/dev/null | grep -v 'cmd')
+go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')
 ```
 
 ## Build
