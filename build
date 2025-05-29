@@ -50,6 +50,7 @@ fi
 if [ "$env" = "development" ]; then
     METERED_API_KEY=${METERED_API_KEY_DEVELOPMENT:-}
 else
+    info "Create Metered API key."
     METERED_API_KEY=$("$root_dir"/metered_turn_server_api.sh create | jq -r '.apiKey')
 fi
 
