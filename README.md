@@ -83,6 +83,22 @@ docker run --rm \
 
 ## Development
 
+### Creating a new Docker image
+
+Build the Docker image:
+
+```sh
+docker build -t macabot/senet-builder:$tag .
+```
+
+Push the Docker image to the registry:
+
+```sh
+docker push macabot/senet-builder:$tag
+```
+
+See <https://hub.docker.com/r/macabot/senet-builder>.
+
 ### Package dependency tree
 
 Red nodes directly or indirectly import `syscall/js`.
