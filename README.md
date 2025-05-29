@@ -47,7 +47,16 @@ You can visit the Senet app on <http://localhost:8001/>.
 ## Test
 
 ```sh
-go test $(go list ./... 2>/dev/null | grep -v 'cmd')
+go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')
+```
+
+```sh
+docker run --rm \
+    -v "$(pwd)":/workspace \
+    -v "$HOME/go/pkg/mod":/go/pkg/mod \
+    -v "$HOME/.cache/go-build":/root/.cache/go-build \
+    -w /workspace \
+    macabot/senet-builder:0.2.0 go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')
 ```
 
 ## Build
@@ -69,10 +78,26 @@ docker run --rm \
     -v "$HOME/go/pkg/mod":/go/pkg/mod \
     -v "$HOME/.cache/go-build":/root/.cache/go-build \
     -w /workspace \
-    macabot/senet-builder:0.1.0 ./build development
+    macabot/senet-builder:0.2.0 ./build development
 ```
 
 ## Development
+
+### Creating a new Docker image
+
+Build the Docker image:
+
+```sh
+docker build -t macabot/senet-builder:$tag .
+```
+
+Push the Docker image to the registry:
+
+```sh
+docker push macabot/senet-builder:$tag
+```
+
+See <https://hub.docker.com/r/macabot/senet-builder>.
 
 ### Package dependency tree
 

@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: macabot/senet-builder:0.2.0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.3'
+          cache: true
+      - name: Set GOFLAGS
+        run: echo "GOFLAGS=-buildvcs=false" >> $GITHUB_ENV
+      - name: Run tests
+        run: go test $(GOOS=js GOARCH=wasm go list ./... | grep -v 'cmd')

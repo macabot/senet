@@ -1,57 +1,93 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 root_dir=$(dirname "$0")
 
 env="$1"
 if [ -z "$env" ]; then
-    echo "Environment is required." >&2
+    echo "ERR: Environment is required." >&2
     exit 1
 fi
 if [ "$env" != "development" ] && [ "$env" != "production" ]; then
-    echo "Environment must be 'development' or 'production'." >&2
+    echo "ERR: Environment must be 'development' or 'production'." >&2
     exit 1
 fi
 
-public_dir="$2"
+info() {
+    if [ "$env" = "development" ]; then
+        return
+    fi
+    echo "INFO:" "$@"
+}
+
+public_dir="${2:-}"
 if [ -z "$public_dir" ]; then
     public_dir="${root_dir}/public"
 fi
 
+info "Prepare public dir '${public_dir}'."
 mkdir -p "$public_dir"
 rm -rf "${public_dir:?}"/*
 
+info "Copy static files."
 cp "${root_dir}/static"/* "$public_dir"
-
 cp \
     "$(go env GOROOT)/lib/wasm/wasm_exec.js" \
     "${public_dir}/wasm_exec.js"
 
+if [ "${CI:-}" = "true" ]; then
+    : # no-op
+elif [[ -f "${root_dir}/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    source "${root_dir}/.env"
+    set +a
+else
+    echo "WARN: ${root_dir}/.env not found." >&2
+fi
+
+if [ "$env" = "development" ]; then
+    METERED_API_KEY=${METERED_API_KEY_DEVELOPMENT:-}
+else
+    info "Create Metered API key."
+    METERED_API_KEY=$("$root_dir"/metered_turn_server_api create | jq -r '.apiKey')
+fi
+
+info "Build Senet WASM file."
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
+    -ldflags "-X github.com/macabot/senet/internal/pkg/metered.METERED_APP_NAME=${METERED_APP_NAME:-} \
+              -X github.com/macabot/senet/internal/pkg/metered.METERED_API_KEY=${METERED_API_KEY:-}" \
     "${root_dir}/cmd/client-hypp/main.go"
 chmod -x "${public_dir}/main.wasm"
 
 if [ "$env" = "production" ]; then
+    info "Optimize Senet WASM file size."
     mv "${public_dir}/main.wasm" "${public_dir}/main.wasm.tmp"
     wasm-opt "${public_dir}/main.wasm.tmp" -Oz --enable-bulk-memory -o "${public_dir}/main.wasm"
     rm "${public_dir}/main.wasm.tmp"
 fi
 
+info "Generate static pages."
 go run "${root_dir}/cmd/static/main.go" "$public_dir"
 
+info "Build Fairytale WASM file."
 GOOS=js GOARCH=wasm go build \
     -o "${root_dir}/cmd/fairytale/main.wasm" \
     "${root_dir}/cmd/fairytale/main.go"
 
+info "Compile Sass to CSS."
 sass "${root_dir}/scss:${public_dir}"
 
 readarray -t files_to_compress < <(find "$public_dir" -type f ! -name '*.gz' ! -name '*.br')
+
+info "Compress with gzip."
 # -9=--best -f=--force -k=--keep
 gzip -9 -f -k "${files_to_compress[@]}"
 
 # It takes a long time to compress main.wasm with brotli, so we only do it for production.
 if [ "$env" = "production" ]; then
+    info "Compress with brotli."
     brotli --best --force --keep "${files_to_compress[@]}"
 fi
