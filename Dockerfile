@@ -3,6 +3,7 @@ FROM golang:1.24.3-alpine3.21
 RUN apk add --no-cache \
     bash \
     brotli \
+    curl \
     git \
     jq
 
