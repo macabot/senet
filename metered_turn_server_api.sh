@@ -3,7 +3,7 @@
 set -euo pipefail
 
 list() {
-    curl -sS "https://senet.metered.live/api/v2/turn/credentials?secretKey=${METERED_SECRET_KEY}" | jq
+    curl -sS "https://senet.metered.live/api/v2/turn/credentials?secretKey=${metered_secret_key}" | jq
 }
 
 create() {
@@ -14,7 +14,7 @@ create() {
         --request POST \
         --header "Content-Type: application/json" \
         --data "{\"label\": \"${unixTimestamp}\"}" \
-        "https://senet.metered.live/api/v1/turn/credential?secretKey=${METERED_SECRET_KEY}" | jq
+        "https://senet.metered.live/api/v1/turn/credential?secretKey=${metered_secret_key}" | jq
 }
 
 deleteByLabel() {
@@ -23,7 +23,7 @@ deleteByLabel() {
     curl \
         -sS \
         --request DELETE \
-        "https://senet.metered.live/api/v2/turn/credential/by_label?secretKey=${METERED_SECRET_KEY}&label=${label}"
+        "https://senet.metered.live/api/v2/turn/credential/by_label?secretKey=${metered_secret_key}&label=${label}"
     echo ""
 }
 
@@ -44,7 +44,9 @@ deleteOld() {
 }
 
 root_dir=$(dirname "$0")
-if [[ -f "${root_dir}/.env" ]]; then
+if [ "${CI:-}" = "true" ]; then
+    : # no-op
+elif [[ -f "${root_dir}/.env" ]]; then
     set -a
     # shellcheck disable=SC1091
     source "${root_dir}/.env"
@@ -52,6 +54,8 @@ if [[ -f "${root_dir}/.env" ]]; then
 else
     echo "WARN: ${root_dir}/.env not found." >&2
 fi
+
+metered_secret_key=${METERED_SECRET_KEY:-}
 
 action="${1:-}"
 case $action in

@@ -36,7 +36,9 @@ cp \
     "$(go env GOROOT)/lib/wasm/wasm_exec.js" \
     "${public_dir}/wasm_exec.js"
 
-if [[ -f "${root_dir}/.env" ]]; then
+if [ "${CI:-}" = "true" ]; then
+    : # no-op
+elif [[ -f "${root_dir}/.env" ]]; then
     set -a
     # shellcheck disable=SC1091
     source "${root_dir}/.env"
@@ -46,7 +48,7 @@ else
 fi
 
 if [ "$env" = "development" ]; then
-    METERED_API_KEY=$METERED_API_KEY_DEVELOPMENT
+    METERED_API_KEY=${METERED_API_KEY_DEVELOPMENT:-}
 else
     METERED_API_KEY=$("$root_dir"/metered_turn_server_api.sh create | jq -r '.apiKey')
 fi
