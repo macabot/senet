@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/macabot/senet/internal/pkg/scaledrone"
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
@@ -53,7 +54,7 @@ func (s *SignalingStep) UnmarshalJSON(data []byte) error {
 
 type Signaling struct {
 	Step SignalingStep
-	// When true, the PeerConnection and DataChannel are set.
+	// Initialized is true when the PeerConnection and DataChannel are set.
 	Initialized        bool
 	ICEConnectionState string
 	ConnectionState    string
@@ -63,6 +64,8 @@ type Signaling struct {
 	Offer   string
 	Answer  string
 	Error   JSONSerializableError
+
+	RoomName string
 }
 
 func (s *Signaling) Clone() *Signaling {
@@ -79,8 +82,12 @@ func (s *Signaling) Clone() *Signaling {
 		Offer:              s.Offer,
 		Answer:             s.Answer,
 		Error:              s.Error,
+		RoomName:           s.RoomName,
 	}
 }
 
-var PeerConnection webrtc.PeerConnection = webrtc.PeerConnection{}
-var DataChannel webrtc.DataChannel = webrtc.DataChannel{}
+var (
+	PeerConnection = webrtc.PeerConnection{}
+	DataChannel    = webrtc.DataChannel{}
+	Scaledrone     = &scaledrone.Scaledrone{}
+)

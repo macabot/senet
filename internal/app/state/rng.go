@@ -106,3 +106,18 @@ func (g CommitmentSchemeGenerator) CanThrow(s *State) bool {
 func (g CommitmentSchemeGenerator) Throw(s *State) int {
 	return s.CommitmentScheme.Throw()
 }
+
+// RandomRoomName create a random room name by concatenating the following:
+// - random uppercase letter
+// - random number
+// - random uppercase letter
+// - random number
+// E.g. R2D2
+func RandomRoomName() string {
+	letters := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	numbers := []rune("0123456789")
+	return string(letters[defaultRNG.Intn(len(letters))]) +
+		string(numbers[defaultRNG.Intn(len(numbers))]) +
+		string(letters[defaultRNG.Intn(len(letters))]) +
+		string(numbers[defaultRNG.Intn(len(numbers))])
+}
