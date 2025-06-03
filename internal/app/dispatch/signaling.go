@@ -271,6 +271,7 @@ func SetSignalingStepNewGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatcha
 	newState.Signaling.Step = state.SignalingStepNewGameOffer
 	newState.Signaling.Loading = true
 	newState.Signaling.Error = nil
+	newState.Signaling.RoomName = state.RandomRoomName()
 	return hypp.StateAndEffects[*state.State]{
 		State:   newState,
 		Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
