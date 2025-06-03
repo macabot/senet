@@ -4,6 +4,7 @@ package scaledrone
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
@@ -22,19 +23,62 @@ const (
 )
 
 type Scaledrone struct {
-	channelID   string
-	roomName    string
-	clientID    string
-	ws          websocket.WebSocket
-	isConnected bool
+	roomName         string
+	clientID         string
+	ws               websocket.WebSocket
+	isConnected      bool
+	onIsConnected    func()
+	onReceiveMessage func(message any)
+	onError          func(err error)
+	onObserveMembers func(members []string)
+	onMemberJoin     func(memberID string)
+	onMemberLeave    func(memberID string)
 }
 
-func NewScaledrone(channelID string) *Scaledrone {
-	return &Scaledrone{
-		channelID: channelID,
+func (s *Scaledrone) SetOnIsConnected(onIsConnected func()) {
+	s.onIsConnected = onIsConnected
+}
+
+func (s *Scaledrone) SetOnReceiveMessage(onReceiveMessage func(message any)) {
+	s.onReceiveMessage = onReceiveMessage
+}
+
+func (s *Scaledrone) SetOnError(onError func(err error)) {
+	s.onError = onError
+}
+
+func (s *Scaledrone) SetOnObserveMembers(onObserveMembers func(members []string)) {
+	s.onObserveMembers = onObserveMembers
+}
+
+func (s *Scaledrone) SetOnMemberJoin(onMemberJoin func(memberID string)) {
+	s.onMemberJoin = onMemberJoin
+}
+
+func (s *Scaledrone) SetOnMemberLeave(onMemberLeave func(memberID string)) {
+	s.onMemberLeave = onMemberLeave
+}
+
+func (s *Scaledrone) Reset() {
+	if !s.ws.IsUndefined() {
+		s.ws.Close()
 	}
+	s.ws = websocket.WebSocket{}
+
+	s.roomName = ""
+	s.clientID = ""
+	s.isConnected = false
+	s.onIsConnected = nil
+	s.onReceiveMessage = nil
+	s.onError = nil
+	s.onObserveMembers = nil
+	s.onMemberJoin = nil
+	s.onMemberLeave = nil
 }
 
+// Connect connects the WebSocket to the Scaledrone server.
+//
+// Make sure to first set the event listeners before connecting to Scaledrone.
 func (s *Scaledrone) Connect(roomName string) {
 	s.roomName = roomName
 	// Add the "observable-" prefix to ensure we get the observable events:
@@ -47,7 +91,7 @@ func (s *Scaledrone) Connect(roomName string) {
 		window.Console().Debug("WebSocket opened")
 		handshake := Handshake{
 			Kind:     "handshake",
-			Channel:  s.channelID,
+			Channel:  SCALEDRONE_CHANNEL_ID,
 			Callback: callbackHandshake,
 		}
 		ws.Send(mustJSONMarshal(handshake))
@@ -55,14 +99,17 @@ func (s *Scaledrone) Connect(roomName string) {
 	})
 
 	ws.OnMessage(func(e js.Value) {
-		data := e.Get("data").String()
-		window.Console().Debug("Received message", data)
+		rawData := e.Get("data").String()
+		window.Console().Debug("Received message", rawData)
 
-		eventData := parseEventData([]byte(data))
+		eventData := parseEventData([]byte(rawData))
 
 		switch data := eventData.(type) {
 		case ErrorCallback:
-			window.Console().Error(data)
+			window.Console().Error(rawData)
+			if s.onError != nil {
+				s.onError(fmt.Errorf("error callback: %s", rawData))
+			}
 		case HandshakeCallback:
 			s.clientID = data.ClientID
 			subscribe := Subscribe{
@@ -75,21 +122,46 @@ func (s *Scaledrone) Connect(roomName string) {
 		case SubscribeCallback:
 			s.isConnected = true
 			window.Console().Debug("Ready to send messages")
+			if s.onIsConnected != nil {
+				s.onIsConnected()
+			}
 		case ObservableMembers:
 			window.Console().Debug("Members currently in room", string(mustJSONMarshal(data.Data)))
+			if s.onObserveMembers != nil {
+				members := make([]string, len(data.Data))
+				for i, member := range data.Data {
+					members[i] = member.ID
+				}
+				s.onObserveMembers(members)
+			}
 		case ObservableMemberJoin:
 			window.Console().Debug("Member joined room", data.Data.ID)
+			if s.onMemberJoin != nil {
+				s.onMemberJoin(data.Data.ID)
+			}
 		case ObservableMemberLeave:
 			window.Console().Debug("Member left room", data.Data.ID)
+			if s.onMemberLeave != nil {
+				s.onMemberLeave(data.Data.ID)
+			}
 		case PublishReceived:
 			window.Console().Debug("Message from %s: %s", data.ClientID, string(mustJSONMarshal(data.Message)))
+			if s.onReceiveMessage != nil && data.ClientID != s.clientID {
+				s.onReceiveMessage(data.Message)
+			}
 		default:
-			window.Console().Error("Unknown message type", data)
+			window.Console().Error("Unknown message type", rawData)
+			if s.onError != nil {
+				s.onError(fmt.Errorf("unknown message type: %s", rawData))
+			}
 		}
 	})
 
 	ws.OnError(func(e js.Value) {
 		window.Console().Error("WebSocket error", e)
+		if s.onError != nil {
+			s.onError(errors.New(e.Get("message").String()))
+		}
 	})
 
 	ws.OnClose(func(e js.Value) {
@@ -153,7 +225,7 @@ func (s Scaledrone) SendMessage(message any) error {
 		return errors.New("Scaledrone is not connected")
 	}
 
-	publishSent := PublishSent{
+	publishSent := PublishSend{
 		Kind:    "publish",
 		Room:    s.roomName,
 		Message: message,
@@ -176,7 +248,7 @@ type Subscribe struct {
 	Callback int    `json:"callback"`
 }
 
-type PublishSent struct {
+type PublishSend struct {
 	// Kind must always equal "publish".
 	Kind string `json:"type"`
 	Room string `json:"room"`
@@ -222,31 +294,29 @@ type PublishReceived struct {
 	ClientID string `json:"client_id"`
 }
 
+type Member struct {
+	ID string `json:"id"`
+}
+
 type ObservableMembers struct {
 	// Kind must always equal "observable_members".
-	Kind string `json:"type"`
-	Room string `json:"room"`
-	Data []struct {
-		ID string `json:"id"`
-	} `json:"data"`
+	Kind string   `json:"type"`
+	Room string   `json:"room"`
+	Data []Member `json:"data"`
 }
 
 type ObservableMemberJoin struct {
 	// Kind must always equal "observable_member_join".
 	Kind string `json:"type"`
 	Room string `json:"room"`
-	Data struct {
-		ID string `json:"id"`
-	} `json:"data"`
+	Data Member `json:"data"`
 }
 
 type ObservableMemberLeave struct {
 	// Kind must always equal "observable_member_leave".
 	Kind string `json:"type"`
 	Room string `json:"room"`
-	Data struct {
-		ID string `json:"id"`
-	} `json:"data"`
+	Data Member `json:"data"`
 }
 
 func mustJSONMarshal(v any) []byte {
