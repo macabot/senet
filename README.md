@@ -175,12 +175,12 @@ graph LR
         home-sourceCode["source-code"]
     end
 
-    subgraph rules["Rule"]
+    subgraph rules["Rules"]
         rules-start["start"]
         rules-home["home"]
     end
 
-    subgraph SPA
+    subgraph Play
 
         subgraph start["Start"]
             start-home["home"]

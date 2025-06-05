@@ -65,7 +65,7 @@ func Run(element window.Element) {
 
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: &state.State{
-			Page: state.StartPage,
+			Screen: state.StartScreen,
 		},
 		View: func(s *state.State) *hypp.VNode {
 			return component.RecoverPanic(component.Senet, s)

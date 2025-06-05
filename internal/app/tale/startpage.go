@@ -10,7 +10,7 @@ func StartPage() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"StartPage",
 		&state.State{
-			Page: state.StartPage,
+			Screen: state.StartScreen,
 		},
 		component.Senet,
 	).WithSettings(fairytale.TaleSettings{

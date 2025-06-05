@@ -5,18 +5,19 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/screen"
 	"github.com/macabot/senet/internal/app/state"
 )
 
 func Senet(s *state.State) *hypp.VNode {
 	return html.Html(
 		hypp.HProps{"lang": "en"},
-		head(s.Page),
+		head(s.Screen),
 		body(s),
 	)
 }
 
-func head(page state.Page) *hypp.VNode {
+func head(page state.Screen) *hypp.VNode {
 	var title string
 	switch page {
 	case state.HomePage:
@@ -48,21 +49,21 @@ func body(s *state.State) *hypp.VNode {
 	}
 
 	var page *hypp.VNode
-	switch s.Page {
-	case state.StartPage:
+	switch s.Screen {
+	case state.StartScreen:
 		page = StartPage(s)
-	case state.SignalingPage:
-		page = SignalingPage(s)
-	case state.WhoGoesFirstPage:
+	case state.OnlineScreen:
+		page = screen.Online()
+	case state.WhoGoesFirstScreen:
 		page = WhoGoesFirstPage(s)
-	case state.GamePage:
+	case state.GameScreen:
 		page = GamePage(s)
 	case state.HomePage:
 		page = HomePage()
 	case state.RulesPage:
 		page = RulesPage()
 	default:
-		panic(fmt.Errorf("component not implemented for page %d", s.Page))
+		panic(fmt.Errorf("component not implemented for page %d", s.Screen))
 	}
 
 	var menu *hypp.VNode

@@ -10,7 +10,7 @@ func RulesPage() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"RulesPage",
 		&state.State{
-			Page: state.RulesPage,
+			Screen: state.RulesPage,
 		},
 		component.Senet,
 	).WithSettings(fairytale.TaleSettings{

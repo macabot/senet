@@ -1,0 +1,41 @@
+package page
+
+import (
+	"fmt"
+
+	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/screen"
+	"github.com/macabot/senet/internal/app/component/template"
+	"github.com/macabot/senet/internal/app/state"
+)
+
+func Play(s *state.State) *hypp.VNode {
+	return html.Html(
+		hypp.HProps{"lang": "en"},
+		template.Head("Play Senet"),
+		playBody(s),
+	)
+}
+
+func playBody(s *state.State) *hypp.VNode {
+	var screenNode *hypp.VNode
+	switch s.Screen {
+	case state.StartScreen:
+		screenNode = screen.Start()
+	case state.OnlineScreen:
+		screenNode = screen.Online()
+	case state.NewGameScreen:
+		screenNode = screen.NewGame()
+	case state.JoinGameScreen:
+		screenNode = screen.JoinGame()
+	case state.WhoGoesFirstScreen:
+		screenNode = screen.WhosGoesFirst()
+	case state.GameScreen:
+		screenNode = screen.Game()
+	default:
+		panic(fmt.Errorf("component not implemented for screen %s", s.Screen))
+	}
+
+	return html.Body(nil, screenNode)
+}
