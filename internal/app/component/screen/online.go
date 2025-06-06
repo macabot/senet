@@ -9,7 +9,7 @@ import (
 func Online() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
-			"class": "signaling-page",
+			"class": "online",
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.Button(
