@@ -1,9 +1,80 @@
-package component
+package atom
 
 import (
+	"fmt"
+
 	"github.com/macabot/hypp"
+	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/hypp/tag/svg"
 )
+
+func SpeechBubbleIcon(s string) *hypp.VNode {
+	switch s {
+	case "[blocking-icon]":
+		return BlockingIcon()
+	case "[no-move-icon]":
+		return NoMoveIcon()
+	case "[piece-0-icon]":
+		return html.Span(hypp.HProps{"class": "piece-icon player-0"})
+	case "[piece-1-icon]":
+		return html.Span(hypp.HProps{"class": "piece-icon player-1"})
+	case "[protected-icon]":
+		return ProtectedIcon()
+	case "[return-to-start-icon]":
+		return ReturnToStartIcon()
+	case "[square-invalid-icon]":
+		return html.Span(hypp.HProps{"class": "square-icon invalid-destination"})
+	case "[square-valid-icon]":
+		return html.Span(hypp.HProps{"class": "square-icon valid-destination"})
+	case "[sticks-1-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+		)
+	case "[sticks-2-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-3-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-4-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon white"}, nil),
+		)
+	case "[sticks-6-icon]":
+		return html.Span(
+			hypp.HProps{"class": "sticks-icon"},
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+			html.Span(hypp.HProps{"class": "stick-icon black"}, nil),
+		)
+	case "[tutor-icon]":
+		return html.Span(
+			hypp.HProps{"class": "player-icon player-1"},
+			hypp.Text("Tutor"),
+		)
+	default:
+		panic(fmt.Errorf("speech bubble icon not implemented for '%s'", s))
+	}
+}
 
 // ProtectedIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Ashield%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048
 func ProtectedIcon() *hypp.VNode {
@@ -71,6 +142,25 @@ func StartIcon() *hypp.VNode {
 			},
 		),
 	)
+}
+
+func PointsIcon(points int) *hypp.VNode {
+	switch points {
+	case 0:
+		return ZeroPointsIcon()
+	case 1:
+		return OnePointIcon()
+	case 2:
+		return TwoPointsIcon()
+	case 3:
+		return ThreePointsIcon()
+	case 4:
+		return FourPointsIcon()
+	case 5:
+		return FivePointsIcon()
+	default:
+		panic(fmt.Errorf("there exists no icon for %d points", points))
+	}
 }
 
 // ZeroPointsIcon is based on https://fonts.google.com/icons?selected=Material%20Symbols%20Outlined%3Acounter_0%3AFILL%400%3Bwght%40400%3BGRAD%400%3Bopsz%4048

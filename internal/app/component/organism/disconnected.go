@@ -1,8 +1,9 @@
-package component
+package organism
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -37,7 +38,7 @@ func Disconnected(s *state.State) *hypp.VNode {
 			hypp.Text("There is a problem with the connection"),
 		),
 		message,
-		connectionStates(s),
+		molecule.ConnectionStates(s),
 		html.Button(
 			hypp.HProps{
 				"onclick": dispatch.GoToStartPage,

@@ -12,10 +12,11 @@ func JoinGame(s *state.State) *hypp.VNode {
 	hasConnection := true
 	roomName := ""
 	var nextButton *hypp.VNode
+	cta := hypp.HProps{"class": "cta"}
 	if !hasConnection {
-		nextButton = atom.Button("Connect", nil, nil)
+		nextButton = atom.Button("Connect", nil, cta)
 	} else {
-		nextButton = atom.Button("Next", nil, nil)
+		nextButton = atom.Button("Next", nil, cta)
 	}
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName

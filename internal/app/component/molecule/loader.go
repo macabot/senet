@@ -1,4 +1,4 @@
-package component
+package molecule
 
 import (
 	"github.com/macabot/hypp"

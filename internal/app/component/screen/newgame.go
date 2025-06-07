@@ -16,8 +16,10 @@ func NewGame(s *state.State) *hypp.VNode {
 		roomName = s.Signaling.RoomName
 	}
 	var status *hypp.VNode
+	var onClickNext hypp.Dispatchable
 	if hasConnection {
 		status = html.P(nil, hypp.Text("Connected"))
+		onClickNext = dispatch.GoToWhoGoesFirstPage
 	} else {
 		status = html.P(nil, hypp.Text("Waiting..."))
 	}
@@ -31,7 +33,7 @@ func NewGame(s *state.State) *hypp.VNode {
 		html.Div(
 			nil,
 			molecule.CancelToStartPageButton(),
-			atom.ConditionalButton("Next", hasConnection, dispatch.GoToWhoGoesFirstPage),
+			atom.Button("Next", onClickNext, hypp.HProps{"class": "cta"}),
 		),
 	)
 }

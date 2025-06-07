@@ -5,7 +5,6 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -46,55 +45,5 @@ func Players(props PlayersProps) *hypp.VNode {
 		player(0, props.Players[0], props.Turn == 0),
 		PlayerTurnIcon(),
 		player(1, props.Players[1], props.Turn == 1),
-	)
-}
-
-func pointsIcon(points int) *hypp.VNode {
-	switch points {
-	case 0:
-		return ZeroPointsIcon()
-	case 1:
-		return OnePointIcon()
-	case 2:
-		return TwoPointsIcon()
-	case 3:
-		return ThreePointsIcon()
-	case 4:
-		return FourPointsIcon()
-	case 5:
-		return FivePointsIcon()
-	default:
-		panic(fmt.Errorf("there exists no icon for %d points", points))
-	}
-}
-
-func player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
-	var bubble *hypp.VNode
-	if player.SpeechBubble != nil {
-		bubble = SpeechBubble(playerIndex, player.SpeechBubble)
-	}
-	return html.Div(
-		hypp.HProps{
-			"class": map[string]bool{
-				"player-wrapper":                      true,
-				fmt.Sprintf("player-%d", playerIndex): true,
-			},
-		},
-		html.Button(
-			hypp.HProps{
-				"class": map[string]bool{
-					"player":         true,
-					"has-turn":       hasTurn,
-					"draw-attention": player.DrawAttention,
-				},
-				"onclick": hypp.ActionAndPayload[*state.State]{
-					Action:  dispatch.ToggleSpeechBubble,
-					Payload: playerIndex,
-				},
-			},
-			html.Span(nil, hypp.Text(player.Name)),
-			pointsIcon(player.Points),
-		),
-		bubble,
 	)
 }

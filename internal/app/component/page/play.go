@@ -30,7 +30,7 @@ func playBody(s *state.State) *hypp.VNode {
 	case state.JoinGameScreen:
 		screenNode = screen.JoinGame(s)
 	case state.WhoGoesFirstScreen:
-		screenNode = screen.WhosGoesFirst()
+		screenNode = screen.WhoGoesFirst(s)
 	case state.GameScreen:
 		screenNode = screen.Game()
 	default:
