@@ -9,7 +9,7 @@ import (
 func HomePage() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"HomePage",
-		&state.State{Page: state.HomePage},
+		&state.State{Screen: state.HomePage},
 		component.Senet,
 	).WithSettings(fairytale.TaleSettings{
 		Target: fairytale.TaleAsHTML,

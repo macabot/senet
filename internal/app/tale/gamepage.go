@@ -15,8 +15,8 @@ func GamePage() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"GamePage",
 		&state.State{
-			Game: game,
-			Page: state.GamePage,
+			Game:   game,
+			Screen: state.GameScreen,
 		},
 		component.Senet,
 	).WithControls(

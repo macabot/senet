@@ -42,7 +42,7 @@ func removeBeforeUnloadListener() {
 
 func GoToTutorial(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
-	newState.Page = state.GamePage
+	newState.Screen = state.GameScreen
 	newState.Game = state.NewGame()
 	newState.Game.Players[0].Name = "You"
 	newState.Game.Players[1].Name = "Tutor"
@@ -61,7 +61,7 @@ func GoToTutorial(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 
 func GoToLocalPlayerVsPlayer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
-	newState.Page = state.GamePage
+	newState.Screen = state.GameScreen
 	newState.Game = state.NewGame()
 	newState.Game.TurnMode = state.IsBothPlayers
 	addBeforeUnloadListener()
@@ -70,7 +70,7 @@ func GoToLocalPlayerVsPlayer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 
 func GoToStartPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := &state.State{
-		Page: state.StartPage,
+		Screen: state.StartScreen,
 	}
 	resetListeners()
 	resetSignaling(newState)
@@ -80,7 +80,7 @@ func GoToStartPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 
 func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := &state.State{
-		Page: state.SignalingPage,
+		Screen: state.SignalingScreen,
 	}
 	resetSignaling(newState)
 	initSignaling(newState)
@@ -91,7 +91,7 @@ func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 func GoToOnlinePlayerVsPlayer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	isPlayer0 := payload.(bool)
 	newState := s.Clone()
-	newState.Page = state.GamePage
+	newState.Screen = state.GameScreen
 	newState.Game = state.NewGame()
 	if isPlayer0 {
 		newState.Game.TurnMode = state.IsPlayer0
@@ -127,7 +127,7 @@ func GoToWhoGoesFirstPage(s *state.State, payload hypp.Payload) hypp.Dispatchabl
 	}
 
 	newState := s.Clone()
-	newState.Page = state.WhoGoesFirstPage
+	newState.Screen = state.WhoGoesFirstScreen
 	newState.CommitmentScheme.IsCaller = isCaller
 	resetListeners()
 	registerCommitmentScheme()

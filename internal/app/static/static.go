@@ -14,10 +14,10 @@ import (
 func GeneratePages(outputDir string) error {
 	pages := map[string]func() *hypp.VNode{
 		"index.html": func() *hypp.VNode {
-			return component.Senet(&state.State{Page: state.HomePage})
+			return component.Senet(&state.State{Screen: state.HomePage})
 		},
 		"rules.html": func() *hypp.VNode {
-			return component.Senet(&state.State{Page: state.RulesPage})
+			return component.Senet(&state.State{Screen: state.RulesPage})
 		},
 	}
 

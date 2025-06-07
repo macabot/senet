@@ -1,15 +1,16 @@
-package component
+package screen
 
 import (
-	"fmt"
-
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
+	"github.com/macabot/senet/internal/app/component/molecule"
+	"github.com/macabot/senet/internal/app/component/organism"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func WhoGoesFirstPage(s *state.State) *hypp.VNode {
+func WhoGoesFirst(s *state.State) *hypp.VNode {
 	hasDecision := s.CommitmentScheme.CanThrow()
 	name0 := ""
 	name1 := ""
@@ -39,51 +40,29 @@ func WhoGoesFirstPage(s *state.State) *hypp.VNode {
 			},
 			hypp.Text("Negotiating commitment scheme..."),
 		),
-		Loader(hasDecision),
+		molecule.Loader(hasDecision),
 		html.Div(
 			hypp.HProps{
 				"class": "players-wrapper",
 			},
-			whoGoesFirstPlayer(0, name0),
-			whoGoesFirstPlayer(1, name1),
+			molecule.WhoGoesFirstPlayer(0, name0),
+			molecule.WhoGoesFirstPlayer(1, name1),
 		),
 		html.Div(
 			nil,
-			html.Button(
-				hypp.HProps{
-					"onclick": dispatch.GoToSignalingPage,
+			molecule.CancelToStartPageButton(),
+			atom.Button(
+				"Play",
+				hypp.ActionAndPayload[*state.State]{
+					Action:  dispatch.GoToOnlinePlayerVsPlayer,
+					Payload: isPlayer0,
 				},
-				hypp.Text("Back"),
-			),
-			html.Button(
 				hypp.HProps{
 					"class":    "cta",
 					"disabled": !hasDecision,
-					"onclick": hypp.ActionAndPayload[*state.State]{
-						Action:  dispatch.GoToOnlinePlayerVsPlayer,
-						Payload: isPlayer0,
-					},
 				},
-				hypp.Text("Play"),
 			),
 		),
-		Disconnected(s),
-	)
-}
-
-func whoGoesFirstPlayer(playerIndex int, name string) *hypp.VNode {
-	return html.Div(
-		hypp.HProps{
-			"class": map[string]bool{
-				"player-wrapper":                      true,
-				fmt.Sprintf("player-%d", playerIndex): true,
-			},
-		},
-		html.Div(
-			hypp.HProps{
-				"class": "player",
-			},
-			hypp.Text(name),
-		),
+		organism.Disconnected(s),
 	)
 }
