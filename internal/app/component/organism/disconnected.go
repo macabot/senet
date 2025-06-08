@@ -3,6 +3,7 @@ package organism
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
@@ -39,11 +40,6 @@ func Disconnected(s *state.State) *hypp.VNode {
 		),
 		message,
 		molecule.ConnectionStates(s),
-		html.Button(
-			hypp.HProps{
-				"onclick": dispatch.GoToStartPage,
-			},
-			hypp.Text("Start page"),
-		),
+		atom.Button("Start page", dispatch.GoToStartPage, nil),
 	)
 }
