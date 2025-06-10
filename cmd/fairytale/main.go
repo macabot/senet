@@ -6,7 +6,10 @@ import (
 	"github.com/macabot/hypp"
 	_ "github.com/macabot/hypp/jsd"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/tale"
+	"github.com/macabot/senet/internal/app/tale/molecule"
+	"github.com/macabot/senet/internal/app/tale/organism"
+	"github.com/macabot/senet/internal/app/tale/page"
+	"github.com/macabot/senet/internal/app/tale/screen"
 )
 
 func main() {
@@ -24,20 +27,26 @@ func main() {
 			},
 		},
 		fairytale.NewBundle(
-			"Components",
-			tale.Board(),
-			tale.Piece(),
-			tale.Players(),
-			tale.Stick(),
-			tale.Sticks(),
+			"Molecules",
+			molecule.TalePiece(),
+			molecule.TaleStick(),
+		),
+		fairytale.NewBundle(
+			"Organisms",
+			organism.TaleBoard(),
+			organism.TalePlayers(),
+			organism.TaleSticks(),
+		),
+		fairytale.NewBundle(
+			"Screens",
+			screen.TaleGame(),
+			screen.TaleStart(),
+			screen.TaleWhoGoesFirst(),
 		),
 		fairytale.NewBundle(
 			"Pages",
-			tale.GamePage(),
-			tale.HomePage(),
-			tale.RulesPage(),
-			tale.StartPage(),
-			tale.WhoGoesFirstPage(),
+			page.TaleHome(),
+			page.TaleRules(),
 		),
 	)
 }

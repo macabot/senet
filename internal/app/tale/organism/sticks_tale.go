@@ -1,15 +1,15 @@
-package tale
+package organism
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/organism"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
-func Sticks() *fairytale.Tale[*state.State] {
+func TaleSticks() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
 	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
@@ -18,7 +18,7 @@ func Sticks() *fairytale.Tale[*state.State] {
 		func(s *state.State) *hypp.VNode {
 			gameCanThrow := s.Game.CanThrow()
 			sticksCanThrow := s.Game.Sticks.CanThrow(s)
-			return component.Sticks(component.SticksProps{
+			return organism.Sticks(organism.SticksProps{
 				Sticks:        s.Game.Sticks,
 				DrawAttention: gameCanThrow && sticksCanThrow,
 				NoValidMoves:  len(s.Game.ValidMoves) == 0,

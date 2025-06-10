@@ -1,15 +1,15 @@
-package tale
+package molecule
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
-func Piece() *fairytale.Tale[*state.State] {
+func TalePiece() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"Piece",
 		&state.State{
@@ -17,14 +17,14 @@ func Piece() *fairytale.Tale[*state.State] {
 		},
 		func(s *state.State) *hypp.VNode {
 			piece := s.Game.Board.FindPieceByID(1)
-			props := component.PieceProps{
+			props := molecule.PieceProps{
 				Piece:         piece,
 				Player:        s.Game.Turn,
 				CanClick:      s.Game.CanClickOnPiece(s.Game.Turn, piece),
 				DrawAttention: s.Game.PieceDrawsAttention(s.Game.Turn, piece.Position),
 				Selected:      s.Game.PieceIsSelected(piece),
 			}
-			return component.Piece(props)
+			return molecule.Piece(props)
 		},
 	).WithControls(
 		mycontrol.PlayerTurn(),

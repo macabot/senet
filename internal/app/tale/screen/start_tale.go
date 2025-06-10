@@ -1,18 +1,21 @@
-package tale
+package screen
 
 import (
 	"github.com/macabot/fairytale"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/hypp"
+	"github.com/macabot/senet/internal/app/component/screen"
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func StartPage() *fairytale.Tale[*state.State] {
+func TaleStart() *fairytale.Tale[*state.State] {
 	return fairytale.New(
-		"StartPage",
+		"Start",
 		&state.State{
 			Screen: state.StartScreen,
 		},
-		component.Senet,
+		func(s *state.State) *hypp.VNode {
+			return screen.Start()
+		},
 	).WithSettings(fairytale.TaleSettings{
 		Target: fairytale.TaleAsHTML,
 	})

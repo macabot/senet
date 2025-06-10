@@ -1,15 +1,15 @@
-package tale
+package organism
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/organism"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
-func Board() *fairytale.Tale[*state.State] {
+func TaleBoard() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
 	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
@@ -17,7 +17,7 @@ func Board() *fairytale.Tale[*state.State] {
 		&state.State{
 			Game: game,
 		},
-		component.Board,
+		organism.Board,
 	).WithControls(
 		mycontrol.Configuration(),
 		control.NewCheckbox(

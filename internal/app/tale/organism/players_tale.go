@@ -1,4 +1,4 @@
-package tale
+package organism
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/organism"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
@@ -113,14 +113,14 @@ func drawAttention(player int) *control.Checkbox[*state.State] {
 	)
 }
 
-func Players() *fairytale.Tale[*state.State] {
+func TalePlayers() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"Players",
 		&state.State{
 			Game: state.NewGame(),
 		},
 		func(s *state.State) *hypp.VNode {
-			return component.Players(component.CreatePlayersProps(s))
+			return organism.Players(organism.CreatePlayersProps(s))
 		},
 	).WithControls(
 		mycontrol.PlayerTurn(),

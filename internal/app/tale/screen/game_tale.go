@@ -1,24 +1,24 @@
-package tale
+package screen
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/screen"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
-func GamePage() *fairytale.Tale[*state.State] {
+func TaleGame() *fairytale.Tale[*state.State] {
 	game := state.NewGame()
 	game.TurnMode = state.IsPlayer0
 	return fairytale.New(
-		"GamePage",
+		"Game",
 		&state.State{
 			Game:   game,
 			Screen: state.GameScreen,
 		},
-		component.Senet,
+		screen.Game,
 	).WithControls(
 		mycontrol.Configuration(),
 		mycontrol.Steps(),

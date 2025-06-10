@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
@@ -13,7 +14,7 @@ import (
 	"github.com/macabot/senet/internal/pkg/sessionstorage"
 )
 
-var debug = false
+var isDebugMode = false
 
 // dispatchWrapper recovers panics throws in effects and actions.
 // An effect that starts a new go routine will not recover from a panic.
@@ -43,7 +44,7 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 
 		dispatchFunc(dispatchable, payload)
 
-		if stateFound && debug {
+		if stateFound && isDebugMode {
 			prevState := sessionstorage.GetItem("state")
 			if prevState != nil {
 				sessionstorage.SetItem("prevState", *prevState)
@@ -64,7 +65,7 @@ func recoverPanic(component func(s *state.State) *hypp.VNode, s *state.State) (v
 			panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
 			window.Console().Error(panicStackTrace)
 			s.PanicStackTrace = &panicStackTrace
-			vNode = Senet(s)
+			vNode = page.Play(s)
 		}
 	}()
 
@@ -75,7 +76,7 @@ func Run(element window.Element) {
 	urlSearchParams := js.Global().Get("URLSearchParams")
 	urlParams := urlSearchParams.New(js.Global().Get("location").Get("search"))
 	debugParam := urlParams.Call("get", "debug")
-	debug = !debugParam.IsNull() && debugParam.String() == "true"
+	isDebugMode = !debugParam.IsNull() && debugParam.String() == "true"
 
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: &state.State{

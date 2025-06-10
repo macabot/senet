@@ -1,19 +1,19 @@
-package tale
+package screen
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/screen"
 	"github.com/macabot/senet/internal/app/state"
 	mycontrol "github.com/macabot/senet/internal/app/tale/control"
 )
 
-func WhoGoesFirstPage() *fairytale.Tale[*state.State] {
+func TaleWhoGoesFirst() *fairytale.Tale[*state.State] {
 	return fairytale.New(
-		"WhoGoesFirstPage",
+		"WhoGoesFirst",
 		&state.State{},
-		component.WhoGoesFirstPage,
+		screen.WhoGoesFirst,
 	).WithControls(
 		control.NewSelect(
 			"Decision",

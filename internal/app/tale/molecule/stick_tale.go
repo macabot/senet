@@ -1,19 +1,19 @@
-package tale
+package molecule
 
 import (
 	"github.com/macabot/fairytale"
 	"github.com/macabot/fairytale/control"
 	"github.com/macabot/hypp"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Stick() *fairytale.Tale[*state.State] {
+func TaleStick() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"Stick",
 		&state.State{Game: state.NewGame()},
 		func(s *state.State) *hypp.VNode {
-			return component.Stick(s.Game.Sticks.Flips[0])
+			return molecule.Stick(s.Game.Sticks.Flips[0])
 		},
 	).WithControls(
 		control.NewNumberInput(
