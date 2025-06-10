@@ -12,7 +12,7 @@ import (
 func TestPageMarshalUnmarshal(t *testing.T) {
 	b, err := json.Marshal(state.StartScreen)
 	require.NoError(t, err)
-	assert.Equal(t, `"Start"`, string(b))
+	assert.Equal(t, `"StartScreen"`, string(b))
 
 	var page state.Screen
 	require.NoError(t, json.Unmarshal(b, &page))
