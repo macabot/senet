@@ -1,8 +1,9 @@
-package component
+package organism
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -19,7 +20,7 @@ func TopBar(s *state.State) *hypp.VNode {
 				"onclick":    dispatch.ToggleMenu,
 				"aria-label": "menu button",
 			},
-			MenuIcon(),
+			atom.MenuIcon(),
 		),
 	)
 }

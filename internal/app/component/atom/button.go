@@ -5,19 +5,7 @@ import (
 	"github.com/macabot/hypp/tag/html"
 )
 
-type ButtonLabel interface {
-	string | *hypp.VNode
-}
-
-func Button[T ButtonLabel](label T, onClick hypp.Dispatchable, props hypp.HProps) *hypp.VNode {
-	var labelNode *hypp.VNode
-	switch l := any(label).(type) {
-	case string:
-		labelNode = hypp.Text(l)
-	case *hypp.VNode:
-		labelNode = l
-	}
-
+func Button(label string, onClick hypp.Dispatchable, props hypp.HProps) *hypp.VNode {
 	return html.Button(
 		hypp.MergeHProps(
 			hypp.HProps{
@@ -26,6 +14,6 @@ func Button[T ButtonLabel](label T, onClick hypp.Dispatchable, props hypp.HProps
 			},
 			props,
 		),
-		labelNode,
+		hypp.Text(label),
 	)
 }

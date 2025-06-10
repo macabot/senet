@@ -40,35 +40,7 @@ func removeBeforeUnloadListener() {
 	beforeUnloadListenerID = window.EventListenerID{}
 }
 
-func GoToTutorial(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	newState.Screen = state.GameScreen
-	newState.Game = state.NewGame()
-	newState.Game.Players[0].Name = "You"
-	newState.Game.Players[1].Name = "Tutor"
-	newState.Game.Turn = 1
-	newState.Game.TurnMode = state.IsPlayer0
-	newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
-		Kind: state.TutorialStart,
-	}
-	newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
-	newState.TutorialIndex = 0
-	resetListeners()
-	RegisterTutorial()
-	addBeforeUnloadListener()
-	return newState
-}
-
-func GoToLocalPlayerVsPlayer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	newState.Screen = state.GameScreen
-	newState.Game = state.NewGame()
-	newState.Game.TurnMode = state.IsBothPlayers
-	addBeforeUnloadListener()
-	return newState
-}
-
-func GoToStartPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+func GoToStartScreen(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := &state.State{
 		Screen: state.StartScreen,
 	}
@@ -78,17 +50,17 @@ func GoToStartPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 	return newState
 }
 
-func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := &state.State{
-		Screen: state.SignalingScreen,
-	}
-	resetSignaling(newState)
-	initSignaling(newState)
-	addBeforeUnloadListener()
-	return newState
-}
+// func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := &state.State{
+// 		Screen: state.SignalingScreen,
+// 	}
+// 	resetSignaling(newState)
+// 	initSignaling(newState)
+// 	addBeforeUnloadListener()
+// 	return newState
+// }
 
-func GoToOnlinePlayerVsPlayer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func GoToOnlineScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	isPlayer0 := payload.(bool)
 	newState := s.Clone()
 	newState.Screen = state.GameScreen
@@ -112,7 +84,7 @@ func GoToOnlinePlayerVsPlayer(s *state.State, payload hypp.Payload) hypp.Dispatc
 	}
 }
 
-func GoToWhoGoesFirstPage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func GoToWhoGoesFirstScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	isCaller := payload.(bool)
 	connectionState := ""
 	readyState := ""
@@ -138,3 +110,33 @@ func GoToWhoGoesFirstPage(s *state.State, payload hypp.Payload) hypp.Dispatchabl
 		Effects: effects,
 	}
 }
+
+func GoToTutorialGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Screen = state.GameScreen
+	newState.Game = state.NewGame()
+	newState.Game.Players[0].Name = "You"
+	newState.Game.Players[1].Name = "Tutor"
+	newState.Game.Turn = 1
+	newState.Game.TurnMode = state.IsPlayer0
+	newState.Game.Players[1].SpeechBubble = &state.SpeechBubble{
+		Kind: state.TutorialStart,
+	}
+	newState.Game.Sticks.GeneratorKind = state.TutorialSticksGeneratorKind
+	newState.TutorialIndex = 0
+	resetListeners()
+	RegisterTutorial()
+	addBeforeUnloadListener()
+	return newState
+}
+
+func GoToLocalPlayerVsPlayerGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Screen = state.GameScreen
+	newState.Game = state.NewGame()
+	newState.Game.TurnMode = state.IsBothPlayers
+	addBeforeUnloadListener()
+	return newState
+}
+
+// TODO func GoToOnlineGameScreen

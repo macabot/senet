@@ -1,10 +1,11 @@
-package component
+package molecule
 
 import (
 	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -54,8 +55,8 @@ func Piece(props PieceProps) *hypp.VNode {
 					props.Player+1,
 				),
 			},
-			BlockingIcon(),
-			ProtectedIcon(),
+			atom.BlockingIcon(),
+			atom.ProtectedIcon(),
 		),
 	)
 }

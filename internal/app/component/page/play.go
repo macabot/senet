@@ -32,7 +32,7 @@ func playBody(s *state.State) *hypp.VNode {
 	case state.WhoGoesFirstScreen:
 		screenNode = screen.WhoGoesFirst(s)
 	case state.GameScreen:
-		screenNode = screen.Game()
+		screenNode = screen.Game(s)
 	default:
 		panic(fmt.Errorf("component not implemented for screen %s", s.Screen))
 	}

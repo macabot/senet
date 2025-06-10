@@ -2,11 +2,12 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/page"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/sessionstorage"
@@ -57,6 +58,19 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 	}
 }
 
+func recoverPanic(component func(s *state.State) *hypp.VNode, s *state.State) (vNode *hypp.VNode) {
+	defer func() {
+		if r := recover(); r != nil {
+			panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+			window.Console().Error(panicStackTrace)
+			s.PanicStackTrace = &panicStackTrace
+			vNode = Senet(s)
+		}
+	}()
+
+	return component(s)
+}
+
 func Run(element window.Element) {
 	urlSearchParams := js.Global().Get("URLSearchParams")
 	urlParams := urlSearchParams.New(js.Global().Get("location").Get("search"))
@@ -68,7 +82,7 @@ func Run(element window.Element) {
 			Screen: state.StartScreen,
 		},
 		View: func(s *state.State) *hypp.VNode {
-			return component.RecoverPanic(component.Senet, s)
+			return recoverPanic(page.Play, s)
 		},
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {

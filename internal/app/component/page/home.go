@@ -1,16 +1,18 @@
-package component
+package page
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
+	"github.com/macabot/senet/internal/app/component/molecule"
 )
 
-func HomePage() *hypp.VNode {
+func Home() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": "home-page",
 		},
-		SenetHeader(),
+		molecule.SenetHeader(),
 		html.P(
 			hypp.HProps{"class": "description"},
 			hypp.Text("Senet is a two-player board game. Block your opponent's moves and be the first player to move all of their pieces off the board."),
@@ -24,21 +26,8 @@ func homePageOptions() *hypp.VNode {
 		hypp.HProps{
 			"class": "links",
 		},
-		html.A(
-			hypp.HProps{
-				"href": "/play",
-			},
-			hypp.Text("Play"),
-		),
-		html.A(
-			hypp.HProps{
-				"href": "/rules",
-			},
-			hypp.Text("Rules"),
-		),
-		html.A(
-			hypp.HProps{"href": "https://github.com/macabot/senet"},
-			hypp.Text("Source code"),
-		),
+		atom.A("Play", "/play", nil),
+		atom.A("Rules", "/rules", nil),
+		atom.A("Source code", "https://github.com/macabot/senet", nil),
 	)
 }

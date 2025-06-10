@@ -40,6 +40,6 @@ func Disconnected(s *state.State) *hypp.VNode {
 		),
 		message,
 		molecule.ConnectionStates(s),
-		atom.Button("Start page", dispatch.GoToStartPage, nil),
+		atom.Button("Start page", dispatch.GoToStartScreen, nil),
 	)
 }

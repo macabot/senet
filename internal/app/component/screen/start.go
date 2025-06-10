@@ -24,9 +24,9 @@ func gameModes() *hypp.VNode {
 			"class": "game-modes",
 		},
 		atom.A("Home", "/", nil),
-		atom.Button("Tutorial", dispatch.GoToTutorial, nil),
-		atom.Button("Local - Player vs. Player", dispatch.GoToLocalPlayerVsPlayer, nil),
-		atom.Button("Online - Player vs. Player", dispatch.GoToSignalingPage, nil),
+		atom.Button("Tutorial", dispatch.GoToTutorialGameScreen, nil),
+		atom.Button("Local - Player vs. Player", dispatch.GoToLocalPlayerVsPlayerGameScreen, nil),
+		atom.Button("Online - Player vs. Player", dispatch.GoToOnlineScreen, nil),
 		atom.A("Rules", "/rules", nil),
 		atom.A("Source code", "https://github.com/macabot/senet", nil),
 	)

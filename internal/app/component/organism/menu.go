@@ -1,8 +1,9 @@
-package component
+package organism
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/dispatch"
 )
 
@@ -15,18 +16,8 @@ func Menu() *hypp.VNode {
 			hypp.HProps{
 				"class": "menu",
 			},
-			html.Button(
-				hypp.HProps{
-					"onclick": dispatch.GoToStartPage,
-				},
-				hypp.Text("Quit game"),
-			),
-			html.Button(
-				hypp.HProps{
-					"onclick": dispatch.ToggleMenu,
-				},
-				hypp.Text("Close"),
-			),
+			atom.Button("Quit game", dispatch.GoToStartScreen, nil),
+			atom.Button("Close", dispatch.ToggleMenu, nil),
 		),
 	)
 }

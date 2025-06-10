@@ -10,7 +10,12 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func Player(playerIndex int, player Player, hasTurn bool) *hypp.VNode {
+type PlayerProps struct {
+	*state.Player
+	Points int
+}
+
+func Player(playerIndex int, player PlayerProps, hasTurn bool) *hypp.VNode {
 	var bubble *hypp.VNode
 	if player.SpeechBubble != nil {
 		bubble = SpeechBubble(playerIndex, player.SpeechBubble)

@@ -1,8 +1,7 @@
-package component
+package util
 
 import (
 	"github.com/macabot/hypp"
-	"golang.org/x/exp/maps"
 )
 
 type WithWrapper func(node *hypp.VNode) *hypp.VNode
@@ -14,11 +13,7 @@ func patchHProps(node *hypp.VNode, patch hypp.HProps) *hypp.VNode {
 	if node.Kind() != hypp.ElementNode {
 		return node
 	}
-	props := node.Props()
-	if props == nil {
-		props = hypp.HProps{}
-	}
-	maps.Copy(props, patch)
+	props := hypp.MergeHProps(node.Props(), patch)
 	return hypp.H(
 		node.Tag(),
 		props,

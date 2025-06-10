@@ -29,7 +29,7 @@ func Online() *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":   "signaling back",
-				"onclick": dispatch.GoToStartPage,
+				"onclick": dispatch.GoToStartScreen,
 			},
 			hypp.Text("Back"),
 		),

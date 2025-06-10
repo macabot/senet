@@ -54,7 +54,7 @@ func WhoGoesFirst(s *state.State) *hypp.VNode {
 			atom.Button(
 				"Play",
 				hypp.ActionAndPayload[*state.State]{
-					Action:  dispatch.GoToOnlinePlayerVsPlayer,
+					Action:  dispatch.GoToOnlineScreen,
 					Payload: isPlayer0,
 				},
 				hypp.HProps{

@@ -19,7 +19,7 @@ func NewGame(s *state.State) *hypp.VNode {
 	var onClickNext hypp.Dispatchable
 	if hasConnection {
 		status = html.P(nil, hypp.Text("Connected"))
-		onClickNext = dispatch.GoToWhoGoesFirstPage
+		onClickNext = dispatch.GoToWhoGoesFirstScreen
 	} else {
 		status = html.P(nil, hypp.Text("Waiting..."))
 	}

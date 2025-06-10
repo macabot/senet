@@ -1,11 +1,13 @@
-package component
+package organism
 
 import (
 	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/app/util"
 	"github.com/macabot/senet/internal/pkg/set"
 )
 
@@ -34,8 +36,8 @@ func Board(props *state.State) *hypp.VNode {
 			position := state.PositionFromCoordinate(coordinate)
 			canClick := hasValidDestination && validDestination == position
 			isStart := hasValidDestination && validDestination == state.ReturnToStartPosition && position == startPosition
-			children[i] = With(
-				Square(SquareProps{
+			children[i] = util.With(
+				molecule.Square(molecule.SquareProps{
 					Position:           position,
 					Selected:           props.Game.Selected,
 					CanClick:           canClick,
@@ -43,7 +45,7 @@ func Board(props *state.State) *hypp.VNode {
 					IsStart:            isStart,
 					ShowDirection:      board.ShowDirections,
 				}),
-				Key(fmt.Sprintf("square-%d", position)),
+				util.Key(fmt.Sprintf("square-%d", position)),
 			)
 			i++
 		}
@@ -53,15 +55,15 @@ func Board(props *state.State) *hypp.VNode {
 		for _, piece := range pieces {
 			drawAttention := props.Game.PieceDrawsAttention(player, piece.Position)
 			isSelected := props.Game.PieceIsSelected(piece)
-			children[i] = With(
-				Piece(PieceProps{
+			children[i] = util.With(
+				molecule.Piece(molecule.PieceProps{
 					Piece:         piece,
 					Player:        player,
 					CanClick:      props.Game.CanClickOnPiece(player, piece),
 					DrawAttention: drawAttention && !isSelected,
 					Selected:      isSelected,
 				}),
-				Key(fmt.Sprintf("piece-%d", piece.ID)),
+				util.Key(fmt.Sprintf("piece-%d", piece.ID)),
 			)
 			i++
 		}

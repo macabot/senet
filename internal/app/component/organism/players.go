@@ -1,26 +1,23 @@
-package component
+package organism
 
 import (
 	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/state"
 )
 
-type Player struct {
-	*state.Player
-	Points int
-}
-
 type PlayersProps struct {
-	Players [2]Player
+	Players [2]molecule.PlayerProps
 	Turn    int
 }
 
 func CreatePlayersProps(s *state.State) PlayersProps {
 	return PlayersProps{
-		Players: [2]Player{
+		Players: [2]molecule.PlayerProps{
 			{
 				Player: s.Game.Players[0],
 				Points: s.Game.Board.Points(0),
@@ -42,8 +39,8 @@ func Players(props PlayersProps) *hypp.VNode {
 				fmt.Sprintf("has-turn-%d", props.Turn): true,
 			},
 		},
-		player(0, props.Players[0], props.Turn == 0),
-		PlayerTurnIcon(),
-		player(1, props.Players[1], props.Turn == 1),
+		molecule.Player(0, props.Players[0], props.Turn == 0),
+		atom.PlayerTurnIcon(),
+		molecule.Player(1, props.Players[1], props.Turn == 1),
 	)
 }

@@ -1,10 +1,11 @@
-package component
+package molecule
 
 import (
 	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -21,9 +22,9 @@ type SquareProps struct {
 func iconToLabel(icon state.Icon) *hypp.VNode {
 	switch icon {
 	case state.Protected:
-		return ProtectedIcon()
+		return atom.ProtectedIcon()
 	case state.ReturnToStart:
-		return ReturnToStartIcon()
+		return atom.ReturnToStartIcon()
 	default:
 		panic(fmt.Errorf("invalid icon %v", icon))
 	}
@@ -31,15 +32,15 @@ func iconToLabel(icon state.Icon) *hypp.VNode {
 
 func positionToArrowIcon(pos state.Position) *hypp.VNode {
 	if pos < 9 {
-		return FlowLeftIcon()
+		return atom.FlowLeftIcon()
 	} else if pos == 9 {
-		return FlowUpIcon()
+		return atom.FlowUpIcon()
 	} else if pos < 19 {
-		return FlowRightIcon()
+		return atom.FlowRightIcon()
 	} else if pos == 19 {
-		return FlowUpIcon()
+		return atom.FlowUpIcon()
 	} else {
-		return FlowLeftIcon()
+		return atom.FlowLeftIcon()
 	}
 }
 
@@ -73,7 +74,7 @@ func Square(props SquareProps) *hypp.VNode {
 			validReturnToStart = true
 		}
 	} else if props.IsStart {
-		label = StartIcon()
+		label = atom.StartIcon()
 	}
 
 	validDestination := props.CanClick

@@ -1,4 +1,4 @@
-package component
+package organism
 
 import (
 	"github.com/macabot/hypp"
@@ -7,23 +7,23 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func GameOver(s *state.State) *hypp.VNode {
-	if s.Game.Winner == nil {
+func OrientationTip(s *state.State) *hypp.VNode {
+	if s.HideOrientationTip {
 		return nil
 	}
 	return html.Div(
 		hypp.HProps{
-			"class": "game-over",
+			"class": "orientation-tip",
 		},
 		html.P(
 			nil,
-			hypp.Textf("Winner: %s", s.Game.Players[*s.Game.Winner].Name),
+			hypp.Text("Rotate or enlarge your screen for a better experience."),
 		),
 		html.Button(
 			hypp.HProps{
-				"onclick": dispatch.GoToStartPage,
+				"onclick": dispatch.ToggleOrientationTip,
 			},
-			hypp.Text("Start page"),
+			hypp.Text("OK"),
 		),
 	)
 }

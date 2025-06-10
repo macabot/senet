@@ -1,10 +1,12 @@
-package component
+package organism
 
 import (
 	"fmt"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/atom"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -21,12 +23,12 @@ func Sticks(props SticksProps) *hypp.VNode {
 		hypp.HProps{
 			"class": "sticks",
 		},
-		Stick(props.Sticks.Flips[0]),
-		Stick(props.Sticks.Flips[1]),
-		Stick(props.Sticks.Flips[2]),
-		Stick(props.Sticks.Flips[3]),
+		molecule.Stick(props.Sticks.Flips[0]),
+		molecule.Stick(props.Sticks.Flips[1]),
+		molecule.Stick(props.Sticks.Flips[2]),
+		molecule.Stick(props.Sticks.Flips[3]),
 		throwButton(!props.DrawAttention || props.IsLoading),
-		Loader(!props.IsLoading),
+		molecule.Loader(!props.IsLoading),
 		steps(props.Sticks, props.NoValidMoves),
 	)
 }
@@ -45,15 +47,15 @@ func throwButton(disabled bool) *hypp.VNode {
 func stepsToIcon(steps int) *hypp.VNode {
 	switch steps {
 	case 1:
-		return OneStepIcon()
+		return atom.OneStepIcon()
 	case 2:
-		return TwoStepsIcon()
+		return atom.TwoStepsIcon()
 	case 3:
-		return ThreeStepsIcon()
+		return atom.ThreeStepsIcon()
 	case 4:
-		return FourStepsIcon()
+		return atom.FourStepsIcon()
 	case 6:
-		return SixStepsIcon()
+		return atom.SixStepsIcon()
 	default:
 		panic(fmt.Errorf("there exists no icon for %d steps", steps))
 	}
@@ -80,6 +82,6 @@ func noMoveButton() *hypp.VNode {
 			"class":   "no-move-button",
 			"onclick": dispatch.NoMove,
 		},
-		NoMoveIcon(),
+		atom.NoMoveIcon(),
 	)
 }
