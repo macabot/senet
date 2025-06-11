@@ -46,6 +46,7 @@ func main() {
 		fairytale.NewBundle(
 			"Pages",
 			page.TaleHome(),
+			page.TalePlay(),
 			page.TaleRules(),
 		),
 	)
