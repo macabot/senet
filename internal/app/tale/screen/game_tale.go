@@ -55,7 +55,5 @@ func TaleGame() *fairytale.Tale[*state.State] {
 			},
 		),
 		mycontrol.Disconnected(),
-	).WithSettings(fairytale.TaleSettings{
-		Target: fairytale.TaleAsHTML,
-	})
+	)
 }

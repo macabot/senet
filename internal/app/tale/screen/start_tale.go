@@ -16,7 +16,5 @@ func TaleStart() *fairytale.Tale[*state.State] {
 		func(s *state.State) *hypp.VNode {
 			return screen.Start()
 		},
-	).WithSettings(fairytale.TaleSettings{
-		Target: fairytale.TaleAsHTML,
-	})
+	)
 }
