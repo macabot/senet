@@ -5,9 +5,18 @@ import (
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/component/molecule"
+	"github.com/macabot/senet/internal/app/component/template"
 )
 
 func Home() *hypp.VNode {
+	return html.Html(
+		hypp.HProps{"lang": "en"},
+		template.Head("Senet"),
+		homeBody(),
+	)
+}
+
+func homeBody() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": "home-page",

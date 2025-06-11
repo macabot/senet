@@ -6,11 +6,20 @@ import (
 	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/component/organism"
+	"github.com/macabot/senet/internal/app/component/template"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/app/util"
 )
 
 func Rules() *hypp.VNode {
+	return html.Html(
+		hypp.HProps{"lang": "en"},
+		template.Head("Senet Rules"),
+		rulesBody(),
+	)
+}
+
+func rulesBody() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": "rules-page",
