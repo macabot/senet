@@ -1,8 +1,6 @@
 package organism
 
 import (
-	"fmt"
-
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/component/atom"
@@ -32,12 +30,18 @@ func CreatePlayersProps(s *state.State) PlayersProps {
 }
 
 func Players(props PlayersProps) *hypp.VNode {
+	classes := map[string]bool{
+		"players": true,
+	}
+	if props.Turn == 0 {
+		classes["has-turn-0"] = true
+	} else if props.Turn == 1 {
+		classes["has-turn-1"] = true
+	}
+
 	return html.Section(
 		hypp.HProps{
-			"class": map[string]bool{
-				"players":                              true,
-				fmt.Sprintf("has-turn-%d", props.Turn): true,
-			},
+			"class": classes,
 		},
 		molecule.Player(0, props.Players[0], props.Turn == 0),
 		atom.PlayerTurnIcon(),
