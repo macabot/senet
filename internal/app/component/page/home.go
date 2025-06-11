@@ -12,11 +12,11 @@ func Home() *hypp.VNode {
 	return html.Html(
 		hypp.HProps{"lang": "en"},
 		template.Head("Senet"),
-		homeBody(),
+		html.Body(nil, homeMain()),
 	)
 }
 
-func homeBody() *hypp.VNode {
+func homeMain() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": "home-page",

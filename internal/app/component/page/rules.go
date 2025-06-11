@@ -15,11 +15,11 @@ func Rules() *hypp.VNode {
 	return html.Html(
 		hypp.HProps{"lang": "en"},
 		template.Head("Senet Rules"),
-		rulesBody(),
+		html.Body(nil, rulesMain()),
 	)
 }
 
-func rulesBody() *hypp.VNode {
+func rulesMain() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
 			"class": "rules-page",
