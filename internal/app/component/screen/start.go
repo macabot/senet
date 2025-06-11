@@ -11,17 +11,17 @@ import (
 func Start() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
-			"class": "start-page",
+			"class": "start-screen",
 		},
 		molecule.SenetHeader(),
-		gameModes(),
+		startOptions(),
 	)
 }
 
-func gameModes() *hypp.VNode {
+func startOptions() *hypp.VNode {
 	return html.Section(
 		hypp.HProps{
-			"class": "game-modes",
+			"class": "options",
 		},
 		atom.A("Home", "/", nil),
 		atom.Button("Tutorial", dispatch.GoToTutorialGameScreen, nil),

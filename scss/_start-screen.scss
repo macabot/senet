@@ -1,0 +1,17 @@
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  .options {
+    display: flex;
+    flex-direction: column;
+  }
+
+  a,
+  button {
+    font-size: 3rem;
+    margin: 5px;
+  }
+}
