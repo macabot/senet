@@ -27,6 +27,6 @@ func TaleRoomNameField() *fairytale.Tale[*state.State] {
 			func(s *state.State) string {
 				return s.Signaling.RoomName
 			},
-		),
+		).WithMaxLength(4),
 	)
 }
