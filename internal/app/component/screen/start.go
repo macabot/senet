@@ -11,7 +11,7 @@ import (
 func Start() *hypp.VNode {
 	return html.Main(
 		hypp.HProps{
-			"class": "start-screen",
+			"class": "screen",
 		},
 		molecule.SenetHeader(),
 		startOptions(),

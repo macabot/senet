@@ -30,6 +30,7 @@ func main() {
 			"Molecules",
 			molecule.TaleMenuButton(),
 			molecule.TalePiece(),
+			molecule.TaleRoomNameField(),
 			molecule.TaleStick(),
 		),
 		fairytale.NewBundle(
@@ -41,6 +42,7 @@ func main() {
 		fairytale.NewBundle(
 			"Screens",
 			screen.TaleGame(),
+			screen.TaleNewGame(),
 			screen.TaleStart(),
 			screen.TaleWhoGoesFirst(),
 		),

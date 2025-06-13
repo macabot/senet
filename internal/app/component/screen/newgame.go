@@ -15,25 +15,35 @@ func NewGame(s *state.State) *hypp.VNode {
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
 	}
-	var status *hypp.VNode
+	var status string
 	var onClickNext hypp.Dispatchable
 	if hasConnection {
-		status = html.P(nil, hypp.Text("Connected"))
+		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
 	} else {
-		status = html.P(nil, hypp.Text("Waiting..."))
+		status = "Waiting..."
 	}
-	return html.Main(
-		hypp.HProps{
-			"class": "online",
-		},
+
+	statusNode := html.P(hypp.HProps{"class": "status"}, hypp.Text(status))
+
+	children := []*hypp.VNode{
 		html.H1(nil, hypp.Text("Online - New Game")),
-		html.Input(hypp.HProps{"readonly": true}, hypp.Text(roomName)),
-		status,
+	}
+	children = append(children, molecule.RoomNameField(roomName, false)...)
+	children = append(
+		children,
+		html.P(nil, hypp.Text("Share the room name with your opponent.")),
+		statusNode,
 		html.Div(
 			nil,
 			molecule.CancelToStartPageButton(),
 			atom.Button("Next", onClickNext, hypp.HProps{"class": "cta"}),
 		),
+	)
+	return html.Main(
+		hypp.HProps{
+			"class": "screen",
+		},
+		children...,
 	)
 }

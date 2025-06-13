@@ -32,6 +32,10 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+button.cta {
+  background-color: lightgreen;
+}
+
 details summary {
   cursor: pointer;
 }

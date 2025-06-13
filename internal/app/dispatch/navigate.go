@@ -60,29 +60,47 @@ func GoToStartScreen(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 // 	return newState
 // }
 
-func GoToOnlineScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	isPlayer0 := payload.(bool)
+func GoToOnlineScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
-	newState.Screen = state.GameScreen
-	newState.Game = state.NewGame()
-	if isPlayer0 {
-		newState.Game.TurnMode = state.IsPlayer0
-		newState.Game.Players[0].Name = "You"
-		newState.Game.Players[1].Name = "Opponent"
-	} else {
-		newState.Game.TurnMode = state.IsPlayer1
-		newState.Game.Players[0].Name = "Opponent"
-		newState.Game.Players[1].Name = "You"
-	}
-	newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
-	isCaller := !newState.Game.HasTurn()
-	effects := sendIsReady(newState, isCaller)
-	addBeforeUnloadListener()
-	return hypp.StateAndEffects[*state.State]{
-		State:   newState,
-		Effects: effects,
-	}
+	newState.Screen = state.OnlineScreen
+	return newState
 }
+
+func GoToNewGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Screen = state.NewGameScreen
+	return newState
+}
+
+func GoToJoinGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.Screen = state.JoinGameScreen
+	return newState
+}
+
+// func GoToOnlineScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	isPlayer0 := payload.(bool)
+// 	newState := s.Clone()
+// 	newState.Screen = state.GameScreen
+// 	newState.Game = state.NewGame()
+// 	if isPlayer0 {
+// 		newState.Game.TurnMode = state.IsPlayer0
+// 		newState.Game.Players[0].Name = "You"
+// 		newState.Game.Players[1].Name = "Opponent"
+// 	} else {
+// 		newState.Game.TurnMode = state.IsPlayer1
+// 		newState.Game.Players[0].Name = "Opponent"
+// 		newState.Game.Players[1].Name = "You"
+// 	}
+// 	newState.Game.Sticks.GeneratorKind = state.CommitmentSchemeGeneratorKind
+// 	isCaller := !newState.Game.HasTurn()
+// 	effects := sendIsReady(newState, isCaller)
+// 	addBeforeUnloadListener()
+// 	return hypp.StateAndEffects[*state.State]{
+// 		State:   newState,
+// 		Effects: effects,
+// 	}
+// }
 
 func GoToWhoGoesFirstScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	isCaller := payload.(bool)
