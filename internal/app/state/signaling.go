@@ -47,8 +47,12 @@ func (s SignalingStep) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignalingStep) UnmarshalJSON(data []byte) error {
+	var step string
+	if err := json.Unmarshal(data, &step); err != nil {
+		return err
+	}
 	var err error
-	*s, err = ToSignalingStep(string(data))
+	*s, err = ToSignalingStep(step)
 	return err
 }
 
