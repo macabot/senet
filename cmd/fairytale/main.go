@@ -28,6 +28,7 @@ func main() {
 		},
 		fairytale.NewBundle(
 			"Molecules",
+			molecule.TaleMenuButton(),
 			molecule.TalePiece(),
 			molecule.TaleStick(),
 		),

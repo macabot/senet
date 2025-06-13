@@ -3,8 +3,7 @@ package organism
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
-	"github.com/macabot/senet/internal/app/component/atom"
-	"github.com/macabot/senet/internal/app/dispatch"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/state"
 )
 
@@ -14,13 +13,6 @@ func TopBar(s *state.State) *hypp.VNode {
 			"class": "top-bar",
 		},
 		Players(CreatePlayersProps(s)),
-		html.Button(
-			hypp.HProps{
-				"class":      "menu-button",
-				"onclick":    dispatch.ToggleMenu,
-				"aria-label": "menu button",
-			},
-			atom.MenuIcon(),
-		),
+		molecule.MenuButton(),
 	)
 }
