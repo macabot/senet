@@ -12,6 +12,8 @@ type SignalingStep int
 
 const (
 	SignalingStepDefault SignalingStep = iota
+	SignalingStepIsConnectedToWebSocket
+	SignalingStepOpponentIsConnectedToWebSocket
 	SignalingStepNewGameOffer
 	SignalingStepNewGameAnswer
 	SignalingStepJoinGameOffer
@@ -19,7 +21,15 @@ const (
 )
 
 func (s SignalingStep) String() string {
-	signalingSteps := [...]string{"Default", "NewGameOffer", "NewGameAnswer", "JoinGameOffer", "JoinGameAnswer"}
+	signalingSteps := [...]string{
+		"Default",
+		"IsConnectedToWebSocket",
+		"OpponentIsConnectedToWebSocket",
+		"NewGameOffer",
+		"NewGameAnswer",
+		"JoinGameOffer",
+		"JoinGameAnswer",
+	}
 	return signalingSteps[s]
 }
 
@@ -28,6 +38,10 @@ func ToSignalingStep(s string) (SignalingStep, error) {
 	switch s {
 	case "Default":
 		step = SignalingStepDefault
+	case "IsConnectedToWebSocket":
+		step = SignalingStepIsConnectedToWebSocket
+	case "OpponentIsConnectedToWebSocket":
+		step = SignalingStepOpponentIsConnectedToWebSocket
 	case "NewGameOfer":
 		step = SignalingStepNewGameOffer
 	case "NewGameAnswer":
@@ -47,8 +61,12 @@ func (s SignalingStep) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignalingStep) UnmarshalJSON(data []byte) error {
+	var step string
+	if err := json.Unmarshal(data, &step); err != nil {
+		return err
+	}
 	var err error
-	*s, err = ToSignalingStep(string(data))
+	*s, err = ToSignalingStep(step)
 	return err
 }
 

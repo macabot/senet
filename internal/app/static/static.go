@@ -7,17 +7,16 @@ import (
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag"
-	"github.com/macabot/senet/internal/app/component"
-	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/app/component/page"
 )
 
 func GeneratePages(outputDir string) error {
 	pages := map[string]func() *hypp.VNode{
 		"index.html": func() *hypp.VNode {
-			return component.Senet(&state.State{Page: state.HomePage})
+			return page.Home()
 		},
 		"rules.html": func() *hypp.VNode {
-			return component.Senet(&state.State{Page: state.RulesPage})
+			return page.Rules()
 		},
 	}
 

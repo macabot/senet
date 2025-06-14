@@ -58,7 +58,8 @@ info "Build Senet WASM file."
 GOOS=js GOARCH=wasm go build \
     -o "${public_dir}/main.wasm" \
     -ldflags "-X github.com/macabot/senet/internal/pkg/metered.METERED_APP_NAME=${METERED_APP_NAME:-} \
-              -X github.com/macabot/senet/internal/pkg/metered.METERED_API_KEY=${METERED_API_KEY:-}" \
+              -X github.com/macabot/senet/internal/pkg/metered.METERED_API_KEY=${METERED_API_KEY:-}
+              -X github.com/macabot/senet/internal/pkg/scaledrone.SCALEDRONE_CHANNEL_ID=${SCALEDRONE_CHANNEL_ID:-}" \
     "${root_dir}/cmd/client-hypp/main.go"
 chmod -x "${public_dir}/main.wasm"
 

@@ -11,7 +11,7 @@ import (
 )
 
 func SetPanicStackTrace(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	panicStackTrace := payload.(*string)
+	panicStackTrace := payload.(string)
 	newState := s.Clone()
 	newState.PanicStackTrace = panicStackTrace
 	return newState
@@ -21,7 +21,7 @@ func RecoverEffectPanic(dispatch hypp.Dispatch) {
 	if r := recover(); r != nil {
 		panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
 		window.Console().Error(panicStackTrace)
-		dispatch(SetPanicStackTrace, &panicStackTrace)
+		dispatch(SetPanicStackTrace, panicStackTrace)
 	}
 }
 
@@ -50,7 +50,7 @@ func RecoverWrapAction(action hypp.Action[*state.State]) hypp.Action[*state.Stat
 				window.Console().Error(panicStackTrace)
 				dispatchable = hypp.ActionAndPayload[*state.State]{
 					Action:  SetPanicStackTrace,
-					Payload: &panicStackTrace,
+					Payload: panicStackTrace,
 				}
 			}
 		}()

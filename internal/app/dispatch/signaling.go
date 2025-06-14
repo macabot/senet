@@ -13,6 +13,46 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+func CreateRoomEffect() hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+			go func() {
+				defer RecoverEffectPanic(dispatch)
+
+				roomName := state.RandomRoomName()
+				state.Scaledrone.SetOnIsConnected(func() {
+					dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
+				})
+				state.Scaledrone.SetOnMemberJoin(func(memberID string) {
+					dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
+				})
+				state.Scaledrone.Connect(roomName)
+			}()
+		},
+	}
+}
+
+func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	roomName := payload.(string)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepIsConnectedToWebSocket
+	newState.Signaling.RoomName = roomName
+	return newState
+}
+
+func setSignalingStepOpponentIsConnectedToWebsocket(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepOpponentIsConnectedToWebSocket
+	// TODO create offer/answer
+	return newState
+}
+
 func initSignaling(s *state.State) {
 	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
 	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
@@ -39,6 +79,9 @@ func resetSignaling(s *state.State) {
 	}
 	if !state.PeerConnection.IsUndefined() {
 		state.PeerConnection.Close()
+	}
+	if state.Scaledrone.IsConnected() {
+		state.Scaledrone.Reset()
 	}
 	state.PeerConnection = webrtc.PeerConnection{}
 	state.DataChannel = webrtc.DataChannel{}

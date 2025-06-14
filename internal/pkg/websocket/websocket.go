@@ -39,7 +39,9 @@ func (ws WebSocket) OnClose(onClose func(e js.Value)) {
 }
 
 func (ws WebSocket) Send(data []byte) {
-	ws.Value.Call("send", data)
+	uint8Array := js.Global().Get("Uint8Array").New(len(data))
+	js.CopyBytesToJS(uint8Array, data)
+	ws.Value.Call("send", uint8Array)
 }
 
 func (ws WebSocket) Close() {
