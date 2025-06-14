@@ -12,6 +12,8 @@ type SignalingStep int
 
 const (
 	SignalingStepDefault SignalingStep = iota
+	SignalingStepIsConnectedToWebSocket
+	SignalingStepOpponentIsConnectedToWebSocket
 	SignalingStepNewGameOffer
 	SignalingStepNewGameAnswer
 	SignalingStepJoinGameOffer
@@ -21,6 +23,8 @@ const (
 func (s SignalingStep) String() string {
 	signalingSteps := [...]string{
 		"Default",
+		"IsConnectedToWebSocket",
+		"OpponentIsConnectedToWebSocket",
 		"NewGameOffer",
 		"NewGameAnswer",
 		"JoinGameOffer",
@@ -34,6 +38,10 @@ func ToSignalingStep(s string) (SignalingStep, error) {
 	switch s {
 	case "Default":
 		step = SignalingStepDefault
+	case "IsConnectedToWebSocket":
+		step = SignalingStepIsConnectedToWebSocket
+	case "OpponentIsConnectedToWebSocket":
+		step = SignalingStepOpponentIsConnectedToWebSocket
 	case "NewGameOfer":
 		step = SignalingStepNewGameOffer
 	case "NewGameAnswer":

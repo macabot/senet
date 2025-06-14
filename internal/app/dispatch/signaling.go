@@ -21,7 +21,10 @@ func CreateRoomEffect() hypp.Effect {
 
 				roomName := state.RandomRoomName()
 				state.Scaledrone.SetOnIsConnected(func() {
-					dispatch(setRoomName, roomName)
+					dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
+				})
+				state.Scaledrone.SetOnMemberJoin(func(memberID string) {
+					dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
 				})
 				state.Scaledrone.Connect(roomName)
 			}()
@@ -29,13 +32,24 @@ func CreateRoomEffect() hypp.Effect {
 	}
 }
 
-func setRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	roomName := payload.(string)
 	newState := s.Clone()
 	if newState.Signaling == nil {
 		newState.Signaling = &state.Signaling{}
 	}
+	newState.Signaling.Step = state.SignalingStepIsConnectedToWebSocket
 	newState.Signaling.RoomName = roomName
+	return newState
+}
+
+func setSignalingStepOpponentIsConnectedToWebsocket(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = state.SignalingStepOpponentIsConnectedToWebSocket
+	// TODO create offer/answer
 	return newState
 }
 

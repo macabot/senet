@@ -10,27 +10,30 @@ import (
 )
 
 func NewGame(s *state.State) *hypp.VNode {
-	isConnected := state.Scaledrone.IsConnected()
-	opponentIsConnected := false
 	roomName := ""
+	opponentIsConnected := false
+	isDoneSignaling := false // FIXME
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
+		opponentIsConnected = s.Signaling.Step == state.SignalingStepOpponentIsConnectedToWebSocket
 	}
+
 	var status string
 	onClickNext := dispatch.NoOp
-	roomNameDisabled := false
 	cta := false
-	if !isConnected {
-		status = "Connecting..."
-		roomNameDisabled = true
+	if roomName == "" {
+		status = "Creating room..."
 	} else if !opponentIsConnected {
 		status = "Waiting for opponent..."
+	} else if !isDoneSignaling {
+		status = "Connecting to opponent..."
 	} else {
 		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
 		cta = true
 	}
 
+	// TODO Refactor this once Hypp supports fragments.
 	children := []*hypp.VNode{
 		html.H1(nil, hypp.Text("Online - New Game")),
 	}
@@ -38,7 +41,8 @@ func NewGame(s *state.State) *hypp.VNode {
 		children,
 		molecule.RoomNameField(molecule.RoomNameFieldProps{
 			RoomName: roomName,
-			Disabled: roomNameDisabled,
+			ReadOnly: true,
+			Disabled: roomName == "",
 		})...,
 	)
 	children = append(
