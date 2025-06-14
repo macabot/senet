@@ -10,6 +10,6 @@ func CancelToStartPageButton() *hypp.VNode {
 	return atom.Button(
 		"Cancel",
 		dispatch.GoToStartScreen,
-		hypp.HProps{"class": "signaling back"},
+		nil,
 	)
 }
