@@ -47,7 +47,7 @@ func NewGame(s *state.State) *hypp.VNode {
 		html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
 		html.Div(
 			nil,
-			molecule.CancelToStartPageButton(), // TODO must disconnect signaling
+			molecule.CancelToStartPageButton(),
 			atom.Button(
 				"Next",
 				onClickNext,
