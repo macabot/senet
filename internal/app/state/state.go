@@ -1,7 +1,7 @@
 package state
 
 type State struct {
-	PanicStackTrace    *string
+	PanicStackTrace    string
 	Game               *Game
 	Screen             Screen
 	ShowMenu           bool
@@ -15,13 +15,8 @@ func (s *State) Clone() *State {
 	if s == nil {
 		return nil
 	}
-	var panicStackTraceClone *string
-	if s.PanicStackTrace != nil {
-		p := *s.PanicStackTrace
-		panicStackTraceClone = &p
-	}
 	return &State{
-		PanicStackTrace:    panicStackTraceClone,
+		PanicStackTrace:    s.PanicStackTrace,
 		Game:               s.Game.Clone(),
 		Screen:             s.Screen,
 		ShowMenu:           s.ShowMenu,

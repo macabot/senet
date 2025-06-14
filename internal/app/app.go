@@ -64,7 +64,7 @@ func recoverPanic(component func(s *state.State) *hypp.VNode, s *state.State) (v
 		if r := recover(); r != nil {
 			panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
 			window.Console().Error(panicStackTrace)
-			s.PanicStackTrace = &panicStackTrace
+			s.PanicStackTrace = panicStackTrace
 			vNode = page.Play(s)
 		}
 	}()
