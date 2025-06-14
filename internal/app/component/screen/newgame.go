@@ -11,7 +11,7 @@ import (
 
 func NewGame(s *state.State) *hypp.VNode {
 	isConnected := state.Scaledrone.IsConnected()
-	hasConnection := false
+	opponentIsConnected := false
 	roomName := ""
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
@@ -19,14 +19,16 @@ func NewGame(s *state.State) *hypp.VNode {
 	var status string
 	onClickNext := dispatch.NoOp
 	roomNameDisabled := false
+	cta := false
 	if !isConnected {
 		status = "Connecting..."
 		roomNameDisabled = true
-	} else if !hasConnection {
-		status = "Waiting for connection..."
+	} else if !opponentIsConnected {
+		status = "Waiting for opponent..."
 	} else {
 		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
+		cta = true
 	}
 
 	children := []*hypp.VNode{
@@ -51,7 +53,7 @@ func NewGame(s *state.State) *hypp.VNode {
 				onClickNext,
 				hypp.HProps{
 					"class": map[string]bool{
-						"cta": onClickNext != nil,
+						"cta": cta,
 					},
 				},
 			),
