@@ -84,6 +84,10 @@ func (s *Scaledrone) Reset() {
 //
 // Make sure to first set the event listeners before connecting to Scaledrone.
 func (s *Scaledrone) Connect(roomName string) {
+	if SCALEDRONE_CHANNEL_ID == "" {
+		window.Console().Error("SCALEDRONE_CHANNEL_ID is not set")
+	}
+
 	s.roomName = roomName
 	// Add the "observable-" prefix to ensure we get the observable events:
 	// - observable_members
