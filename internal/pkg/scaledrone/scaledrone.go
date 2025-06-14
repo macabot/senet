@@ -23,10 +23,12 @@ const (
 )
 
 type Scaledrone struct {
-	roomName         string
-	clientID         string
-	ws               websocket.WebSocket
-	isConnected      bool
+	roomName    string
+	clientID    string
+	ws          websocket.WebSocket
+	isConnected bool
+	members     []string
+
 	onIsConnected    func()
 	onReceiveMessage func(message any)
 	onError          func(err error)
@@ -37,6 +39,10 @@ type Scaledrone struct {
 
 func (s Scaledrone) IsConnected() bool {
 	return s.isConnected
+}
+
+func (s Scaledrone) Members() []string {
+	return s.members
 }
 
 func (s *Scaledrone) SetOnIsConnected(onIsConnected func()) {
@@ -135,20 +141,23 @@ func (s *Scaledrone) Connect(roomName string) {
 			}
 		case ObservableMembers:
 			window.Console().Debug("Members currently in room", string(mustJSONMarshal(data.Data)))
+			members := make([]string, len(data.Data))
+			for i, member := range data.Data {
+				members[i] = member.ID
+			}
+			s.members = members
 			if s.onObserveMembers != nil {
-				members := make([]string, len(data.Data))
-				for i, member := range data.Data {
-					members[i] = member.ID
-				}
 				s.onObserveMembers(members)
 			}
 		case ObservableMemberJoin:
 			window.Console().Debug("Member joined room", data.Data.ID)
+			s.members = append(s.members, data.Data.ID)
 			if s.onMemberJoin != nil {
 				s.onMemberJoin(data.Data.ID)
 			}
 		case ObservableMemberLeave:
 			window.Console().Debug("Member left room", data.Data.ID)
+			s.removeMember(data.Data.ID)
 			if s.onMemberLeave != nil {
 				s.onMemberLeave(data.Data.ID)
 			}
@@ -177,6 +186,15 @@ func (s *Scaledrone) Connect(roomName string) {
 	})
 
 	s.ws = ws
+}
+
+func (s *Scaledrone) removeMember(memberID string) {
+	for i, member := range s.members {
+		if member == memberID {
+			s.members = append(s.members[:i], s.members[i+1:]...)
+			return
+		}
+	}
 }
 
 func parseEventData(b []byte) any {
