@@ -13,6 +13,32 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+func CreateRoomEffect() hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+			go func() {
+				defer RecoverEffectPanic(dispatch)
+
+				roomName := state.RandomRoomName()
+				state.Scaledrone.SetOnIsConnected(func() {
+					dispatch(setRoomName, roomName)
+				})
+				state.Scaledrone.Connect(roomName)
+			}()
+		},
+	}
+}
+
+func setRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	roomName := payload.(string)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.RoomName = roomName
+	return newState
+}
+
 func initSignaling(s *state.State) {
 	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
 	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {

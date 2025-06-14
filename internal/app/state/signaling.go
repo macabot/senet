@@ -19,7 +19,13 @@ const (
 )
 
 func (s SignalingStep) String() string {
-	signalingSteps := [...]string{"Default", "NewGameOffer", "NewGameAnswer", "JoinGameOffer", "JoinGameAnswer"}
+	signalingSteps := [...]string{
+		"Default",
+		"NewGameOffer",
+		"NewGameAnswer",
+		"JoinGameOffer",
+		"JoinGameAnswer",
+	}
 	return signalingSteps[s]
 }
 

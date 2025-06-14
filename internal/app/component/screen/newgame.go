@@ -10,34 +10,51 @@ import (
 )
 
 func NewGame(s *state.State) *hypp.VNode {
-	hasConnection := true
+	isConnected := state.Scaledrone.IsConnected()
+	hasConnection := false
 	roomName := ""
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
 	}
 	var status string
-	var onClickNext hypp.Dispatchable
-	if hasConnection {
+	onClickNext := dispatch.NoOp
+	roomNameDisabled := false
+	if !isConnected {
+		status = "Connecting..."
+		roomNameDisabled = true
+	} else if !hasConnection {
+		status = "Waiting for connection..."
+	} else {
 		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
-	} else {
-		status = "Waiting..."
 	}
-
-	statusNode := html.P(hypp.HProps{"class": "status"}, hypp.Text(status))
 
 	children := []*hypp.VNode{
 		html.H1(nil, hypp.Text("Online - New Game")),
 	}
-	children = append(children, molecule.RoomNameField(roomName, false)...)
+	children = append(
+		children,
+		molecule.RoomNameField(molecule.RoomNameFieldProps{
+			RoomName: roomName,
+			Disabled: roomNameDisabled,
+		})...,
+	)
 	children = append(
 		children,
 		html.P(nil, hypp.Text("Share the room name with your opponent.")),
-		statusNode,
+		html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
 		html.Div(
 			nil,
-			molecule.CancelToStartPageButton(),
-			atom.Button("Next", onClickNext, hypp.HProps{"class": "cta"}),
+			molecule.CancelToStartPageButton(), // TODO must disconnect signaling
+			atom.Button(
+				"Next",
+				onClickNext,
+				hypp.HProps{
+					"class": map[string]bool{
+						"cta": onClickNext != nil,
+					},
+				},
+			),
 		),
 	)
 	return html.Main(

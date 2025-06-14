@@ -69,7 +69,10 @@ func GoToOnlineScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 func GoToNewGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 	newState.Screen = state.NewGameScreen
-	return newState
+	return hypp.StateAndEffects[*state.State]{
+		State:   newState,
+		Effects: []hypp.Effect{CreateRoomEffect()},
+	}
 }
 
 func GoToJoinGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {

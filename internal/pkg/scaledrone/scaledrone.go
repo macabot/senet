@@ -35,6 +35,10 @@ type Scaledrone struct {
 	onMemberLeave    func(memberID string)
 }
 
+func (s Scaledrone) IsConnected() bool {
+	return s.isConnected
+}
+
 func (s *Scaledrone) SetOnIsConnected(onIsConnected func()) {
 	s.onIsConnected = onIsConnected
 }

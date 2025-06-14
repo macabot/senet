@@ -14,7 +14,12 @@ func TaleRoomNameField() *fairytale.Tale[*state.State] {
 		"RoomNameField",
 		&state.State{Signaling: &state.Signaling{RoomName: "R2D2"}},
 		func(s *state.State) *hypp.VNode {
-			return html.Div(nil, molecule.RoomNameField(s.Signaling.RoomName, false)...)
+			return html.Div(
+				nil,
+				molecule.RoomNameField(molecule.RoomNameFieldProps{
+					RoomName: s.Signaling.RoomName,
+				})...,
+			)
 		},
 	).WithControls(
 		control.NewTextInput(

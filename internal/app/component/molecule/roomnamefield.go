@@ -5,7 +5,13 @@ import (
 	"github.com/macabot/hypp/tag/html"
 )
 
-func RoomNameField(roomName string, readOnly bool) []*hypp.VNode {
+type RoomNameFieldProps struct {
+	RoomName string
+	ReadOnly bool
+	Disabled bool
+}
+
+func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
 	id := "room-name"
 	return []*hypp.VNode{
 		html.Label(
@@ -18,10 +24,11 @@ func RoomNameField(roomName string, readOnly bool) []*hypp.VNode {
 		html.Input(
 			hypp.HProps{
 				"id":        id,
-				"readonly":  readOnly,
+				"readonly":  props.ReadOnly,
+				"disabled":  props.Disabled,
 				"maxlength": 4,
 				"class":     "room-name-input",
-				"value":     roomName,
+				"value":     props.RoomName,
 			},
 		),
 	}
