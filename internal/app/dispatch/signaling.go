@@ -66,6 +66,9 @@ func resetSignaling(s *state.State) {
 	if !state.PeerConnection.IsUndefined() {
 		state.PeerConnection.Close()
 	}
+	if state.Scaledrone.IsConnected() {
+		state.Scaledrone.Reset()
+	}
 	state.PeerConnection = webrtc.PeerConnection{}
 	state.DataChannel = webrtc.DataChannel{}
 	s.Signaling = nil
