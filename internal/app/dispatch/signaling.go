@@ -196,32 +196,34 @@ func sendDataChannelMessage(data string) {
 }
 
 func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	err := payload.(error)
+	signalingError := payload.(state.SignalingError)
 	newState := s.Clone()
 	if newState.Signaling == nil {
 		newState.Signaling = &state.Signaling{}
 	}
-	newState.Signaling.Error = &state.JSONSerializableErr{Err: err}
+	newState.Signaling.Error = &signalingError
 	newState.Signaling.Loading = false
 	return newState
 }
 
 func CreatePeerConnectionOfferEffect() hypp.Effect {
 	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
 			go func() {
 				defer RecoverEffectPanic(dispatch)
+
+				summary := "Failed to create the offer"
 
 				offer, err := state.PeerConnection.AwaitCreateOffer()
 				if err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to create peer connection offer", err))
 					})
 					return
 				}
 				if err := state.PeerConnection.AwaitSetLocalDescription(offer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
 					})
 					return
 				}
@@ -256,6 +258,8 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 			go func() {
 				defer RecoverEffectPanic(dispatch)
 
+				summary := "Failed to create the answer"
+
 				if state.PeerConnection.SignalingState() != "stable" {
 					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
 					return
@@ -263,20 +267,20 @@ func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
 				offer := webrtc.NewSessionDescription("offer", offer)
 				if err := state.PeerConnection.AwaitSetRemoteDescription(offer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection remote description", err))
 					})
 					return
 				}
 				answer, err := state.PeerConnection.AwaitCreateAnswer()
 				if err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to create peer connection answer", err))
 					})
 					return
 				}
 				if err := state.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
 					})
 					return
 				}
@@ -403,7 +407,7 @@ func ConnectNewGameEffect(answer string) hypp.Effect {
 				answer := webrtc.NewSessionDescription("answer", answer)
 				if err := state.PeerConnection.AwaitSetRemoteDescription(answer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, err)
+						dispatch(setSignalingError, state.NewSignalingError("Failed to create a new game", "Failed to set peer connection remote description", err))
 					})
 					return
 				}

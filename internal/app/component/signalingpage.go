@@ -66,14 +66,18 @@ func signalingError(signaling *state.Signaling, isOffer bool) *hypp.VNode {
 		return nil
 	}
 
-	summary := "Invalid answer"
-	if isOffer {
-		summary = "Invalid offer"
-	}
-	return html.Details(
-		hypp.HProps{"class": "error"},
-		html.Summary(nil, hypp.Text(summary)),
-		html.P(nil, hypp.Text(signaling.Error.Error())),
+	return html.Div(
+		nil,
+		html.P(nil, hypp.Text(signaling.Error.Summary)),
+		html.Details(
+			hypp.HProps{"class": "error"},
+			html.Summary(nil, hypp.Text("Details")),
+			html.Pre(nil, hypp.Textf(
+				"Description:\n%s\n\nError:\n%s",
+				signaling.Error.Description,
+				signaling.Error.Error(),
+			)),
+		),
 	)
 }
 

@@ -70,6 +70,26 @@ func (s *SignalingStep) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+type SignalingError struct {
+	// Summary must contain a user friendly message.
+	Summary string
+	// Description must contain detailed information that is useful for debugging by a developer.
+	Description string
+	Err         JSONSerializableError
+}
+
+func NewSignalingError(summary string, description string, err error) *SignalingError {
+	return &SignalingError{
+		Description: description,
+		Err:         &JSONSerializableErr{Err: err},
+	}
+}
+
+// Error implements the error interface for SignalingError.
+func (se *SignalingError) Error() string {
+	return se.Err.Error()
+}
+
 type Signaling struct {
 	Step SignalingStep
 	// Initialized is true when the PeerConnection and DataChannel are set.
@@ -81,7 +101,8 @@ type Signaling struct {
 	Loading bool
 	Offer   string
 	Answer  string
-	Error   JSONSerializableError
+
+	Error *SignalingError
 
 	RoomName string
 }
