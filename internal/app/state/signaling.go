@@ -8,6 +8,17 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+// ENUM(
+// default
+// web-socket-error
+// is-connected-to-web-socket
+// opponent-is-connected-to-web-socket
+// web-rtc-error
+// )
+//
+//go:generate go tool go-enum --marshal
+type SignalingStatus int
+
 type SignalingStep int
 
 const (
@@ -70,6 +81,11 @@ func (s *SignalingStep) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+type SignalingError struct {
+	Summary string
+	Details string
+}
+
 type Signaling struct {
 	Step SignalingStep
 	// Initialized is true when the PeerConnection and DataChannel are set.
@@ -81,7 +97,8 @@ type Signaling struct {
 	Loading bool
 	Offer   string
 	Answer  string
-	Error   JSONSerializableError
+
+	Error *SignalingError
 
 	RoomName string
 }

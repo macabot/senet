@@ -11,7 +11,17 @@ Play at <https://senet.macabot.com>.
 - [Brotli](https://github.com/google/brotli)
 - [wasm-opt](https://github.com/WebAssembly/binaryen)
 
-## Setup
+## Go generate
+
+This project uses [go-enum](https://github.com/abice/go-enum) to generate enums.
+
+To generate code:
+
+```shell
+go generate ./...
+```
+
+## Development terminal setup
 
 The setup requires the following terminals.
 

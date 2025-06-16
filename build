@@ -21,6 +21,13 @@ info() {
     echo "INFO:" "$@"
 }
 
+if [ "$env" = "development" ]; then
+    echo "!!!"
+    # go generate ./...
+fi
+
+exit 0
+
 public_dir="${2:-}"
 if [ -z "$public_dir" ]; then
     public_dir="${root_dir}/public"
