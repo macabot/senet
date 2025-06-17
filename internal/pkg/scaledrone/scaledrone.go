@@ -25,12 +25,14 @@ const (
 var (
 	ErrScaledroneChannelIDNotSet = errors.New("SCALEDRONE_CHANNEL_ID is not set")
 
-	ErrCallbackError        = errors.New("Scaledrone callback error")
-	ErrHandshakeFailed      = fmt.Errorf("%w: Scaledrone handshake failed", ErrCallbackError)
-	ErrSubscribeFailed      = fmt.Errorf("%w: Scaledrone subscribe failed", ErrCallbackError)
-	ErrUnknownCallbackError = fmt.Errorf("%w: unknown Scaledrone callback error", ErrCallbackError)
+	ErrCallback        = errors.New("Scaledrone callback error")
+	ErrHandshakeFailed = fmt.Errorf("%w: Scaledrone handshake failed", ErrCallback)
+	ErrSubscribeFailed = fmt.Errorf("%w: Scaledrone subscribe failed", ErrCallback)
+	ErrUnknownCallback = fmt.Errorf("%w: unknown Scaledrone callback", ErrCallback)
 
 	ErrUnknownMessageType = errors.New("unknown Scaledrone message type")
+
+	ErrConnection = errors.New("Scaledrone connection error")
 )
 
 type Scaledrone struct {
@@ -137,7 +139,7 @@ func (s *Scaledrone) Connect(roomName string) error {
 			} else if data.Callback == CallbackSubscribe {
 				err = fmt.Errorf("%w: %s", ErrSubscribeFailed, rawData)
 			} else {
-				err = fmt.Errorf("%w: %s", ErrUnknownCallbackError, rawData)
+				err = fmt.Errorf("%w: %s", ErrUnknownCallback, rawData)
 			}
 			window.Console().Error(err.Error())
 			if s.onError != nil {
@@ -194,7 +196,8 @@ func (s *Scaledrone) Connect(roomName string) error {
 	})
 
 	ws.OnError(func(err error) {
-		window.Console().Error("WebSocket error", err.Error())
+		err = fmt.Errorf("%w: %w", ErrConnection, err)
+		window.Console().Error(err.Error())
 		if s.onError != nil {
 			s.onError(err)
 		}

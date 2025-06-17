@@ -13,7 +13,6 @@ import (
 	"github.com/macabot/senet/internal/pkg/metered"
 	"github.com/macabot/senet/internal/pkg/scaledrone"
 	"github.com/macabot/senet/internal/pkg/webrtc"
-	"github.com/macabot/senet/internal/pkg/websocket"
 )
 
 func CreateRoomEffect() hypp.Effect {
@@ -29,17 +28,18 @@ func CreateRoomEffect() hypp.Effect {
 				state.Scaledrone.SetOnError(func(err error) {
 					if errors.Is(err, scaledrone.ErrUnknownMessageType) {
 						// Carry on and hope for the best.
+						window.Console().Warn("Ignoring unknown message type error:", err.Error())
 						return
 					}
 
 					var signalingError *state.SignalingError
-					if errors.Is(err, scaledrone.ErrCallbackError) {
+					if errors.Is(err, scaledrone.ErrCallback) {
 						signalingError = state.NewSignalingError(
 							"Failed to create room",
 							err.Error(),
 							err,
 						)
-					} else if errors.Is(err, websocket.ErrWebSocket) {
+					} else if errors.Is(err, scaledrone.ErrConnection) {
 						signalingError = state.NewSignalingError(
 							"Connection lost",
 							err.Error(),
