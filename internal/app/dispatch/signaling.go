@@ -32,26 +32,17 @@ func CreateRoomEffect() hypp.Effect {
 						return
 					}
 
-					var signalingError *state.SignalingError
+					summary := "unknown error"
 					if errors.Is(err, scaledrone.ErrCallback) {
-						signalingError = state.NewSignalingError(
-							"Failed to create room",
-							err.Error(),
-							err,
-						)
+						summary = "Failed to create room"
 					} else if errors.Is(err, scaledrone.ErrConnection) {
-						signalingError = state.NewSignalingError(
-							"Connection lost",
-							err.Error(),
-							err,
-						)
-					} else {
-						signalingError = state.NewSignalingError(
-							"Unknown error",
-							err.Error(),
-							err,
-						)
+						summary = "Connection lost"
 					}
+					signalingError := state.NewSignalingError(
+						summary,
+						"",
+						err,
+					)
 					dispatch(setSignalingError, signalingError)
 				})
 				state.Scaledrone.SetOnIsConnected(func() {
@@ -261,6 +252,19 @@ func sendDataChannelMessage(data string) {
 
 func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	signalingError := payload.(*state.SignalingError)
+
+	var stateDescription string
+	if b, err := json.MarshalIndent(s.Signaling, "", "  "); err == nil {
+		stateDescription = "[Signaling state]\n" + string(b)
+	} else {
+		stateDescription = "[Could not JSON encode signaling state]\n" + err.Error()
+	}
+	if signalingError.Description == "" {
+		signalingError.Description = stateDescription
+	} else {
+		signalingError.Description += "\n" + stateDescription
+	}
+
 	newState := s.Clone()
 	if newState.Signaling == nil {
 		newState.Signaling = &state.Signaling{}
