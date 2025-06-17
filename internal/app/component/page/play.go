@@ -14,11 +14,15 @@ func Play(s *state.State) *hypp.VNode {
 	return html.Html(
 		hypp.HProps{"lang": "en"},
 		template.Head("Play Senet"),
-		playBody(s),
+		html.Body(nil, playScreen(s)),
 	)
 }
 
-func playBody(s *state.State) *hypp.VNode {
+func playScreen(s *state.State) *hypp.VNode {
+	if s.PanicStackTrace != "" {
+		return screen.Panic(s)
+	}
+
 	var screenNode *hypp.VNode
 	switch s.Screen {
 	case state.StartScreen:
@@ -37,5 +41,5 @@ func playBody(s *state.State) *hypp.VNode {
 		panic(fmt.Errorf("component not implemented for screen %s", s.Screen))
 	}
 
-	return html.Body(nil, screenNode)
+	return screenNode
 }

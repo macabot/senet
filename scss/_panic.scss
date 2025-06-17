@@ -1,9 +1,4 @@
-.panic-modal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-
+.panic {
   details {
     max-width: 80%;
     border: 1px solid #aaa;
@@ -15,11 +10,5 @@
     font-weight: bold;
     margin: -0.5em -0.5em 0;
     padding: 0.5em;
-  }
-
-  button {
-    font-size: 3rem;
-    padding: 10px;
-    margin: 20px;
   }
 }

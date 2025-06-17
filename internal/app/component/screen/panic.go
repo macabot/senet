@@ -1,4 +1,4 @@
-package organism
+package screen
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func PanicModal(s *state.State) *hypp.VNode {
+func Panic(s *state.State) *hypp.VNode {
 	panicStackTrace := "[Unknown error]"
 	if s.PanicStackTrace != "" {
 		panicStackTrace = "[Error]\n" + s.PanicStackTrace
@@ -27,9 +27,9 @@ func PanicModal(s *state.State) *hypp.VNode {
 
 	details := panicStackTrace + "\n\n" + stateJSON
 
-	return html.Div(
+	return html.Main(
 		hypp.HProps{
-			"class": "panic-modal",
+			"class": "screen panic",
 		},
 		html.H1(
 			nil,
