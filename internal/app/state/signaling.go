@@ -79,6 +79,7 @@ type SignalingError struct {
 
 func NewSignalingError(summary string, description string, err error) *SignalingError {
 	return &SignalingError{
+		Summary:     summary,
 		Description: description,
 		Err:         &JSONSerializableErr{Err: err},
 	}
