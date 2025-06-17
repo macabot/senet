@@ -4,13 +4,16 @@ package dispatch
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/metered"
+	"github.com/macabot/senet/internal/pkg/scaledrone"
 	"github.com/macabot/senet/internal/pkg/webrtc"
+	"github.com/macabot/senet/internal/pkg/websocket"
 )
 
 func CreateRoomEffect() hypp.Effect {
@@ -19,17 +22,78 @@ func CreateRoomEffect() hypp.Effect {
 			go func() {
 				defer RecoverEffectPanic(dispatch)
 
+				dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
+
 				roomName := state.RandomRoomName()
+
+				state.Scaledrone.SetOnError(func(err error) {
+					if errors.Is(err, scaledrone.ErrUnknownMessageType) {
+						// Carry on and hope for the best.
+						return
+					}
+
+					var signalingError *state.SignalingError
+					if errors.Is(err, scaledrone.ErrCallbackError) {
+						signalingError = state.NewSignalingError(
+							"Failed to create room",
+							err.Error(),
+							err,
+						)
+					} else if errors.Is(err, websocket.ErrWebSocket) {
+						signalingError = state.NewSignalingError(
+							"Connection lost",
+							err.Error(),
+							err,
+						)
+					} else {
+						signalingError = state.NewSignalingError(
+							"Unknown error",
+							err.Error(),
+							err,
+						)
+					}
+					dispatch(setSignalingError, signalingError)
+				})
 				state.Scaledrone.SetOnIsConnected(func() {
 					dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
 				})
 				state.Scaledrone.SetOnMemberJoin(func(memberID string) {
 					dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
 				})
-				state.Scaledrone.Connect(roomName)
+				state.Scaledrone.SetOnMemberLeave(func(memberID string) {
+					dispatch(setSignalingStep, state.SignalingStepIsConnectedToWebSocket)
+				})
+
+				if err := state.Scaledrone.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
+					dispatch(setSignalingError, state.SignalingError{
+						Summary:     "Failed to connect to create room",
+						Description: "ScaledroneChannel ID is not set.",
+						Err: &state.JSONSerializableErr{
+							Err: err,
+						},
+					})
+				} else if err != nil {
+					dispatch(setSignalingError, state.SignalingError{
+						Summary:     "Failed to connect to create room",
+						Description: "Unknown error",
+						Err: &state.JSONSerializableErr{
+							Err: err,
+						},
+					})
+				}
+
 			}()
 		},
 	}
+}
+
+func setSignalingStep(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.Step = payload.(state.SignalingStep)
+	return newState
 }
 
 func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -196,12 +260,12 @@ func sendDataChannelMessage(data string) {
 }
 
 func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	signalingError := payload.(state.SignalingError)
+	signalingError := payload.(*state.SignalingError)
 	newState := s.Clone()
 	if newState.Signaling == nil {
 		newState.Signaling = &state.Signaling{}
 	}
-	newState.Signaling.Error = &signalingError
+	newState.Signaling.Error = signalingError
 	newState.Signaling.Loading = false
 	return newState
 }

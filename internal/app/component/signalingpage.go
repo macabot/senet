@@ -61,26 +61,6 @@ func signalingModal(s *state.State, f func(s *state.State) *hypp.VNode) *hypp.VN
 	)
 }
 
-func signalingError(signaling *state.Signaling) *hypp.VNode {
-	if signaling == nil || signaling.Error == nil {
-		return nil
-	}
-
-	return html.Div(
-		nil,
-		html.P(nil, hypp.Text(signaling.Error.Summary)),
-		html.Details(
-			hypp.HProps{"class": "error"},
-			html.Summary(nil, hypp.Text("Details")),
-			html.Pre(nil, hypp.Textf(
-				"Description:\n%s\n\nError:\n%s",
-				signaling.Error.Description,
-				signaling.Error.Error(),
-			)),
-		),
-	)
-}
-
 func signalingNewGameOffer(s *state.State) *hypp.VNode {
 	offer := "[error: Signaling is nil]"
 	if s.Signaling != nil {
@@ -169,7 +149,6 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the answer of your opponent below.")),
-		signalingError(s.Signaling),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "answer-textarea",
@@ -197,7 +176,6 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the offer of your opponent below.")),
-		signalingError(s.Signaling),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "offer-textarea",

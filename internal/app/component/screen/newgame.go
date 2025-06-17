@@ -11,26 +11,36 @@ import (
 
 func NewGame(s *state.State) *hypp.VNode {
 	roomName := ""
-	opponentIsConnected := false
-	isDoneSignaling := false // FIXME
+	signalingStep := state.SignalingStepDefault
+	var signalingError *hypp.VNode
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
-		opponentIsConnected = s.Signaling.Step == state.SignalingStepOpponentIsConnectedToWebSocket
+		signalingStep = s.Signaling.Step
+		signalingError = molecule.SignalingError(s.Signaling.Error)
 	}
 
 	var status string
 	onClickNext := dispatch.NoOp
 	cta := false
-	if roomName == "" {
+	switch signalingStep {
+	case state.SignalingStepDefault:
+		status = ""
+	case state.SignalingStepConnectingToWebSocket:
 		status = "Creating room..."
-	} else if !opponentIsConnected {
+	case state.SignalingStepIsConnectedToWebSocket:
 		status = "Waiting for opponent..."
-	} else if !isDoneSignaling {
+	case state.SignalingStepOpponentIsConnectedToWebSocket,
+		state.SignalingStepNewGameOffer,
+		state.SignalingStepNewGameAnswer,
+		state.SignalingStepJoinGameOffer,
+		state.SignalingStepJoinGameAnswer:
 		status = "Connecting to opponent..."
-	} else {
+	case state.SignalingStepHasWebRTCConnection:
 		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
 		cta = true
+	default:
+		status = "Unknown signaling step"
 	}
 
 	// TODO Refactor this once Hypp supports fragments.
@@ -49,6 +59,7 @@ func NewGame(s *state.State) *hypp.VNode {
 		children,
 		html.P(nil, hypp.Text("Share the room name with your opponent.")),
 		html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
+		signalingError,
 		html.Div(
 			nil,
 			molecule.CancelToStartPageButton(),
