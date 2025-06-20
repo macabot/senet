@@ -10,6 +10,10 @@ import (
 func Game(s *state.State) *hypp.VNode {
 	gameCanThrow := s.Game.CanThrow()
 	sticksCanThrow := s.Game.Sticks.CanThrow(s)
+	var menu *hypp.VNode
+	if s.ShowMenu {
+		menu = organism.Menu()
+	}
 	return html.Main(
 		hypp.HProps{
 			"class": "game-page",
@@ -25,5 +29,6 @@ func Game(s *state.State) *hypp.VNode {
 		organism.Disconnected(s),
 		organism.GameOver(s),
 		organism.OrientationTip(s),
+		menu,
 	)
 }
