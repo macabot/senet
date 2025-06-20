@@ -20,7 +20,7 @@ func NewGame(s *state.State) *hypp.VNode {
 	}
 
 	var status string
-	onClickNext := dispatch.NoOp
+	var onClickNext hypp.Dispatchable
 	cta := false
 	switch signalingStep {
 	case state.SignalingStepDefault:

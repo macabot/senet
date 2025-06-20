@@ -6,8 +6,8 @@ github.com/gosimple/unidecode v1.0.1 h1:hZzFTMMqSswvf0LBJZCZgThIZrpDHFXux9KeGmn6
 github.com/gosimple/unidecode v1.0.1/go.mod h1:CP0Cr1Y1kogOtx0bJblKzsVWrqYaqfNOnHzpgWw4Awc=
 github.com/macabot/fairytale v0.0.0-20250501192821-955ed7c064fb h1:R1hA3TNF4VjFMTeH4G3d1RMgG4jvNRUoogvo+RAmP4k=
 github.com/macabot/fairytale v0.0.0-20250501192821-955ed7c064fb/go.mod h1:Pjetqxe00ZEX/QJpahqs9/EAz1CqUu6Dt+xik1CceJo=
-github.com/macabot/hypp v0.0.0-20250606183251-e3a2006ae24a h1:eDd5Zi62BRnOURS8P12bD/bjJgtR9u5m/CALX69sGwg=
-github.com/macabot/hypp v0.0.0-20250606183251-e3a2006ae24a/go.mod h1:0qm3vEIpJaYuxwDux4z6OmEPou+QT3X8PFOcVJCdu1U=
+github.com/macabot/hypp v0.0.0-20250620201438-9bfa725c94a9 h1:+ZvPQyX94LYNDTgnQ+IA1xNcZ7agNd7LE806jrkwpGE=
+github.com/macabot/hypp v0.0.0-20250620201438-9bfa725c94a9/go.mod h1:0qm3vEIpJaYuxwDux4z6OmEPou+QT3X8PFOcVJCdu1U=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.5.2 h1:xuMeJ0Sdp5ZMRXx/aWO6RZxdr3beISkG5/G/aIRr3pY=
