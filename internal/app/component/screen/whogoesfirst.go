@@ -15,6 +15,7 @@ func WhoGoesFirst(s *state.State) *hypp.VNode {
 	name0 := ""
 	name1 := ""
 	isPlayer0 := false
+	var ctaDispatchable hypp.Dispatchable
 	if hasDecision {
 		correctCall := s.CommitmentScheme.CallerPredictions[0] == s.CommitmentScheme.FlipperResults[0]
 		if s.CommitmentScheme.IsCaller == correctCall {
@@ -24,6 +25,10 @@ func WhoGoesFirst(s *state.State) *hypp.VNode {
 		} else {
 			name0 = "Opponent"
 			name1 = "You"
+		}
+		ctaDispatchable = hypp.ActionAndPayload[*state.State]{
+			Action:  dispatch.GoToOnlineScreen,
+			Payload: isPlayer0,
 		}
 	}
 	return html.Main(
@@ -53,13 +58,9 @@ func WhoGoesFirst(s *state.State) *hypp.VNode {
 			molecule.CancelToStartPageButton(),
 			atom.Button(
 				"Play",
-				hypp.ActionAndPayload[*state.State]{
-					Action:  dispatch.GoToOnlineScreen,
-					Payload: isPlayer0,
-				},
+				ctaDispatchable,
 				hypp.HProps{
-					"class":    "cta",
-					"disabled": !hasDecision,
+					"class": map[string]bool{"cta": hasDecision},
 				},
 			),
 		),
