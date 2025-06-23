@@ -2,17 +2,19 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
+	"runtime/debug"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
-	"github.com/macabot/senet/internal/app/component"
+	"github.com/macabot/senet/internal/app/component/page"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/sessionstorage"
 )
 
-var debug = false
+var isDebugMode = false
 
 // dispatchWrapper recovers panics throws in effects and actions.
 // An effect that starts a new go routine will not recover from a panic.
@@ -42,7 +44,7 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 
 		dispatchFunc(dispatchable, payload)
 
-		if stateFound && debug {
+		if stateFound && isDebugMode {
 			prevState := sessionstorage.GetItem("state")
 			if prevState != nil {
 				sessionstorage.SetItem("prevState", *prevState)
@@ -57,18 +59,31 @@ func dispatchWrapper(dispatchFunc hypp.Dispatch) hypp.Dispatch {
 	}
 }
 
+func recoverPanic(component func(s *state.State) *hypp.VNode, s *state.State) (vNode *hypp.VNode) {
+	defer func() {
+		if r := recover(); r != nil {
+			panicStackTrace := fmt.Sprintf("%v\n%s", r, string(debug.Stack()))
+			window.Console().Error(panicStackTrace)
+			s.PanicStackTrace = panicStackTrace
+			vNode = page.Play(s)
+		}
+	}()
+
+	return component(s)
+}
+
 func Run(element window.Element) {
 	urlSearchParams := js.Global().Get("URLSearchParams")
 	urlParams := urlSearchParams.New(js.Global().Get("location").Get("search"))
 	debugParam := urlParams.Call("get", "debug")
-	debug = !debugParam.IsNull() && debugParam.String() == "true"
+	isDebugMode = !debugParam.IsNull() && debugParam.String() == "true"
 
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: &state.State{
-			Page: state.StartPage,
+			Screen: state.StartScreen,
 		},
 		View: func(s *state.State) *hypp.VNode {
-			return component.RecoverPanic(component.Senet, s)
+			return recoverPanic(page.Play, s)
 		},
 		Node: element,
 		Subscriptions: func(s *state.State) []hypp.Subscription {

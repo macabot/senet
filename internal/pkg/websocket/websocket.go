@@ -1,6 +1,15 @@
 package websocket
 
-import "github.com/macabot/hypp/js"
+import (
+	"errors"
+	"fmt"
+
+	"github.com/macabot/hypp/js"
+)
+
+var (
+	ErrWebSocket = errors.New("WebSocket error")
+)
 
 type WebSocket struct {
 	js.Value
@@ -24,9 +33,9 @@ func (ws WebSocket) OnMessage(onMessage func(e js.Value)) {
 	}))
 }
 
-func (ws WebSocket) OnError(onError func(e js.Value)) {
+func (ws WebSocket) OnError(onError func(err error)) {
 	ws.Value.Set("onerror", js.FuncOf(func(this js.Value, args []js.Value) any {
-		onError(args[0])
+		onError(fmt.Errorf("%w: %s", ErrWebSocket, args[0].Get("message").String()))
 		return nil
 	}))
 }
@@ -39,7 +48,9 @@ func (ws WebSocket) OnClose(onClose func(e js.Value)) {
 }
 
 func (ws WebSocket) Send(data []byte) {
-	ws.Value.Call("send", data)
+	uint8Array := js.Global().Get("Uint8Array").New(len(data))
+	js.CopyBytesToJS(uint8Array, data)
+	ws.Value.Call("send", uint8Array)
 }
 
 func (ws WebSocket) Close() {

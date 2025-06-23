@@ -1,8 +1,10 @@
+// TODO delete this file
 package component
 
 import (
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/tag/html"
+	"github.com/macabot/senet/internal/app/component/molecule"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -43,7 +45,7 @@ func SignalingPage(s *state.State) *hypp.VNode {
 		html.Button(
 			hypp.HProps{
 				"class":   "signaling back",
-				"onclick": dispatch.GoToStartPage,
+				"onclick": dispatch.GoToStartScreen,
 			},
 			hypp.Text("Back"),
 		),
@@ -57,57 +59,6 @@ func signalingModal(s *state.State, f func(s *state.State) *hypp.VNode) *hypp.VN
 			"class": "signaling-modal",
 		},
 		f(s),
-	)
-}
-
-func connectionStates(s *state.State) *hypp.VNode {
-	iceConnectionState := "[unset]"
-	connectionState := "[unset]"
-	readyState := "[unset]"
-	if s.Signaling != nil {
-		if s.Signaling.ICEConnectionState != "" {
-			iceConnectionState = s.Signaling.ICEConnectionState
-		}
-		if s.Signaling.ConnectionState != "" {
-			connectionState = s.Signaling.ConnectionState
-		}
-		if s.Signaling.ReadyState != "" {
-			readyState = s.Signaling.ReadyState
-		}
-	}
-	return html.Div(
-		hypp.HProps{"class": "connection-state"},
-		html.Div(
-			nil,
-			html.Span(nil, hypp.Text("ICE connection state:")),
-			html.B(nil, hypp.Text(iceConnectionState)),
-		),
-		html.Div(
-			nil,
-			html.Span(nil, hypp.Text("Connection state:")),
-			html.B(nil, hypp.Text(connectionState)),
-		),
-		html.Div(
-			nil,
-			html.Span(nil, hypp.Text("Ready state:")),
-			html.B(nil, hypp.Text(readyState)),
-		),
-	)
-}
-
-func signalingError(signaling *state.Signaling, isOffer bool) *hypp.VNode {
-	if signaling == nil || signaling.Error == nil {
-		return nil
-	}
-
-	summary := "Invalid answer"
-	if isOffer {
-		summary = "Invalid offer"
-	}
-	return html.Details(
-		hypp.HProps{"class": "error"},
-		html.Summary(nil, hypp.Text(summary)),
-		html.P(nil, hypp.Text(signaling.Error.Error())),
 	)
 }
 
@@ -141,12 +92,12 @@ func signalingNewGameOffer(s *state.State) *hypp.VNode {
 				"value":    offer,
 			},
 		),
-		connectionStates(s),
+		molecule.ConnectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.GoToStartPage,
+					"onclick": dispatch.GoToStartScreen,
 				},
 				hypp.Text("Cancel"),
 			),
@@ -178,7 +129,7 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 			hypp.HProps{
 				"class": "cta",
 				"onclick": hypp.ActionAndPayload[*state.State]{
-					Action:  dispatch.GoToWhoGoesFirstPage,
+					Action:  dispatch.GoToWhoGoesFirstScreen,
 					Payload: true,
 				},
 			},
@@ -199,19 +150,18 @@ func signalingNewGameAnswer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the answer of your opponent below.")),
-		signalingError(s.Signaling, false),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "answer-textarea",
 				"oninput": dispatch.SetSignalingAnswer,
 			},
 		),
-		connectionStates(s),
+		molecule.ConnectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.GoToStartPage,
+					"onclick": dispatch.GoToStartScreen,
 				},
 				hypp.Text("Cancel"),
 			),
@@ -227,19 +177,18 @@ func signalingJoinGameOffer(s *state.State) *hypp.VNode {
 		},
 		html.H1(nil, hypp.Text("Online - Player vs. Player")),
 		html.P(nil, hypp.Text("Paste the offer of your opponent below.")),
-		signalingError(s.Signaling, true),
 		html.Textarea(
 			hypp.HProps{
 				"id":      "offer-textarea",
 				"oninput": dispatch.SetSignalingOffer,
 			},
 		),
-		connectionStates(s),
+		molecule.ConnectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.GoToStartPage,
+					"onclick": dispatch.GoToStartScreen,
 				},
 				hypp.Text("Cancel"),
 			),
@@ -287,12 +236,12 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 				"value":    answer,
 			},
 		),
-		connectionStates(s),
+		molecule.ConnectionStates(s),
 		html.Div(
 			nil,
 			html.Button(
 				hypp.HProps{
-					"onclick": dispatch.GoToStartPage,
+					"onclick": dispatch.GoToStartScreen,
 				},
 				hypp.Text("Cancel"),
 			),
@@ -300,7 +249,7 @@ func signalingJoinGameAnswer(s *state.State) *hypp.VNode {
 				hypp.HProps{
 					"class": "cta",
 					"onclick": hypp.ActionAndPayload[*state.State]{
-						Action:  dispatch.GoToWhoGoesFirstPage,
+						Action:  dispatch.GoToWhoGoesFirstScreen,
 						Payload: false,
 					},
 				},

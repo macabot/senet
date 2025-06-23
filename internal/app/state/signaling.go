@@ -12,30 +12,52 @@ type SignalingStep int
 
 const (
 	SignalingStepDefault SignalingStep = iota
+	SignalingStepConnectingToWebSocket
+	SignalingStepIsConnectedToWebSocket
+	SignalingStepOpponentIsConnectedToWebSocket
 	SignalingStepNewGameOffer
 	SignalingStepNewGameAnswer
 	SignalingStepJoinGameOffer
 	SignalingStepJoinGameAnswer
+	SignalingStepHasWebRTCConnection
 )
 
 func (s SignalingStep) String() string {
-	signalingSteps := [...]string{"Default", "NewGameOffer", "NewGameAnswer", "JoinGameOffer", "JoinGameAnswer"}
+	signalingSteps := [...]string{
+		"SignalingStepDefault",
+		"SignalingStepConnectingToWebSocket",
+		"SignalingStepIsConnectedToWebSocket",
+		"SignalingStepOpponentIsConnectedToWebSocket",
+		"SignalingStepNewGameOffer",
+		"SignalingStepNewGameAnswer",
+		"SignalingStepJoinGameOffer",
+		"SignalingStepJoinGameAnswer",
+		"SignalingStepHasWebRTCConnection",
+	}
 	return signalingSteps[s]
 }
 
 func ToSignalingStep(s string) (SignalingStep, error) {
 	var step SignalingStep
 	switch s {
-	case "Default":
+	case "SignalingStepDefault":
 		step = SignalingStepDefault
-	case "NewGameOfer":
+	case "SignalingStepConnectingToWebSocket":
+		step = SignalingStepConnectingToWebSocket
+	case "SignalingStepIsConnectedToWebSocket":
+		step = SignalingStepIsConnectedToWebSocket
+	case "SignalingStepOpponentIsConnectedToWebSocket":
+		step = SignalingStepOpponentIsConnectedToWebSocket
+	case "SignalingStepNewGameOffer":
 		step = SignalingStepNewGameOffer
-	case "NewGameAnswer":
+	case "SignalingStepNewGameAnswer":
 		step = SignalingStepNewGameAnswer
-	case "JoinGameOffer":
+	case "SignalingStepJoinGameOffer":
 		step = SignalingStepJoinGameOffer
-	case "JoinGameAnswer":
+	case "SignalingStepJoinGameAnswer":
 		step = SignalingStepJoinGameAnswer
+	case "SignalingStepHasWebRTCConnection":
+		step = SignalingStepHasWebRTCConnection
 	default:
 		return step, fmt.Errorf("invalid SignalingStep '%s'", s)
 	}
@@ -47,9 +69,34 @@ func (s SignalingStep) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignalingStep) UnmarshalJSON(data []byte) error {
+	var step string
+	if err := json.Unmarshal(data, &step); err != nil {
+		return err
+	}
 	var err error
-	*s, err = ToSignalingStep(string(data))
+	*s, err = ToSignalingStep(step)
 	return err
+}
+
+type SignalingError struct {
+	// Summary must contain a user friendly message.
+	Summary string
+	// Description must contain detailed information that is useful for debugging by a developer.
+	Description string
+	Err         JSONSerializableError
+}
+
+func NewSignalingError(summary string, description string, err error) *SignalingError {
+	return &SignalingError{
+		Summary:     summary,
+		Description: description,
+		Err:         &JSONSerializableErr{Err: err},
+	}
+}
+
+// Error implements the error interface for SignalingError.
+func (se *SignalingError) Error() string {
+	return se.Err.Error()
 }
 
 type Signaling struct {
@@ -63,7 +110,8 @@ type Signaling struct {
 	Loading bool
 	Offer   string
 	Answer  string
-	Error   JSONSerializableError
+
+	Error *SignalingError
 
 	RoomName string
 }

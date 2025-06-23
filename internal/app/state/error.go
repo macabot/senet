@@ -18,6 +18,9 @@ type JSONSerializableErr struct {
 }
 
 func (e JSONSerializableErr) Error() string {
+	if e.Err == nil {
+		return ""
+	}
 	return e.Err.Error()
 }
 
