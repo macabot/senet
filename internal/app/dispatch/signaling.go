@@ -5,6 +5,7 @@ package dispatch
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/macabot/hypp"
 	"github.com/macabot/hypp/js"
@@ -14,6 +15,16 @@ import (
 	"github.com/macabot/senet/internal/pkg/scaledrone"
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
+
+func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	newState := s.Clone()
+	if newState.Signaling == nil {
+		newState.Signaling = &state.Signaling{}
+	}
+	newState.Signaling.RoomName = strings.ToUpper(event.Target().Value())
+	return newState
+}
 
 func CreateRoomEffect() hypp.Effect {
 	return hypp.Effect{
@@ -75,6 +86,29 @@ func CreateRoomEffect() hypp.Effect {
 
 			}()
 		},
+	}
+}
+
+func JoinRoomEffect() hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+			go func() {
+				defer RecoverEffectPanic(dispatch)
+
+				dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
+				// TODO
+			}()
+		},
+	}
+}
+
+func JoinGame(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	event.PreventDefault()
+
+	return hypp.StateAndEffects[*state.State]{
+		State:   s,
+		Effects: []hypp.Effect{JoinRoomEffect()},
 	}
 }
 
