@@ -21,16 +21,30 @@ func JoinGame(s *state.State) *hypp.VNode {
 	if s.Signaling != nil {
 		roomName = s.Signaling.RoomName
 	}
-	return html.Main(
-		hypp.HProps{
-			"class": "online",
-		},
+
+	// TODO Refactor this once Hypp supports fragments.
+	children := []*hypp.VNode{
 		html.H1(nil, hypp.Text("Online - Join Game")),
-		html.Input(nil, hypp.Text(roomName)),
+	}
+	children = append(
+		children,
+		molecule.RoomNameField(molecule.RoomNameFieldProps{
+			RoomName:  roomName,
+			AutoFocus: true,
+		})...,
+	)
+	children = append(
+		children,
 		html.Div(
 			nil,
 			molecule.CancelToStartPageButton(),
 			nextButton,
 		),
+	)
+	return html.Main(
+		hypp.HProps{
+			"class": "screen",
+		},
+		children...,
 	)
 }

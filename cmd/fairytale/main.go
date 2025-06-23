@@ -42,6 +42,7 @@ func main() {
 		fairytale.NewBundle(
 			"Screens",
 			screen.TaleGame(),
+			screen.TaleJoinGame(),
 			screen.TaleNewGame(),
 			screen.TaleStart(),
 			screen.TaleWhoGoesFirst(),

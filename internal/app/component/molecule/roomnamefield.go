@@ -6,9 +6,10 @@ import (
 )
 
 type RoomNameFieldProps struct {
-	RoomName string
-	ReadOnly bool
-	Disabled bool
+	RoomName  string
+	ReadOnly  bool
+	Disabled  bool
+	AutoFocus bool
 }
 
 func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
@@ -26,6 +27,7 @@ func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
 				"id":        id,
 				"readonly":  props.ReadOnly,
 				"disabled":  props.Disabled,
+				"autofocus": props.AutoFocus,
 				"maxlength": 4,
 				"class":     "room-name-input",
 				"value":     props.RoomName,
