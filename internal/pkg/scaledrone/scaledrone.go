@@ -269,18 +269,13 @@ func parseEventData(b []byte) any {
 	return nil
 }
 
-func (s Scaledrone) SendMessage(message any) error {
-	if !s.isConnected {
-		return errors.New("Scaledrone is not connected")
-	}
-
+func (s Scaledrone) SendMessage(message any) {
 	publishSent := PublishSend{
 		Kind:    "publish",
 		Room:    s.roomName,
 		Message: message,
 	}
 	s.ws.Send(mustJSONMarshal(publishSent))
-	return nil
 }
 
 type Handshake struct {
