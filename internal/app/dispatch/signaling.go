@@ -36,26 +36,7 @@ func CreateRoomEffect() hypp.Effect {
 
 				roomName := state.RandomRoomName()
 
-				state.Scaledrone.SetOnError(func(err error) {
-					if errors.Is(err, scaledrone.ErrUnknownMessageType) {
-						// Carry on and hope for the best.
-						window.Console().Warn("Ignoring unknown message type error:", err.Error())
-						return
-					}
-
-					summary := "unknown error"
-					if errors.Is(err, scaledrone.ErrCallback) {
-						summary = "Failed to create room"
-					} else if errors.Is(err, scaledrone.ErrConnection) {
-						summary = "Connection lost"
-					}
-					signalingError := state.NewSignalingError(
-						summary,
-						"",
-						err,
-					)
-					dispatch(setSignalingError, signalingError)
-				})
+				state.Scaledrone.SetOnError(createScaledroneErrorHandler(dispatch))
 				state.Scaledrone.SetOnIsConnected(func() {
 					dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
 				})
@@ -83,32 +64,88 @@ func CreateRoomEffect() hypp.Effect {
 						},
 					})
 				}
-
 			}()
 		},
 	}
 }
 
-func JoinRoomEffect() hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
+func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	roomName := payload.(string)
+	go func() {
+		defer RecoverEffectPanic(dispatch)
 
-				dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
-				// TODO
-			}()
-		},
-	}
+		dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
+
+		state.Scaledrone.SetOnError(createScaledroneErrorHandler(dispatch))
+		state.Scaledrone.SetOnIsConnected(func() {
+			dispatch(setSignalingStepIsConnectedToWebSocket, nil)
+		})
+		state.Scaledrone.SetOnObserveMembers(func(members []string) {
+			if len(members) >= 2 {
+				dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
+			}
+		})
+		state.Scaledrone.SetOnMemberJoin(func(memberID string) {
+			if len(state.Scaledrone.Members()) >= 2 {
+				dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
+			}
+		})
+
+		if err := state.Scaledrone.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
+			dispatch(setSignalingError, state.SignalingError{
+				Summary:     "Failed to connect to join room",
+				Description: "ScaledroneChannel ID is not set.",
+				Err: &state.JSONSerializableErr{
+					Err: err,
+				},
+			})
+		} else if err != nil {
+			dispatch(setSignalingError, state.SignalingError{
+				Summary:     "Failed to connect to join room",
+				Description: "Unknown error",
+				Err: &state.JSONSerializableErr{
+					Err: err,
+				},
+			})
+		}
+	}()
 }
 
 func JoinGame(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	event := payload.(window.Event)
 	event.PreventDefault()
 
+	roomName := ""
+	if s.Signaling != nil {
+		roomName = s.Signaling.RoomName
+	}
+
 	return hypp.StateAndEffects[*state.State]{
 		State:   s,
-		Effects: []hypp.Effect{JoinRoomEffect()},
+		Effects: []hypp.Effect{{Effecter: JoinRoomEffecter, Payload: roomName}},
+	}
+}
+
+func createScaledroneErrorHandler(dispatch hypp.Dispatch) func(err error) {
+	return func(err error) {
+		if errors.Is(err, scaledrone.ErrUnknownMessageType) {
+			// Carry on and hope for the best.
+			window.Console().Warn("Ignoring unknown message type error:", err.Error())
+			return
+		}
+
+		summary := "unknown error"
+		if errors.Is(err, scaledrone.ErrCallback) {
+			summary = "Failed to create room"
+		} else if errors.Is(err, scaledrone.ErrConnection) {
+			summary = "Connection lost"
+		}
+		signalingError := state.NewSignalingError(
+			summary,
+			"",
+			err,
+		)
+		dispatch(setSignalingError, signalingError)
 	}
 }
 
@@ -122,13 +159,14 @@ func setSignalingStep(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 }
 
 func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	roomName := payload.(string)
 	newState := s.Clone()
 	if newState.Signaling == nil {
 		newState.Signaling = &state.Signaling{}
 	}
 	newState.Signaling.Step = state.SignalingStepIsConnectedToWebSocket
-	newState.Signaling.RoomName = roomName
+	if roomName, ok := payload.(string); ok {
+		newState.Signaling.RoomName = roomName
+	}
 	return newState
 }
 
