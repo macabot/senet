@@ -71,7 +71,7 @@ func GoToNewGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState.Screen = state.NewGameScreen
 	return hypp.StateAndEffects[*state.State]{
 		State:   newState,
-		Effects: []hypp.Effect{CreateRoomEffect()},
+		Effects: []hypp.Effect{{Effecter: CreateRoomEffecter}},
 	}
 }
 
