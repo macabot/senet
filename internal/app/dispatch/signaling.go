@@ -16,6 +16,12 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
+type SendICECandidateMessage struct {
+	// Kind must always equal "candidate".
+	Kind      string
+	Candidate webrtc.ICECandidate
+}
+
 func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	event := payload.(window.Event)
 	newState := s.Clone()
@@ -173,7 +179,33 @@ func setSignalingStepOpponentIsConnectedToWebsocket(s *state.State, _ hypp.Paylo
 	}
 	newState.Signaling.Step = state.SignalingStepOpponentIsConnectedToWebSocket
 	// TODO create offer/answer
-	return newState
+
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			{Effecter: createPeerConnectionEffecter},
+		},
+	}
+}
+
+func createPeerConnectionEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
+	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
+	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
+		peerConnectionConfig.ICEServers = metered.FetchedICEServers
+	} else {
+		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
+	}
+
+	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
+
+	state.PeerConnection.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
+		if event.Candidate().Truthy() {
+			state.Scaledrone.SendMessage(SendICECandidateMessage{
+				Kind:      "candidate",
+				Candidate: event.Candidate(),
+			})
+		}
+	})
 }
 
 func initSignaling(s *state.State) {
