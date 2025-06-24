@@ -1,6 +1,8 @@
 package webrtc
 
 import (
+	"encoding/json"
+
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/senet/internal/pkg/promise"
 )
@@ -120,6 +122,38 @@ func (c PeerConnection) AwaitCreateAnswer() (SessionDescription, error) {
 
 type ICECandidate struct {
 	js.Value
+}
+
+// ToJSON converts the ICECandidate to a map that can be JSON serialized.
+//
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCIceCandidate/toJSON
+func (c ICECandidate) ToJSON() map[string]any {
+	m := map[string]any{}
+	if candidate := c.Value.Get("candidate"); !candidate.IsUndefined() {
+		m["candidate"] = c.Value.Get("candidate").String()
+	}
+	if sdpMid := c.Value.Get("sdpMid"); !sdpMid.IsUndefined() {
+		if sdpMid.IsNull() {
+			m["sdpMid"] = nil
+		} else {
+			m["sdpMid"] = c.Value.Get("sdpMid").String()
+		}
+	}
+	if sdpMLineIndex := c.Value.Get("sdpMLineIndex"); !sdpMLineIndex.IsUndefined() {
+		if sdpMLineIndex.IsNull() {
+			m["sdpMLineIndex"] = nil
+		} else {
+			m["sdpMLineIndex"] = c.Value.Get("sdpMLineIndex").Int()
+		}
+	}
+	if userFragment := c.Value.Get("userFragment"); !userFragment.IsUndefined() {
+		m["userFragment"] = c.Value.Get("userFragment").String()
+	}
+	return m
+}
+
+func (c ICECandidate) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.ToJSON())
 }
 
 type PeerConnectionICEEvent struct {
