@@ -54,6 +54,6 @@ func TaleGame() *fairytale.Tale[*state.State] {
 				{Label: "Player 2", Value: 2},
 			},
 		),
-		mycontrol.Disconnected(),
+		// mycontrol.Disconnected(),
 	)
 }

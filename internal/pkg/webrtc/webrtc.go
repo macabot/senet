@@ -2,6 +2,7 @@ package webrtc
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/senet/internal/pkg/promise"
@@ -77,9 +78,31 @@ func (c PeerConnection) SetOnICEConnectionStateChange(onICEConnectionStateChange
 	}))
 }
 
+type DataChannelEvent struct {
+	js.Value
+}
+
+func (e DataChannelEvent) Channel() DataChannel {
+	return DataChannel{e.Value.Get("channel")}
+}
+
+func (c PeerConnection) SetOnDataChannel(onDataChannel func(DataChannelEvent)) {
+	c.Value.Set("ondatachannel", js.FuncOf(func(this js.Value, args []js.Value) any {
+		onDataChannel(DataChannelEvent{args[0]})
+		return nil
+	}))
+}
+
 func (c PeerConnection) SetOnConnectionStateChange(onConnectionStateChange func()) {
 	c.Value.Set("onconnectionstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onConnectionStateChange()
+		return nil
+	}))
+}
+
+func (c PeerConnection) SetOnSignalingStateChange(onSignalingStateChange func()) {
+	c.Value.Set("onsignalingstatechange", js.FuncOf(func(this js.Value, args []js.Value) any {
+		onSignalingStateChange()
 		return nil
 	}))
 }
@@ -209,6 +232,20 @@ func (c DataChannel) SetOnOpen(onOpen func()) {
 	}))
 }
 
+func (c DataChannel) SetOnClose(onClose func()) {
+	c.Value.Set("onclose", js.FuncOf(func(this js.Value, args []js.Value) any {
+		onClose()
+		return nil
+	}))
+}
+
+func (c DataChannel) SetOnError(onError func(err error)) {
+	c.Value.Set("onerror", js.FuncOf(func(this js.Value, args []js.Value) any {
+		onError(errors.New(args[0].String()))
+		return nil
+	}))
+}
+
 func (c DataChannel) SetOnMessage(onMessage func(e js.Value)) {
 	c.Value.Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
 		onMessage(args[0])
@@ -222,6 +259,10 @@ func (c DataChannel) Send(data string) {
 
 func (c DataChannel) ReadyState() string {
 	return c.Value.Get("readyState").String()
+}
+
+func (c DataChannel) Label() string {
+	return c.Value.Get("label").String()
 }
 
 // Close closes the RTCDataChannel. Closure of the data channel is not instantaneous.

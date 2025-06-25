@@ -5,7 +5,6 @@ import (
 	"github.com/macabot/hypp/tag/html"
 	"github.com/macabot/senet/internal/app/component/atom"
 	"github.com/macabot/senet/internal/app/component/molecule"
-	"github.com/macabot/senet/internal/app/component/organism"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
 )
@@ -64,6 +63,6 @@ func WhoGoesFirst(s *state.State) *hypp.VNode {
 				},
 			),
 		),
-		organism.Disconnected(s),
+		// organism.Disconnected(s),
 	)
 }

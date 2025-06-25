@@ -107,17 +107,17 @@ func GoToJoinGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 
 func GoToWhoGoesFirstScreen(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	isCaller := payload.(bool)
-	connectionState := ""
-	readyState := ""
-	loading := false
-	if s.Signaling != nil {
-		connectionState = s.Signaling.ConnectionState
-		readyState = s.Signaling.ReadyState
-		loading = s.Signaling.Loading
-	}
-	if connectionState != "connected" || readyState != "open" || loading {
-		return s
-	}
+	// connectionState := ""
+	// readyState := ""
+	// loading := false
+	// if s.Signaling != nil {
+	// 	connectionState = s.Signaling.ConnectionState
+	// 	readyState = s.Signaling.ReadyState
+	// 	loading = s.Signaling.Loading
+	// }
+	// if connectionState != "connected" || readyState != "open" || loading {
+	// 	return s
+	// }
 
 	newState := s.Clone()
 	newState.Screen = state.WhoGoesFirstScreen

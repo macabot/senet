@@ -200,33 +200,69 @@ func createPeerConnectionEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
 
 	state.PeerConnection.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
 		if event.Candidate().Truthy() {
+			window.Console().Debug("Sending ICE candidate", event.Candidate())
 			state.Scaledrone.SendMessage(SendICECandidateMessage{
 				Kind:      "candidate",
 				Candidate: event.Candidate(),
 			})
 		}
 	})
+
+	// Handle incoming DataChannel for answering peer.
+	state.PeerConnection.SetOnDataChannel(func(dce webrtc.DataChannelEvent) {
+		state.DataChannel = dce.Channel()
+		window.Console().Debug("Received DataChannel", state.DataChannel.Label())
+		setupDataChannelListeners(dispatch)
+	})
+
+	state.PeerConnection.SetOnICEConnectionStateChange(func() {
+		window.Console().Debug("ICEConnectionState:", state.PeerConnection.ICEConnectionState())
+	})
+
+	state.PeerConnection.SetOnSignalingStateChange(func() {
+		window.Console().Debug("SignalingState:", state.PeerConnection.SignalingState())
+	})
 }
 
-func initSignaling(s *state.State) {
-	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
-	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
-		peerConnectionConfig.ICEServers = metered.FetchedICEServers
-	} else {
-		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
-	}
+func setupDataChannelListeners(dispatch hypp.Dispatch) {
+	state.DataChannel.SetOnOpen(func() {
+		window.Console().Debug("DataChannel opened")
+		dispatch(setSignalingStep, state.SignalingStepHasWebRTCConnection)
+	})
 
-	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
-	state.DataChannel = state.PeerConnection.CreateDataChannel("chat", webrtc.DefaultDataChannelOptions)
+	state.DataChannel.SetOnMessage(func(e js.Value) {
+		data := e.Get("data")
+		window.Console().Debug("<<< Receive DataChannel message", data)
+	})
 
-	if s.Signaling == nil {
-		s.Signaling = &state.Signaling{}
-	}
-	s.Signaling.Initialized = true
-	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
-	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
-	s.Signaling.ReadyState = state.DataChannel.ReadyState()
+	state.DataChannel.SetOnClose(func() {
+		window.Console().Error("DataChannel closed")
+	})
+
+	state.DataChannel.SetOnError(func(err error) {
+		window.Console().Error("DataChannel error", err.Error())
+	})
 }
+
+// func initSignaling(s *state.State) {
+// 	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
+// 	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
+// 		peerConnectionConfig.ICEServers = metered.FetchedICEServers
+// 	} else {
+// 		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
+// 	}
+
+// 	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
+// 	state.DataChannel = state.PeerConnection.CreateDataChannel("chat", webrtc.DefaultDataChannelOptions)
+
+// 	if s.Signaling == nil {
+// 		s.Signaling = &state.Signaling{}
+// 	}
+// 	s.Signaling.Initialized = true
+// 	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
+// 	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
+// 	s.Signaling.ReadyState = state.DataChannel.ReadyState()
+// }
 
 func resetSignaling(s *state.State) {
 	if !state.DataChannel.IsUndefined() {
@@ -243,67 +279,67 @@ func resetSignaling(s *state.State) {
 	s.Signaling = nil
 }
 
-type SignalingStates struct {
-	ICEConnectionState string
-	ConnectionState    string
-	ReadyState         string
-}
+// type SignalingStates struct {
+// 	ICEConnectionState string
+// 	ConnectionState    string
+// 	ReadyState         string
+// }
 
-func SetSignalingStates(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	signalingStates := payload.(SignalingStates)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
+// func SetSignalingStates(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	signalingStates := payload.(SignalingStates)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
 
-	if newState.Signaling.ICEConnectionState != signalingStates.ICEConnectionState {
-		window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, signalingStates.ICEConnectionState)
-	}
-	if newState.Signaling.ConnectionState != signalingStates.ConnectionState {
-		window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, signalingStates.ConnectionState)
-	}
-	if newState.Signaling.ReadyState != signalingStates.ReadyState {
-		window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, signalingStates.ReadyState)
-	}
+// 	if newState.Signaling.ICEConnectionState != signalingStates.ICEConnectionState {
+// 		window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, signalingStates.ICEConnectionState)
+// 	}
+// 	if newState.Signaling.ConnectionState != signalingStates.ConnectionState {
+// 		window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, signalingStates.ConnectionState)
+// 	}
+// 	if newState.Signaling.ReadyState != signalingStates.ReadyState {
+// 		window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, signalingStates.ReadyState)
+// 	}
 
-	newState.Signaling.ICEConnectionState = signalingStates.ICEConnectionState
-	newState.Signaling.ConnectionState = signalingStates.ConnectionState
-	newState.Signaling.ReadyState = signalingStates.ReadyState
+// 	newState.Signaling.ICEConnectionState = signalingStates.ICEConnectionState
+// 	newState.Signaling.ConnectionState = signalingStates.ConnectionState
+// 	newState.Signaling.ReadyState = signalingStates.ReadyState
 
-	return newState
-}
+// 	return newState
+// }
 
-func onSignalingStateChange(dispatch hypp.Dispatch) {
-	iceConnectionState := state.PeerConnection.ICEConnectionState()
-	connectionState := state.PeerConnection.ConnectionState()
-	readyState := state.DataChannel.ReadyState()
-	dispatch(SetSignalingStates, SignalingStates{
-		ICEConnectionState: iceConnectionState,
-		ConnectionState:    connectionState,
-		ReadyState:         readyState,
-	})
-}
+// func onSignalingStateChange(dispatch hypp.Dispatch) {
+// 	iceConnectionState := state.PeerConnection.ICEConnectionState()
+// 	connectionState := state.PeerConnection.ConnectionState()
+// 	readyState := state.DataChannel.ReadyState()
+// 	dispatch(SetSignalingStates, SignalingStates{
+// 		ICEConnectionState: iceConnectionState,
+// 		ConnectionState:    connectionState,
+// 		ReadyState:         readyState,
+// 	})
+// }
 
-func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		onSignalingStateChange(dispatch)
-	})
-	return func() {}
-}
+// func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+// 	state.PeerConnection.SetOnICEConnectionStateChange(func() {
+// 		onSignalingStateChange(dispatch)
+// 	})
+// 	return func() {}
+// }
 
-func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.PeerConnection.SetOnConnectionStateChange(func() {
-		onSignalingStateChange(dispatch)
-	})
-	return func() {}
-}
+// func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+// 	state.PeerConnection.SetOnConnectionStateChange(func() {
+// 		onSignalingStateChange(dispatch)
+// 	})
+// 	return func() {}
+// }
 
-func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.DataChannel.SetOnOpen(func() {
-		onSignalingStateChange(dispatch)
-	})
-	return func() {}
-}
+// func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
+// 	state.DataChannel.SetOnOpen(func() {
+// 		onSignalingStateChange(dispatch)
+// 	})
+// 	return func() {}
+// }
 
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
@@ -370,7 +406,6 @@ func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		newState.Signaling = &state.Signaling{}
 	}
 	newState.Signaling.Error = signalingError
-	newState.Signaling.Loading = false
 	return newState
 }
 
@@ -400,200 +435,201 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 						return
 					}
 					offer := state.PeerConnection.LocalDescription().SDP()
-					window.RequestAnimationFrame(func() {
-						dispatch(setOffer, offer)
-					})
+					window.Console().Debug("Offer:", offer)
+					// window.RequestAnimationFrame(func() {
+					// 	dispatch(setOffer, offer)
+					// })
 				})
 			}()
 		},
 	}
 }
 
-func setOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	offer := payload.(string)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Offer = offer
-	newState.Signaling.Loading = false
-	return newState
-}
+// func setOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	offer := payload.(string)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Offer = offer
+// 	newState.Signaling.Loading = false
+// 	return newState
+// }
 
-func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
+// func CreatePeerConnectionAnswerEffect(offer string) hypp.Effect {
+// 	return hypp.Effect{
+// 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+// 			go func() {
+// 				defer RecoverEffectPanic(dispatch)
 
-				summary := "Failed to create the answer"
+// 				summary := "Failed to create the answer"
 
-				if state.PeerConnection.SignalingState() != "stable" {
-					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
-					return
-				}
-				offer := webrtc.NewSessionDescription("offer", offer)
-				if err := state.PeerConnection.AwaitSetRemoteDescription(offer); err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection remote description", err))
-					})
-					return
-				}
-				answer, err := state.PeerConnection.AwaitCreateAnswer()
-				if err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to create peer connection answer", err))
-					})
-					return
-				}
-				if err := state.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
-					})
-					return
-				}
-				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
-					if pci.Candidate().Truthy() {
-						return
-					}
-					answer := state.PeerConnection.LocalDescription().SDP()
-					window.RequestAnimationFrame(func() {
-						dispatch(setAnswer, answer)
-					})
-				})
-			}()
-		},
-	}
-}
+// 				if state.PeerConnection.SignalingState() != "stable" {
+// 					window.Console().Log(`PeerConnection.SignalingState != "stable"`)
+// 					return
+// 				}
+// 				offer := webrtc.NewSessionDescription("offer", offer)
+// 				if err := state.PeerConnection.AwaitSetRemoteDescription(offer); err != nil {
+// 					window.RequestAnimationFrame(func() {
+// 						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection remote description", err))
+// 					})
+// 					return
+// 				}
+// 				answer, err := state.PeerConnection.AwaitCreateAnswer()
+// 				if err != nil {
+// 					window.RequestAnimationFrame(func() {
+// 						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to create peer connection answer", err))
+// 					})
+// 					return
+// 				}
+// 				if err := state.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
+// 					window.RequestAnimationFrame(func() {
+// 						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
+// 					})
+// 					return
+// 				}
+// 				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
+// 					if pci.Candidate().Truthy() {
+// 						return
+// 					}
+// 					answer := state.PeerConnection.LocalDescription().SDP()
+// 					window.RequestAnimationFrame(func() {
+// 						dispatch(setAnswer, answer)
+// 					})
+// 				})
+// 			}()
+// 		},
+// 	}
+// }
 
-func setAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	answer := payload.(string)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
-	newState.Signaling.Answer = answer
-	newState.Signaling.Loading = false
-	return newState
-}
+// func setAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	answer := payload.(string)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
+// 	newState.Signaling.Answer = answer
+// 	newState.Signaling.Loading = false
+// 	return newState
+// }
 
-func SetSignalingStepNewGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = state.SignalingStepNewGameOffer
-	newState.Signaling.Loading = true
-	newState.Signaling.Error = nil
-	newState.Signaling.RoomName = state.RandomRoomName()
-	return hypp.StateAndEffects[*state.State]{
-		State:   newState,
-		Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
-	}
-}
+// func SetSignalingStepNewGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepNewGameOffer
+// 	newState.Signaling.Loading = true
+// 	newState.Signaling.Error = nil
+// 	newState.Signaling.RoomName = state.RandomRoomName()
+// 	return hypp.StateAndEffects[*state.State]{
+// 		State:   newState,
+// 		Effects: []hypp.Effect{CreatePeerConnectionOfferEffect()},
+// 	}
+// }
 
-func SetSignalingStepNewGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	if s.Signaling.Loading {
-		return s
-	}
-	newState.Signaling.Step = state.SignalingStepNewGameAnswer
-	return newState
-}
+// func SetSignalingStepNewGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	if s.Signaling.Loading {
+// 		return s
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepNewGameAnswer
+// 	return newState
+// }
 
-func SetSignalingStepJoinGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = state.SignalingStepJoinGameOffer
-	return newState
-}
+// func SetSignalingStepJoinGameOffer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepJoinGameOffer
+// 	return newState
+// }
 
-func SetSignalingStepJoinGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Loading = true
-	newState.Signaling.Error = nil
-	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
-	return hypp.StateAndEffects[*state.State]{
-		State:   newState,
-		Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
-	}
-}
+// func SetSignalingStepJoinGameAnswer(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Loading = true
+// 	newState.Signaling.Error = nil
+// 	newState.Signaling.Step = state.SignalingStepJoinGameAnswer
+// 	return hypp.StateAndEffects[*state.State]{
+// 		State:   newState,
+// 		Effects: []hypp.Effect{CreatePeerConnectionAnswerEffect(newState.Signaling.Offer)},
+// 	}
+// }
 
-func SetSignalingOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	event := payload.(window.Event)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Offer = event.Target().Value()
-	return newState
-}
+// func SetSignalingOffer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	event := payload.(window.Event)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Offer = event.Target().Value()
+// 	return newState
+// }
 
-func SetSignalingAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	event := payload.(window.Event)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Answer = event.Target().Value()
-	return newState
-}
+// func SetSignalingAnswer(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	event := payload.(window.Event)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Answer = event.Target().Value()
+// 	return newState
+// }
 
-func ConnectNewGame(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Loading = true
-	newState.Signaling.Error = nil
-	return hypp.StateAndEffects[*state.State]{
-		State:   newState,
-		Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
-	}
-}
+// func ConnectNewGame(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Loading = true
+// 	newState.Signaling.Error = nil
+// 	return hypp.StateAndEffects[*state.State]{
+// 		State:   newState,
+// 		Effects: []hypp.Effect{ConnectNewGameEffect(newState.Signaling.Answer)},
+// 	}
+// }
 
-func ConnectNewGameEffect(answer string) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
+// func ConnectNewGameEffect(answer string) hypp.Effect {
+// 	return hypp.Effect{
+// 		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+// 			go func() {
+// 				defer RecoverEffectPanic(dispatch)
 
-				signalingState := state.PeerConnection.SignalingState()
-				if signalingState != "have-local-offer" {
-					window.Console().Log("ConnectNewGameEffect expected signaling state 'have-local-offer', got '%s'.", signalingState)
-					return
-				}
-				answer := webrtc.NewSessionDescription("answer", answer)
-				if err := state.PeerConnection.AwaitSetRemoteDescription(answer); err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError("Failed to create a new game", "Failed to set peer connection remote description", err))
-					})
-					return
-				}
-				window.RequestAnimationFrame(func() {
-					dispatch(setSignalingLoading, false)
-				})
-			}()
-		},
-	}
-}
+// 				signalingState := state.PeerConnection.SignalingState()
+// 				if signalingState != "have-local-offer" {
+// 					window.Console().Log("ConnectNewGameEffect expected signaling state 'have-local-offer', got '%s'.", signalingState)
+// 					return
+// 				}
+// 				answer := webrtc.NewSessionDescription("answer", answer)
+// 				if err := state.PeerConnection.AwaitSetRemoteDescription(answer); err != nil {
+// 					window.RequestAnimationFrame(func() {
+// 						dispatch(setSignalingError, state.NewSignalingError("Failed to create a new game", "Failed to set peer connection remote description", err))
+// 					})
+// 					return
+// 				}
+// 				window.RequestAnimationFrame(func() {
+// 					dispatch(setSignalingLoading, false)
+// 				})
+// 			}()
+// 		},
+// 	}
+// }
 
-func setSignalingLoading(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	loading := payload.(bool)
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Loading = loading
-	newState.Signaling.Error = nil
-	return newState
-}
+// func setSignalingLoading(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	loading := payload.(bool)
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Loading = loading
+// 	newState.Signaling.Error = nil
+// 	return newState
+// }

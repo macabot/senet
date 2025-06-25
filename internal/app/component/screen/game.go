@@ -26,7 +26,7 @@ func Game(s *state.State) *hypp.VNode {
 			NoValidMoves:  len(s.Game.ValidMoves) == 0,
 			IsLoading:     gameCanThrow && !sticksCanThrow,
 		}),
-		organism.Disconnected(s),
+		// organism.Disconnected(s),
 		organism.GameOver(s),
 		organism.OrientationTip(s),
 		menu,

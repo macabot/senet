@@ -86,27 +86,27 @@ func Run(element window.Element) {
 			return recoverPanic(page.Play, s)
 		},
 		Node: element,
-		Subscriptions: func(s *state.State) []hypp.Subscription {
-			initialized := s.Signaling != nil && s.Signaling.Initialized
-			return []hypp.Subscription{
-				{
-					Subscriber: dispatch.OnICEConnectionStateChangeSubscriber,
-					Disabled:   !initialized,
-				},
-				{
-					Subscriber: dispatch.OnConnectionStateChangeSubscriber,
-					Disabled:   !initialized,
-				},
-				{
-					Subscriber: dispatch.OnDataChannelOpenSubscriber,
-					Disabled:   !initialized,
-				},
-				{
-					Subscriber: dispatch.OnDataChannelMessageSubscriber,
-					Disabled:   !initialized,
-				},
-			}
-		},
+		// Subscriptions: func(s *state.State) []hypp.Subscription {
+		// 	initialized := s.Signaling != nil && s.Signaling.Initialized
+		// 	return []hypp.Subscription{
+		// 		{
+		// 			Subscriber: dispatch.OnICEConnectionStateChangeSubscriber,
+		// 			Disabled:   !initialized,
+		// 		},
+		// 		{
+		// 			Subscriber: dispatch.OnConnectionStateChangeSubscriber,
+		// 			Disabled:   !initialized,
+		// 		},
+		// 		{
+		// 			Subscriber: dispatch.OnDataChannelOpenSubscriber,
+		// 			Disabled:   !initialized,
+		// 		},
+		// 		{
+		// 			Subscriber: dispatch.OnDataChannelMessageSubscriber,
+		// 			Disabled:   !initialized,
+		// 		},
+		// 	}
+		// },
 		DispatchWrapper: dispatchWrapper,
 	})
 

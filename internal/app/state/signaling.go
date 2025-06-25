@@ -20,6 +20,7 @@ const (
 	SignalingStepJoinGameOffer
 	SignalingStepJoinGameAnswer
 	SignalingStepHasWebRTCConnection
+	SignalingStepOpponentLeft
 )
 
 func (s SignalingStep) String() string {
@@ -33,6 +34,7 @@ func (s SignalingStep) String() string {
 		"SignalingStepJoinGameOffer",
 		"SignalingStepJoinGameAnswer",
 		"SignalingStepHasWebRTCConnection",
+		"SignalingStepOpponentLeft",
 	}
 	return signalingSteps[s]
 }
@@ -58,6 +60,8 @@ func ToSignalingStep(s string) (SignalingStep, error) {
 		step = SignalingStepJoinGameAnswer
 	case "SignalingStepHasWebRTCConnection":
 		step = SignalingStepHasWebRTCConnection
+	case "SignalingStepOpponentLeft":
+		step = SignalingStepOpponentLeft
 	default:
 		return step, fmt.Errorf("invalid SignalingStep '%s'", s)
 	}
@@ -102,14 +106,22 @@ func (se *SignalingError) Error() string {
 type Signaling struct {
 	Step SignalingStep
 	// Initialized is true when the PeerConnection and DataChannel are set.
-	Initialized        bool
-	ICEConnectionState string
-	ConnectionState    string
-	ReadyState         string
+	// Initialized bool
+
+	// // SignalingState describes the state of the signaling process on the local end of the connection while connecting or reconnecting to another peer.
+	// // See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/signalingState
+	// SignalingState string
+
+	// ICEConnectionState string
+
+	// // ConnectionState indicates the current state of the peer connection by returning one of the following string values: new, connecting, connected, disconnected, failed, or closed.
+	// // See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionState
+	// ConnectionState string
+	// ReadyState      string
 	// Loading Offer or Answer.
-	Loading bool
-	Offer   string
-	Answer  string
+	// Loading bool
+	// Offer   string
+	// Answer  string
 
 	Error *SignalingError
 
@@ -121,16 +133,16 @@ func (s *Signaling) Clone() *Signaling {
 		return nil
 	}
 	return &Signaling{
-		Step:               s.Step,
-		Initialized:        s.Initialized,
-		ICEConnectionState: s.ICEConnectionState,
-		ConnectionState:    s.ConnectionState,
-		ReadyState:         s.ReadyState,
-		Loading:            s.Loading,
-		Offer:              s.Offer,
-		Answer:             s.Answer,
-		Error:              s.Error,
-		RoomName:           s.RoomName,
+		Step: s.Step,
+		// Initialized:        s.Initialized,
+		// ICEConnectionState: s.ICEConnectionState,
+		// ConnectionState:    s.ConnectionState,
+		// ReadyState:         s.ReadyState,
+		// Loading:            s.Loading,
+		// Offer:              s.Offer,
+		// Answer:             s.Answer,
+		Error:    s.Error,
+		RoomName: s.RoomName,
 	}
 }
 
