@@ -50,16 +50,6 @@ func GoToStartScreen(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 	return newState
 }
 
-// func GoToSignalingPage(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
-// 	newState := &state.State{
-// 		Screen: state.SignalingScreen,
-// 	}
-// 	resetSignaling(newState)
-// 	initSignaling(newState)
-// 	addBeforeUnloadListener()
-// 	return newState
-// }
-
 func GoToOnlineScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 	newState.Screen = state.OnlineScreen
@@ -71,7 +61,7 @@ func GoToNewGameScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState.Screen = state.NewGameScreen
 	return hypp.StateAndEffects[*state.State]{
 		State:   newState,
-		Effects: []hypp.Effect{{Effecter: CreateRoomEffecter}},
+		Effects: []hypp.Effect{{Effecter: CreateRoomEffecter, Payload: newState.Scaledrone}},
 	}
 }
 
@@ -159,5 +149,3 @@ func GoToLocalPlayerVsPlayerGameScreen(s *state.State, _ hypp.Payload) hypp.Disp
 	addBeforeUnloadListener()
 	return newState
 }
-
-// TODO func GoToOnlineGameScreen

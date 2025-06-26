@@ -33,25 +33,24 @@ func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 }
 
 func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	sd := payload.(*scaledrone.Scaledrone)
 	go func() {
 		defer RecoverEffectPanic(dispatch)
 
-		dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
-
 		roomName := state.RandomRoomName()
 
-		state.Scaledrone.SetOnError(createScaledroneErrorHandler(dispatch))
-		state.Scaledrone.SetOnIsConnected(func() {
+		sd.SetOnError(createScaledroneErrorHandler(dispatch))
+		sd.SetOnIsConnected(func() {
 			dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
 		})
-		state.Scaledrone.SetOnMemberJoin(func(memberID string) {
+		sd.SetOnMemberJoin(func(memberID string) {
 			dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
 		})
-		state.Scaledrone.SetOnMemberLeave(func(memberID string) {
-			dispatch(setSignalingStep, state.SignalingStepIsConnectedToWebSocket)
-		})
+		// sd.SetOnMemberLeave(func(memberID string) {
+		// 	dispatch(setSignalingStep, state.SignalingStepIsConnectedToWebSocket)
+		// })
 
-		if err := state.Scaledrone.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
+		if err := sd.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
 			dispatch(setSignalingError, state.SignalingError{
 				Summary:     "Failed to connect to create room",
 				Description: "ScaledroneChannel ID is not set.",
@@ -76,7 +75,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 	go func() {
 		defer RecoverEffectPanic(dispatch)
 
-		dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
+		// dispatch(setSignalingStep, state.SignalingStepConnectingToWebSocket)
 
 		state.Scaledrone.SetOnError(createScaledroneErrorHandler(dispatch))
 		state.Scaledrone.SetOnIsConnected(func() {

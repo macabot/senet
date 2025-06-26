@@ -11,6 +11,7 @@ import (
 	"github.com/macabot/senet/internal/app/component/page"
 	"github.com/macabot/senet/internal/app/dispatch"
 	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/pkg/scaledrone"
 	"github.com/macabot/senet/internal/pkg/sessionstorage"
 )
 
@@ -80,7 +81,8 @@ func Run(element window.Element) {
 
 	hypp.App(hypp.AppProps[*state.State]{
 		Init: &state.State{
-			Screen: state.StartScreen,
+			Screen:     state.StartScreen,
+			Scaledrone: scaledrone.NewScaledrone(),
 		},
 		View: func(s *state.State) *hypp.VNode {
 			return recoverPanic(page.Play, s)

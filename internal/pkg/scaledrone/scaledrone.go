@@ -50,6 +50,10 @@ type Scaledrone struct {
 	onMemberLeave    func(memberID string)
 }
 
+func NewScaledrone() *Scaledrone {
+	return &Scaledrone{}
+}
+
 func (s Scaledrone) IsConnected() bool {
 	return s.isConnected
 }
