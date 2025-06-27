@@ -24,7 +24,7 @@ func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 }
 
 func EffectsAction(effects ...hypp.Effect) hypp.Action[*state.State] {
-	return func(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		return hypp.StateAndEffects[*state.State]{
 			State:   s,
 			Effects: effects,

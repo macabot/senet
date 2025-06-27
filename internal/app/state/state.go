@@ -12,11 +12,14 @@ type State struct {
 	ShowMenu           bool
 	HideOrientationTip bool
 
-	SignalingError *SignalingError
-	RoomName       string
-	PeerConnection webrtc.PeerConnection
-	DataChannel    webrtc.DataChannel
-	Scaledrone     *scaledrone.Scaledrone
+	WebSocketConnected         bool
+	OpponentWebsocketConnected bool
+	WebRTCConnected            bool
+	SignalingError             *SignalingError
+	RoomName                   string
+	PeerConnection             webrtc.PeerConnection
+	DataChannel                webrtc.DataChannel
+	Scaledrone                 *scaledrone.Scaledrone
 
 	CommitmentScheme CommitmentScheme
 
@@ -34,11 +37,14 @@ func (s *State) Clone() *State {
 		ShowMenu:           s.ShowMenu,
 		HideOrientationTip: s.HideOrientationTip,
 
-		SignalingError: s.SignalingError,
-		RoomName:       s.RoomName,
-		PeerConnection: s.PeerConnection,
-		DataChannel:    s.DataChannel,
-		Scaledrone:     s.Scaledrone,
+		WebSocketConnected:         s.WebSocketConnected,
+		OpponentWebsocketConnected: s.OpponentWebsocketConnected,
+		WebRTCConnected:            s.WebRTCConnected,
+		SignalingError:             s.SignalingError,
+		RoomName:                   s.RoomName,
+		PeerConnection:             s.PeerConnection,
+		DataChannel:                s.DataChannel,
+		Scaledrone:                 s.Scaledrone,
 
 		CommitmentScheme: s.CommitmentScheme.Clone(),
 

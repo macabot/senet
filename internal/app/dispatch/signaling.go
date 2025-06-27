@@ -5,6 +5,7 @@ package dispatch
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/macabot/hypp"
@@ -23,12 +24,30 @@ type SendICECandidateMessage struct {
 }
 
 func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	event := payload.(window.Event)
+	roomName := payload.(string)
 	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
+	newState.RoomName = roomName
+	return newState
+}
+
+func SetRoomNameByEvent(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	event.PreventDefault()
+	return hypp.ActionAndPayload[*state.State]{
+		Action:  SetRoomName,
+		Payload: strings.ToUpper(event.Target().Value()),
 	}
-	newState.Signaling.RoomName = strings.ToUpper(event.Target().Value())
+}
+
+func SetWebSocketConnected(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.WebSocketConnected = payload.(bool)
+	return newState
+}
+
+func SetOpponentWebSocketConnected(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.OpponentWebsocketConnected = payload.(bool)
 	return newState
 }
 
@@ -41,31 +60,40 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 
 		sd.SetOnError(createScaledroneErrorHandler(dispatch))
 		sd.SetOnIsConnected(func() {
-			dispatch(setSignalingStepIsConnectedToWebSocket, roomName)
+			dispatch(SetRoomName, roomName)
+			dispatch(SetWebSocketConnected, true)
 		})
 		sd.SetOnMemberJoin(func(memberID string) {
-			dispatch(setSignalingStepOpponentIsConnectedToWebsocket, nil)
-		})
-		// sd.SetOnMemberLeave(func(memberID string) {
-		// 	dispatch(setSignalingStep, state.SignalingStepIsConnectedToWebSocket)
-		// })
+			if len(sd.Members()) != 2 {
+				dispatch(SetSignalingError, state.NewSignalingError(
+					"Unexpected number of users in the room",
+					fmt.Sprintf("%s has joined and there are now %d users in the room.", memberID, len(sd.Members())),
+					errors.New("unexpected number of users in room"),
+				))
+				return
+			}
 
-		if err := sd.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
-			dispatch(setSignalingError, state.SignalingError{
-				Summary:     "Failed to connect to create room",
-				Description: "ScaledroneChannel ID is not set.",
-				Err: &state.JSONSerializableErr{
-					Err: err,
-				},
-			})
-		} else if err != nil {
-			dispatch(setSignalingError, state.SignalingError{
-				Summary:     "Failed to connect to create room",
-				Description: "Unknown error",
-				Err: &state.JSONSerializableErr{
-					Err: err,
-				},
-			})
+			dispatch(SetOpponentWebSocketConnected, true)
+			dispatch(EffectsAction(hypp.Effect{Effecter: CreatePeerConnectionEffecter}), nil)
+		})
+		sd.SetOnMemberLeave(func(memberID string) {
+			if len(sd.Members()) < 2 {
+				dispatch(SetOpponentWebSocketConnected, false)
+			}
+		})
+
+		if err := sd.Connect(roomName); err != nil {
+			summary := "Failed to create room"
+			description := "Unknown error"
+			if errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
+				description = "ScaledroneChannel ID is not set."
+			}
+			signalingError := state.NewSignalingError(
+				summary,
+				description,
+				err,
+			)
+			dispatch(SetSignalingError, signalingError)
 		}
 	}()
 }
@@ -93,7 +121,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		})
 
 		if err := state.Scaledrone.Connect(roomName); errors.Is(err, scaledrone.ErrScaledroneChannelIDNotSet) {
-			dispatch(setSignalingError, state.SignalingError{
+			dispatch(SetSignalingError, state.SignalingError{
 				Summary:     "Failed to connect to join room",
 				Description: "ScaledroneChannel ID is not set.",
 				Err: &state.JSONSerializableErr{
@@ -101,7 +129,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 				},
 			})
 		} else if err != nil {
-			dispatch(setSignalingError, state.SignalingError{
+			dispatch(SetSignalingError, state.SignalingError{
 				Summary:     "Failed to connect to join room",
 				Description: "Unknown error",
 				Err: &state.JSONSerializableErr{
@@ -146,48 +174,50 @@ func createScaledroneErrorHandler(dispatch hypp.Dispatch) func(err error) {
 			"",
 			err,
 		)
-		dispatch(setSignalingError, signalingError)
+		dispatch(SetSignalingError, signalingError)
 	}
 }
 
-func setSignalingStep(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = payload.(state.SignalingStep)
-	return newState
-}
+// func setSignalingStep(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = payload.(state.SignalingStep)
+// 	return newState
+// }
 
-func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = state.SignalingStepIsConnectedToWebSocket
-	if roomName, ok := payload.(string); ok {
-		newState.Signaling.RoomName = roomName
-	}
-	return newState
-}
+// func setSignalingStepIsConnectedToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepIsConnectedToWebSocket
+// 	if roomName, ok := payload.(string); ok {
+// 		newState.Signaling.RoomName = roomName
+// 	}
+// 	return newState
+// }
 
-func setSignalingStepOpponentIsConnectedToWebsocket(s *state.State, _ hypp.Payload) hypp.Dispatchable {
-	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Step = state.SignalingStepOpponentIsConnectedToWebSocket
-	// TODO create offer/answer
+// func setSignalingStepOpponentIsConnectedToWebsocket(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+// 	newState := s.Clone()
+// 	if newState.Signaling == nil {
+// 		newState.Signaling = &state.Signaling{}
+// 	}
+// 	newState.Signaling.Step = state.SignalingStepOpponentIsConnectedToWebSocket
+// 	// TODO create offer/answer
 
-	return hypp.StateAndEffects[*state.State]{
-		State: newState,
-		Effects: []hypp.Effect{
-			{Effecter: createPeerConnectionEffecter},
-		},
-	}
-}
+// 	return hypp.StateAndEffects[*state.State]{
+// 		State: newState,
+// 		Effects: []hypp.Effect{
+// 			{Effecter: createPeerConnectionEffecter},
+// 		},
+// 	}
+// }
 
-func createPeerConnectionEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
+func CreatePeerConnectionEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	sd := payload.(*scaledrone.Scaledrone)
+
 	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
 	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
 		peerConnectionConfig.ICEServers = metered.FetchedICEServers
@@ -195,12 +225,12 @@ func createPeerConnectionEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
 		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
 	}
 
-	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
+	pc := webrtc.NewPeerConnection(peerConnectionConfig)
 
-	state.PeerConnection.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
+	pc.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
 		if event.Candidate().Truthy() {
 			window.Console().Debug("Sending ICE candidate", event.Candidate())
-			state.Scaledrone.SendMessage(SendICECandidateMessage{
+			sd.SendMessage(SendICECandidateMessage{
 				Kind:      "candidate",
 				Candidate: event.Candidate(),
 			})
@@ -208,19 +238,28 @@ func createPeerConnectionEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
 	})
 
 	// Handle incoming DataChannel for answering peer.
-	state.PeerConnection.SetOnDataChannel(func(dce webrtc.DataChannelEvent) {
+	pc.SetOnDataChannel(func(dce webrtc.DataChannelEvent) {
 		state.DataChannel = dce.Channel()
 		window.Console().Debug("Received DataChannel", state.DataChannel.Label())
 		setupDataChannelListeners(dispatch)
 	})
 
-	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-		window.Console().Debug("ICEConnectionState:", state.PeerConnection.ICEConnectionState())
+	pc.SetOnICEConnectionStateChange(func() {
+		window.Console().Debug("ICEConnectionState:", pc.ICEConnectionState())
 	})
 
-	state.PeerConnection.SetOnSignalingStateChange(func() {
-		window.Console().Debug("SignalingState:", state.PeerConnection.SignalingState())
+	pc.SetOnSignalingStateChange(func() {
+		window.Console().Debug("SignalingState:", pc.SignalingState())
 	})
+
+	dispatch(SetPeerConnection, pc)
+}
+
+func SetPeerConnection(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	pc := payload.(webrtc.PeerConnection)
+	newState := s.Clone()
+	newState.PeerConnection = pc
+	return newState
 }
 
 func setupDataChannelListeners(dispatch hypp.Dispatch) {
@@ -385,14 +424,14 @@ func sendDataChannelMessage(data string) {
 	state.DataChannel.Send(data)
 }
 
-func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	signalingError := payload.(*state.SignalingError)
 
 	var stateDescription string
-	if b, err := json.MarshalIndent(s.Signaling, "", "  "); err == nil {
-		stateDescription = "[Signaling state]\n" + string(b)
+	if b, err := json.MarshalIndent(s, "", "  "); err == nil {
+		stateDescription = "[State]\n" + string(b)
 	} else {
-		stateDescription = "[Could not JSON encode signaling state]\n" + err.Error()
+		stateDescription = "[Could not JSON encode state]\n" + err.Error()
 	}
 	if signalingError.Description == "" {
 		signalingError.Description = stateDescription
@@ -401,10 +440,7 @@ func setSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	}
 
 	newState := s.Clone()
-	if newState.Signaling == nil {
-		newState.Signaling = &state.Signaling{}
-	}
-	newState.Signaling.Error = signalingError
+	newState.SignalingError = signalingError
 	return newState
 }
 
@@ -419,13 +455,13 @@ func CreatePeerConnectionOfferEffect() hypp.Effect {
 				offer, err := state.PeerConnection.AwaitCreateOffer()
 				if err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to create peer connection offer", err))
+						dispatch(SetSignalingError, state.NewSignalingError(summary, "Failed to create peer connection offer", err))
 					})
 					return
 				}
 				if err := state.PeerConnection.AwaitSetLocalDescription(offer); err != nil {
 					window.RequestAnimationFrame(func() {
-						dispatch(setSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
+						dispatch(SetSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
 					})
 					return
 				}
