@@ -50,25 +50,10 @@ func NewPeerConnection(config PeerConnectionConfig) PeerConnection {
 	return PeerConnection{js.Global().Get("RTCPeerConnection").New(config.Value())}
 }
 
-type DataChannelOptions struct {
-	Negotiated bool
-	ID         int
-}
-
-func (o DataChannelOptions) Value() map[string]any {
-	return map[string]any{
-		"negotiated": o.Negotiated,
-		"id":         o.ID,
-	}
-}
-
-var DefaultDataChannelOptions = DataChannelOptions{
-	Negotiated: true,
-	ID:         0,
-}
-
-func (c PeerConnection) CreateDataChannel(label string, options DataChannelOptions) DataChannel {
-	return DataChannel{c.Value.Call("createDataChannel", label, options.Value())}
+// CreateDataChannel creates a new channel linked with the remote peer, over which any kind of data may be transmitted.
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createDataChannel
+func (c PeerConnection) CreateDataChannel(label string) DataChannel {
+	return DataChannel{c.Value.Call("createDataChannel", label)}
 }
 
 func (c PeerConnection) SetOnICEConnectionStateChange(onICEConnectionStateChange func()) {
