@@ -23,11 +23,19 @@ func Delayed(dispatchable hypp.Dispatchable, delay time.Duration) hypp.Effect {
 	}
 }
 
-func EffectsAction(effects ...hypp.Effect) hypp.Action[*state.State] {
+// EffectsToAction creates an action that returns the current state and given effects.
+func EffectsToAction(effects ...hypp.Effect) hypp.Action[*state.State] {
 	return func(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 		return hypp.StateAndEffects[*state.State]{
 			State:   s,
 			Effects: effects,
 		}
+	}
+}
+
+func DispatchablesToEffect(dispatchables ...hypp.Dispatchable) hypp.Effect {
+	return hypp.Effect{
+		Effecter: func(dispatch hypp.Dispatch, payload hypp.Payload) {
+		},
 	}
 }

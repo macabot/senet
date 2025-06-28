@@ -74,7 +74,7 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			}
 
 			dispatch(SetOpponentWebSocketConnected, true)
-			dispatch(EffectsAction(hypp.Effect{Effecter: CreatePeerConnectionEffecter}), nil)
+			dispatch(EffectsToAction(hypp.Effect{Effecter: CreatePeerConnectionEffecter}), nil)
 		})
 		sd.SetOnMemberLeave(func(memberID string) {
 			if len(sd.Members()) < 2 {
@@ -229,6 +229,15 @@ func CreatePeerConnectionEffecter(dispatch hypp.Dispatch, payload hypp.Payload) 
 
 	pc.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
 		if event.Candidate().Truthy() {
+			if !sd.IsConnected() {
+				dispatch(SetSignalingError, state.NewSignalingError(
+					"Failed to connect to opponent",
+					"Cannot send ICE candidate when WebSocket isn't connected.",
+					errors.New("websocket not connected"),
+				))
+				return
+			}
+
 			window.Console().Debug("Sending ICE candidate", event.Candidate())
 			sd.SendMessage(SendICECandidateMessage{
 				Kind:      "candidate",
@@ -238,9 +247,9 @@ func CreatePeerConnectionEffecter(dispatch hypp.Dispatch, payload hypp.Payload) 
 	})
 
 	// Handle incoming DataChannel for answering peer.
-	pc.SetOnDataChannel(func(dce webrtc.DataChannelEvent) {
-		state.DataChannel = dce.Channel()
-		window.Console().Debug("Received DataChannel", state.DataChannel.Label())
+	pc.SetOnDataChannel(func(event webrtc.DataChannelEvent) {
+		dc := event.Channel()
+		window.Console().Debug("Received DataChannel", dc.Label())
 		setupDataChannelListeners(dispatch)
 	})
 
@@ -262,24 +271,47 @@ func SetPeerConnection(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	return newState
 }
 
-func setupDataChannelListeners(dispatch hypp.Dispatch) {
-	state.DataChannel.SetOnOpen(func() {
-		window.Console().Debug("DataChannel opened")
-		dispatch(setSignalingStep, state.SignalingStepHasWebRTCConnection)
-	})
+func setupDataChannelListenersEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	dc := payload.(webrtc.DataChannel)
 
-	state.DataChannel.SetOnMessage(func(e js.Value) {
-		data := e.Get("data")
-		window.Console().Debug("<<< Receive DataChannel message", data)
+	dc.SetOnOpen(func() {
+		dispatch(DataChannelOpen, nil)
 	})
+	dc.SetOnMessage(func(e js.Value) {
+		dispatch(DataChannelMessage, e)
+	})
+	dc.SetOnClose(func() {
+		dispatch(DataChannelClose, dc)
+	})
+	dc.SetOnError(func(err error) {
+		dispatch(DataChannelError, error)
+	})
+}
 
-	state.DataChannel.SetOnClose(func() {
-		window.Console().Error("DataChannel closed")
-	})
+func DataChannelOpen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	window.Console().Debug("DataChannel opened")
+	newState := s.Clone()
+	newState.WebRTCConnected = true
+	return newState
+}
 
-	state.DataChannel.SetOnError(func(err error) {
-		window.Console().Error("DataChannel error", err.Error())
-	})
+func DataChannelMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	e := payload.(js.Value)
+	window.Console().Debug("<<< Receive data channel message", e.Get("data"))
+	return s
+}
+
+func DataChannelClose(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	dc := payload.(webrtc.DataChannel)
+	window.Console().Debug("DataChannel closed", dc.Label())
+	return hypp.StateAndEffects[*state.State]{
+		State: s,
+		Effects: []hypp.Effect{
+			{Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
+				dispatch(HangUp, nil)
+			}},
+		},
+	}
 }
 
 // func initSignaling(s *state.State) {
