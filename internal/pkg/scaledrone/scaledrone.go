@@ -273,6 +273,9 @@ func parseEventData(b []byte) any {
 	return nil
 }
 
+// SendMessage sends a message to the connected room.
+//
+// It must be possible to JSON encode the message. If not, the function will panic.
 func (s Scaledrone) SendMessage(message any) {
 	publishSent := PublishSend{
 		Kind:    "publish",
