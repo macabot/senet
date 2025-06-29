@@ -43,7 +43,7 @@ type Scaledrone struct {
 	members     []string
 
 	onIsConnected    func()
-	onReceiveMessage func(message any)
+	onReceiveMessage func(message json.RawMessage)
 	onError          func(err error)
 	onObserveMembers func(members []string)
 	onMemberJoin     func(memberID string)
@@ -66,7 +66,7 @@ func (s *Scaledrone) SetOnIsConnected(onIsConnected func()) {
 	s.onIsConnected = onIsConnected
 }
 
-func (s *Scaledrone) SetOnReceiveMessage(onReceiveMessage func(message any)) {
+func (s *Scaledrone) SetOnReceiveMessage(onReceiveMessage func(message json.RawMessage)) {
 	s.onReceiveMessage = onReceiveMessage
 }
 
@@ -138,11 +138,12 @@ func (s *Scaledrone) Connect(roomName string) error {
 		switch data := eventData.(type) {
 		case ErrorCallback:
 			var err error
-			if data.Callback == CallbackHandshake {
+			switch data.Callback {
+			case CallbackHandshake:
 				err = fmt.Errorf("%w: %s", ErrHandshakeFailed, rawData)
-			} else if data.Callback == CallbackSubscribe {
+			case CallbackSubscribe:
 				err = fmt.Errorf("%w: %s", ErrSubscribeFailed, rawData)
-			} else {
+			default:
 				err = fmt.Errorf("%w: %s", ErrUnknownCallback, rawData)
 			}
 			window.Console().Error(err.Error())
@@ -341,8 +342,8 @@ type PublishReceived struct {
 	// - JSON
 	// - string
 	// - number
-	Message  any    `json:"message"`
-	ClientID string `json:"client_id"`
+	Message  json.RawMessage `json:"message"`
+	ClientID string          `json:"client_id"`
 }
 
 type Member struct {
