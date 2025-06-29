@@ -231,9 +231,17 @@ func (c DataChannel) SetOnError(onError func(err error)) {
 	}))
 }
 
-func (c DataChannel) SetOnMessage(onMessage func(e js.Value)) {
+type MessageEvent struct {
+	js.Value
+}
+
+func (e MessageEvent) Data() string {
+	return e.Value.Get("data").String()
+}
+
+func (c DataChannel) SetOnMessage(onMessage func(event MessageEvent)) {
 	c.Value.Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
-		onMessage(args[0])
+		onMessage(MessageEvent{args[0]})
 		return nil
 	}))
 }
