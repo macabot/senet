@@ -69,6 +69,9 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(SetRoomName, roomName)
 			dispatch(SetWebSocketConnected, true)
 		})
+		sd.SetOnReceiveMessage(func(message json.RawMessage) {
+			dispatch(OnWebSocketMessage, message)
+		})
 		sd.SetOnObserveMembers(func(members []string) {
 			if len(members) != 1 {
 				dispatch(SetSignalingError, state.NewSignalingError(
@@ -111,6 +114,26 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(SetSignalingError, signalingError)
 		}
 	}()
+}
+
+func OnWebSocketMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	message := payload.(json.RawMessage)
+	if s.PeerConnection.IsUndefined() {
+		return hypp.StateAndEffects[*state.State]{
+			State: s,
+			Effects: []hypp.Effect{
+				{
+					Effecter: CreatePeerConnectionEffecter,
+					Payload:  s.Scaledrone,
+				},
+				{
+					Effecter: HandleIncomingMessageAfterPcReady,
+				},
+			},
+		}
+	} else {
+
+	}
 }
 
 type ScaledroneAndRoomName struct {
@@ -361,8 +384,8 @@ func setupDataChannelListenersEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 	dc.SetOnOpen(func() {
 		dispatch(DataChannelOpen, nil)
 	})
-	dc.SetOnMessage(func(e js.Value) {
-		dispatch(DataChannelMessage, e)
+	dc.SetOnMessage(func(event webrtc.MessageEvent) {
+		dispatch(DataChannelMessage, event)
 	})
 	dc.SetOnClose(func() {
 		dispatch(DataChannelClose, dc)
@@ -380,8 +403,8 @@ func DataChannelOpen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 }
 
 func DataChannelMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	e := payload.(js.Value)
-	window.Console().Debug("<<< Receive data channel message", e.Get("data"))
+	event := payload.(webrtc.MessageEvent)
+	window.Console().Debug("<<< Receive data channel message", event.Data())
 	return s
 }
 
@@ -426,106 +449,8 @@ func SetDataChannel(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	dc := payload.(webrtc.DataChannel)
 	newState := s.Clone()
 	newState.DataChannel = dc
-	newState.WebRTCConnected = true
 	return newState
 }
-
-// func initSignaling(s *state.State) {
-// 	peerConnectionConfig := webrtc.DefaultPeerConnectionConfig
-// 	if len(metered.FetchedICEServers) > 0 && metered.FetchErr == nil {
-// 		peerConnectionConfig.ICEServers = metered.FetchedICEServers
-// 	} else {
-// 		window.Console().Error("Could not fetch metered ICE servers. Using default peer connection config.", metered.FetchErr.Error())
-// 	}
-
-// 	state.PeerConnection = webrtc.NewPeerConnection(peerConnectionConfig)
-// 	state.DataChannel = state.PeerConnection.CreateDataChannel("chat", webrtc.DefaultDataChannelOptions)
-
-// 	if s.Signaling == nil {
-// 		s.Signaling = &state.Signaling{}
-// 	}
-// 	s.Signaling.Initialized = true
-// 	s.Signaling.ConnectionState = state.PeerConnection.ConnectionState()
-// 	s.Signaling.ICEConnectionState = state.PeerConnection.ICEConnectionState()
-// 	s.Signaling.ReadyState = state.DataChannel.ReadyState()
-// }
-
-func resetSignaling(s *state.State) {
-	if !state.DataChannel.IsUndefined() {
-		state.DataChannel.Close()
-	}
-	if !state.PeerConnection.IsUndefined() {
-		state.PeerConnection.Close()
-	}
-	if state.Scaledrone.IsConnected() {
-		state.Scaledrone.Reset()
-	}
-	state.PeerConnection = webrtc.PeerConnection{}
-	state.DataChannel = webrtc.DataChannel{}
-	s.Signaling = nil
-}
-
-// type SignalingStates struct {
-// 	ICEConnectionState string
-// 	ConnectionState    string
-// 	ReadyState         string
-// }
-
-// func SetSignalingStates(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-// 	signalingStates := payload.(SignalingStates)
-// 	newState := s.Clone()
-// 	if newState.Signaling == nil {
-// 		newState.Signaling = &state.Signaling{}
-// 	}
-
-// 	if newState.Signaling.ICEConnectionState != signalingStates.ICEConnectionState {
-// 		window.Console().Debug("ICEConnectionState: %s --> %s", newState.Signaling.ICEConnectionState, signalingStates.ICEConnectionState)
-// 	}
-// 	if newState.Signaling.ConnectionState != signalingStates.ConnectionState {
-// 		window.Console().Debug("ConnectionState: %s --> %s", newState.Signaling.ConnectionState, signalingStates.ConnectionState)
-// 	}
-// 	if newState.Signaling.ReadyState != signalingStates.ReadyState {
-// 		window.Console().Debug("ReadyState: %s --> %s", newState.Signaling.ReadyState, signalingStates.ReadyState)
-// 	}
-
-// 	newState.Signaling.ICEConnectionState = signalingStates.ICEConnectionState
-// 	newState.Signaling.ConnectionState = signalingStates.ConnectionState
-// 	newState.Signaling.ReadyState = signalingStates.ReadyState
-
-// 	return newState
-// }
-
-// func onSignalingStateChange(dispatch hypp.Dispatch) {
-// 	iceConnectionState := state.PeerConnection.ICEConnectionState()
-// 	connectionState := state.PeerConnection.ConnectionState()
-// 	readyState := state.DataChannel.ReadyState()
-// 	dispatch(SetSignalingStates, SignalingStates{
-// 		ICEConnectionState: iceConnectionState,
-// 		ConnectionState:    connectionState,
-// 		ReadyState:         readyState,
-// 	})
-// }
-
-// func OnICEConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-// 	state.PeerConnection.SetOnICEConnectionStateChange(func() {
-// 		onSignalingStateChange(dispatch)
-// 	})
-// 	return func() {}
-// }
-
-// func OnConnectionStateChangeSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-// 	state.PeerConnection.SetOnConnectionStateChange(func() {
-// 		onSignalingStateChange(dispatch)
-// 	})
-// 	return func() {}
-// }
-
-// func OnDataChannelOpenSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-// 	state.DataChannel.SetOnOpen(func() {
-// 		onSignalingStateChange(dispatch)
-// 	})
-// 	return func() {}
-// }
 
 func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
 	state.DataChannel.SetOnMessage(func(e js.Value) {
