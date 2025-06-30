@@ -17,16 +17,47 @@ import (
 	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
-type ICECandidateMessageToSend struct {
+type ICECandidateMessage struct {
 	// Kind must always equal "candidate".
 	Kind      string
 	Candidate webrtc.ICECandidate
 }
 
-type OfferMessageToSend struct {
+type OfferMessage struct {
 	// Kind must always equal "offer".
 	Kind  string
 	Offer webrtc.SessionDescription
+}
+
+type AnswerMessage struct {
+	// Kind must always equal "answer".
+	Kind   string
+	Answer webrtc.SessionDescription
+}
+
+type MessageDiscriminator struct {
+	Kind string
+}
+
+func parseReceivedMessage(raw json.RawMessage) any {
+	discriminator := MessageDiscriminator{}
+	mustJSONUnmarshal(raw, &discriminator)
+	switch discriminator.Kind {
+	case "candidate":
+		candidate := webrtc.ICECandidate{}
+		mustJSONUnmarshal(raw, &candidate)
+		return candidate
+	case "offer":
+		offer := webrtc.SessionDescription{}
+		mustJSONUnmarshal(raw, &offer)
+		return offer
+	case "answer":
+		answer := webrtc.SessionDescription{}
+		mustJSONUnmarshal(raw, &answer)
+		return answer
+	default:
+		return nil
+	}
 }
 
 func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -127,13 +158,76 @@ func OnWebSocketMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable 
 					Payload:  s.Scaledrone,
 				},
 				{
-					Effecter: HandleIncomingMessageAfterPcReady,
+					Effecter: HandleIncomingMessageAfterPcReadyEffecter,
+					Payload:  message,
 				},
 			},
 		}
 	} else {
-
+		return hypp.ActionAndPayload[*state.State]{
+			Action:  HandleIncomingMessageAfterPcReady,
+			Payload: message,
+		}
 	}
+}
+
+func HandleIncomingMessageAfterPcReadyEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	message := payload.(json.RawMessage)
+	dispatch(HandleIncomingMessageAfterPcReady, message)
+}
+
+func HandleIncomingMessageAfterPcReady(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	message := payload.(json.RawMessage)
+	parsedMessage := parseReceivedMessage(message)
+	switch m := parsedMessage.(type) {
+	case OfferMessage:
+		return hypp.StateAndEffects[*state.State]{
+			State: s,
+			Effects: []hypp.Effect{
+				{
+					Effecter: CreateAnswerEffecter,
+					Payload: CreateAnswerEffecterPayload{
+						PeerConnection: s.PeerConnection,
+						Scaledrone:     s.Scaledrone,
+						Offer:          m,
+					},
+				},
+			},
+		}
+	case AnswerMessage:
+		return hypp.StateAndEffects[*state.State]{
+			State: s,
+			Effects: []hypp.Effect{
+				{
+					Effecter: HandleAnswerMessageEffecter,
+					Payload: HandleAnswerMessageEffecerPayload{
+						PeerConnection: s.PeerConnection,
+						Answer:         m,
+					},
+				},
+			},
+		}
+	case ICECandidateMessage:
+		return hypp.StateAndEffects[*state.State]{
+			State: s,
+			Effects: []hypp.Effect{
+				{
+					Effecter: AddICECandidateEffecter,
+					Payload: AddICECandidateEffecterPayload{
+						PeerConnection: s.PeerConnection,
+						Candidate:      m.Candidate,
+					},
+				},
+			},
+		}
+	default:
+		return s
+	}
+}
+
+type HandleIncomingMessagePayload struct {
+	Message        json.RawMessage
+	PeerConnection webrtc.PeerConnection
 }
 
 type ScaledroneAndRoomName struct {
@@ -268,7 +362,7 @@ func CreatePeerConnectionEffecter(dispatch hypp.Dispatch, payload hypp.Payload) 
 			}
 
 			window.Console().Debug("Sending ICE candidate", event.Candidate())
-			sd.SendMessage(ICECandidateMessageToSend{
+			sd.SendMessage(ICECandidateMessage{
 				Kind:      "candidate",
 				Candidate: event.Candidate(),
 			})
@@ -352,7 +446,7 @@ func CreateOfferAndDataChannelEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 		return
 	}
 	window.Console().Debug("Sending offer:", offer.Value)
-	sd.SendMessage(OfferMessageToSend{
+	sd.SendMessage(OfferMessage{
 		Kind:  "offer",
 		Offer: offer,
 	})
