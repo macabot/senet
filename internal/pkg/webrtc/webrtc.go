@@ -211,6 +211,30 @@ func NewSessionDescription(kind string, sdp string) SessionDescription {
 	})}
 }
 
+func (d SessionDescription) ToJSON() map[string]any {
+	return map[string]any{
+		"type": d.Type(),
+		"sdp":  d.SDP(),
+	}
+}
+
+func (d SessionDescription) MarshalJSON() ([]byte, error) {
+	return json.Marshal(d.ToJSON())
+}
+
+func (d *SessionDescription) UnmarshalJSON(data []byte) error {
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+	d.Value = js.ValueOf(m)
+	return nil
+}
+
+func (d SessionDescription) Type() string {
+	return d.Value.Get("type").String()
+}
+
 func (d SessionDescription) SDP() string {
 	return d.Value.Get("sdp").String()
 }
