@@ -164,6 +164,15 @@ func (c ICECandidate) MarshalJSON() ([]byte, error) {
 	return json.Marshal(c.ToJSON())
 }
 
+func (c *ICECandidate) UnmarshalJSON(data []byte) error {
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+	c.Value = js.Global().Get("RTCIceCandidate").New(m)
+	return nil
+}
+
 type PeerConnectionICEEvent struct {
 	js.Value
 }
