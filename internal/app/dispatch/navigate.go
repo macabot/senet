@@ -15,6 +15,7 @@ func resetListeners() {
 	onThrowSticks = []func(s, newState *state.State) []hypp.Effect{}
 }
 
+// TODO move to state
 var beforeUnloadListenerID window.EventListenerID
 
 // addBeforeUnloadListener triggers a browser-generated confirmation dialog that asks users to confirm if they really want to leave the page when they try to close or reload it, or navigate somewhere else.
@@ -45,9 +46,16 @@ func GoToStartScreen(_ *state.State, _ hypp.Payload) hypp.Dispatchable {
 		Screen: state.StartScreen,
 	}
 	resetListeners()
-	resetSignaling(newState)
 	removeBeforeUnloadListener()
-	return newState
+	return hypp.StateAndEffects[*state.State]{
+		State: newState,
+		Effects: []hypp.Effect{
+			{
+				Effecter: HangUpEffecter,
+				Payload:  nil,
+			},
+		},
+	}
 }
 
 func GoToOnlineScreen(s *state.State, _ hypp.Payload) hypp.Dispatchable {

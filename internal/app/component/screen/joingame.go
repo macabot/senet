@@ -10,20 +10,19 @@ import (
 )
 
 func JoinGame(s *state.State) *hypp.VNode {
-	roomName := ""
-	signalingStep := state.SignalingStepDefault
 	var signalingError *hypp.VNode
-	if s.Signaling != nil {
-		roomName = s.Signaling.RoomName
-		signalingStep = s.Signaling.Step
-		signalingError = molecule.SignalingError(s.Signaling.Error)
+	if s.SignalingError != nil {
+		signalingError = molecule.SignalingError(s.SignalingError)
 	}
 
 	var status string
-	var ctaButton *hypp.VNode
+	ctaButton := html.Button(
+		nil,
+		hypp.Text("Next"),
+	)
 	inputDisabled := true
-	switch signalingStep {
-	case state.SignalingStepDefault:
+
+	if !s.ConnectingToWebsocket {
 		status = "Waiting for room name"
 		ctaButton = html.Button(
 			hypp.HProps{
@@ -33,32 +32,19 @@ func JoinGame(s *state.State) *hypp.VNode {
 			hypp.Text("Connect"),
 		)
 		inputDisabled = false
-	case state.SignalingStepConnectingToWebSocket:
+	} else if !s.WebSocketConnected {
 		status = "Joining room..."
-		ctaButton = html.Button(
-			nil,
-			hypp.Text("Next"),
-		)
-	case state.SignalingStepIsConnectedToWebSocket:
-	case state.SignalingStepOpponentIsConnectedToWebSocket,
-		state.SignalingStepNewGameOffer,
-		state.SignalingStepNewGameAnswer,
-		state.SignalingStepJoinGameOffer,
-		state.SignalingStepJoinGameAnswer:
+	} else if !s.OpponentWebsocketConnected {
+		status = "Waiting for opponent..."
+	} else if !s.WebRTCConnected {
 		status = "Connecting to opponent..."
-		ctaButton = html.Button(
-			nil,
-			hypp.Text("Next"),
-		)
-	case state.SignalingStepHasWebRTCConnection:
+	} else {
 		status = "Connected"
 		ctaButton = atom.Button(
 			"Next",
 			dispatch.JoinGame,
 			hypp.HProps{"class": "cta"},
 		)
-	default:
-		status = "Unknown signaling step"
 	}
 
 	return html.Main(
@@ -73,7 +59,7 @@ func JoinGame(s *state.State) *hypp.VNode {
 			},
 			append(
 				molecule.RoomNameField(molecule.RoomNameFieldProps{
-					RoomName:  roomName,
+					RoomName:  s.RoomName,
 					AutoFocus: true,
 					Disabled:  inputDisabled,
 				}),

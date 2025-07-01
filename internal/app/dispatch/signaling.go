@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/macabot/hypp"
-	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
 	"github.com/macabot/senet/internal/pkg/metered"
@@ -177,6 +176,10 @@ func HandleIncomingMessageAfterPcReadyEffecter(dispatch hypp.Dispatch, payload h
 }
 
 func HandleIncomingMessageAfterPcReady(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	if s.PeerConnection.IsUndefined() {
+		panic("HandleIncomingMessageAfterPcReady called without a valid peer connection.")
+	}
+
 	message := payload.(json.RawMessage)
 	parsedMessage := parseReceivedMessage(message)
 	switch m := parsedMessage.(type) {
@@ -189,7 +192,7 @@ func HandleIncomingMessageAfterPcReady(s *state.State, payload hypp.Payload) hyp
 					Payload: CreateAnswerEffecterPayload{
 						PeerConnection: s.PeerConnection,
 						Scaledrone:     s.Scaledrone,
-						Offer:          m,
+						Message:        m,
 					},
 				},
 			},
@@ -202,7 +205,7 @@ func HandleIncomingMessageAfterPcReady(s *state.State, payload hypp.Payload) hyp
 					Effecter: HandleAnswerMessageEffecter,
 					Payload: HandleAnswerMessageEffecerPayload{
 						PeerConnection: s.PeerConnection,
-						Answer:         m,
+						Message:        m,
 					},
 				},
 			},
@@ -223,6 +226,90 @@ func HandleIncomingMessageAfterPcReady(s *state.State, payload hypp.Payload) hyp
 	default:
 		return s
 	}
+}
+
+type CreateAnswerEffecterPayload struct {
+	PeerConnection webrtc.PeerConnection
+	Scaledrone     *scaledrone.Scaledrone
+	Message        OfferMessage
+}
+
+func CreateAnswerEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(CreateAnswerEffecterPayload)
+	go func() {
+		defer RecoverEffectPanic(dispatch)
+
+		if err := p.PeerConnection.AwaitSetRemoteDescription(p.Message.Offer); err != nil {
+			dispatch(SetSignalingError, state.NewSignalingError(
+				"Failed to connect to opponent",
+				"Failed to set peer connection remote description",
+				err,
+			))
+			return
+		}
+		answer, err := p.PeerConnection.AwaitCreateAnswer()
+		if err != nil {
+			dispatch(SetSignalingError, state.NewSignalingError(
+				"Failed to connect to opponent",
+				"Failed to create peer connection answer",
+				err,
+			))
+			return
+		}
+		if err := p.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
+			dispatch(SetSignalingError, state.NewSignalingError(
+				"Failed to connect to opponent",
+				"Failed to set peer connection local description",
+				err,
+			))
+			return
+		}
+		p.Scaledrone.SendMessage(AnswerMessage{
+			Kind:   "answer",
+			Answer: answer,
+		})
+	}()
+}
+
+type HandleAnswerMessageEffecerPayload struct {
+	PeerConnection webrtc.PeerConnection
+	Message        AnswerMessage
+}
+
+func HandleAnswerMessageEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(HandleAnswerMessageEffecerPayload)
+	go func() {
+		defer RecoverEffectPanic(dispatch)
+
+		if err := p.PeerConnection.AwaitSetRemoteDescription(p.Message.Answer); err != nil {
+			dispatch(SetSignalingError, state.NewSignalingError(
+				"Failed to connect to opponent",
+				"Failed to set peer connection remote description",
+				err,
+			))
+			return
+		}
+	}()
+}
+
+type AddICECandidateEffecterPayload struct {
+	PeerConnection webrtc.PeerConnection
+	Candidate      webrtc.ICECandidate
+}
+
+func AddICECandidateEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(AddICECandidateEffecterPayload)
+	go func() {
+		defer RecoverEffectPanic(dispatch)
+
+		if err := p.PeerConnection.AwaitAddICECandidate(p.Candidate); err != nil {
+			dispatch(SetSignalingError, state.NewSignalingError(
+				"Failed to connect to opponent",
+				"Failed to add ICE candidate",
+				err,
+			))
+		}
+	}()
 }
 
 type HandleIncomingMessagePayload struct {
@@ -515,6 +602,10 @@ func DataChannelClose(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	}
 }
 
+func HangUpEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	dispatch(HangUp, nil)
+}
+
 func HangUp(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 
@@ -546,12 +637,13 @@ func SetDataChannel(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	return newState
 }
 
-func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp.Unsubscribe {
-	state.DataChannel.SetOnMessage(func(e js.Value) {
-		data := e.Get("data")
+func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, payload hypp.Payload) hypp.Unsubscribe {
+	dc := payload.(webrtc.DataChannel)
+	dc.SetOnMessage(func(e webrtc.MessageEvent) {
+		data := e.Data()
 		window.Console().Debug("<<< Receive DataChannel message", data)
 		var message CommitmentSchemeMessage[json.RawMessage]
-		mustJSONUnmarshal([]byte(data.String()), &message)
+		mustJSONUnmarshal([]byte(data), &message)
 		switch message.Kind {
 		case SendIsReadyKind:
 			dispatch(ReceiveIsReady, nil)
@@ -586,9 +678,9 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, _ hypp.Payload) hypp
 	return func() {}
 }
 
-func sendDataChannelMessage(data string) {
+func sendDataChannelMessage(dc webrtc.DataChannel, data string) {
 	window.Console().Debug(">>> Send DataChannel message", data)
-	state.DataChannel.Send(data)
+	dc.Send(data)
 }
 
 func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -609,40 +701,4 @@ func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 	newState.SignalingError = signalingError
 	return newState
-}
-
-func CreatePeerConnectionOfferEffect() hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			go func() {
-				defer RecoverEffectPanic(dispatch)
-
-				summary := "Failed to create the offer"
-
-				offer, err := state.PeerConnection.AwaitCreateOffer()
-				if err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(SetSignalingError, state.NewSignalingError(summary, "Failed to create peer connection offer", err))
-					})
-					return
-				}
-				if err := state.PeerConnection.AwaitSetLocalDescription(offer); err != nil {
-					window.RequestAnimationFrame(func() {
-						dispatch(SetSignalingError, state.NewSignalingError(summary, "Failed to set peer connection local description", err))
-					})
-					return
-				}
-				state.PeerConnection.SetOnICECandidate(func(pci webrtc.PeerConnectionICEEvent) {
-					if pci.Candidate().Truthy() {
-						return
-					}
-					offer := state.PeerConnection.LocalDescription().SDP()
-					window.Console().Debug("Offer:", offer)
-					// window.RequestAnimationFrame(func() {
-					// 	dispatch(setOffer, offer)
-					// })
-				})
-			}()
-		},
-	}
 }

@@ -10,37 +10,25 @@ import (
 )
 
 func NewGame(s *state.State) *hypp.VNode {
-	roomName := ""
-	signalingStep := state.SignalingStepDefault
 	var signalingError *hypp.VNode
-	if s.Signaling != nil {
-		roomName = s.Signaling.RoomName
-		signalingStep = s.Signaling.Step
-		signalingError = molecule.SignalingError(s.Signaling.Error)
+	if s.SignalingError != nil {
+		signalingError = molecule.SignalingError(s.SignalingError)
 	}
 
 	var status string
 	var onClickNext hypp.Dispatchable
 	cta := false
-	switch signalingStep {
-	case state.SignalingStepDefault:
-		status = ""
-	case state.SignalingStepConnectingToWebSocket:
+
+	if s.RoomName == "" || !s.WebSocketConnected {
 		status = "Creating room..."
-	case state.SignalingStepIsConnectedToWebSocket:
+	} else if !s.OpponentWebsocketConnected {
 		status = "Waiting for opponent..."
-	case state.SignalingStepOpponentIsConnectedToWebSocket,
-		state.SignalingStepNewGameOffer,
-		state.SignalingStepNewGameAnswer,
-		state.SignalingStepJoinGameOffer,
-		state.SignalingStepJoinGameAnswer:
+	} else if !s.WebRTCConnected {
 		status = "Connecting to opponent..."
-	case state.SignalingStepHasWebRTCConnection:
+	} else {
 		status = "Connected"
 		onClickNext = dispatch.GoToWhoGoesFirstScreen
 		cta = true
-	default:
-		status = "Unknown signaling step"
 	}
 
 	// TODO Refactor this once Hypp supports fragments.
@@ -50,9 +38,9 @@ func NewGame(s *state.State) *hypp.VNode {
 	children = append(
 		children,
 		molecule.RoomNameField(molecule.RoomNameFieldProps{
-			RoomName: roomName,
+			RoomName: s.RoomName,
 			ReadOnly: true,
-			Disabled: roomName == "",
+			Disabled: s.RoomName == "",
 		})...,
 	)
 	children = append(
