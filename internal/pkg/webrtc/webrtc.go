@@ -128,6 +128,12 @@ func (c PeerConnection) AwaitCreateAnswer() (SessionDescription, error) {
 	return SessionDescription{v}, err
 }
 
+func (c PeerConnection) AwaitAddICECandidate(candidate ICECandidate) error {
+	p := c.Value.Call("addIceCandidate", candidate.Value)
+	_, err := promise.Await(p)
+	return err
+}
+
 type ICECandidate struct {
 	js.Value
 }
