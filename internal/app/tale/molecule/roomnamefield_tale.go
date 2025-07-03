@@ -12,12 +12,12 @@ import (
 func TaleRoomNameField() *fairytale.Tale[*state.State] {
 	return fairytale.New(
 		"RoomNameField",
-		&state.State{Signaling: &state.Signaling{RoomName: "R2D2"}},
+		&state.State{RoomName: "R2D2"},
 		func(s *state.State) *hypp.VNode {
 			return html.Div(
 				nil,
 				molecule.RoomNameField(molecule.RoomNameFieldProps{
-					RoomName: s.Signaling.RoomName,
+					RoomName: s.RoomName,
 				})...,
 			)
 		},
@@ -26,11 +26,11 @@ func TaleRoomNameField() *fairytale.Tale[*state.State] {
 			"Room name",
 			func(s *state.State, roomName string) hypp.Dispatchable {
 				newState := s.Clone()
-				newState.Signaling.RoomName = roomName
+				newState.RoomName = roomName
 				return newState
 			},
 			func(s *state.State) string {
-				return s.Signaling.RoomName
+				return s.RoomName
 			},
 		).WithMaxLength(4),
 	)
