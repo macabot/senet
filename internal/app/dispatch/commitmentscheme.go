@@ -7,12 +7,16 @@ import (
 	"github.com/macabot/hypp/js"
 	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/app/state"
+	"github.com/macabot/senet/internal/pkg/webrtc"
 )
 
 func registerCommitmentScheme() {
 	onThrowSticks = append(onThrowSticks, func(_, newState *state.State) []hypp.Effect {
 		return []hypp.Effect{
-			SendHasThrownEffect(),
+			{
+				Effecter: SendHasThrownEffecter,
+				Payload:  newState.DataChannel,
+			},
 		}
 	})
 
@@ -20,7 +24,16 @@ func registerCommitmentScheme() {
 		onMoveToSquare,
 		func(s, newState *state.State, from, to state.Position) []hypp.Effect {
 			effects := []hypp.Effect{
-				SendMoveEffect(from, to),
+				{
+					Effecter: SendMoveEffecter,
+					Payload: SendMovePayload{
+						DataChannel: newState.DataChannel,
+						Move: Move{
+							From: from,
+							To:   to,
+						},
+					},
+				},
 			}
 			isCaller := !newState.Game.HasTurn()
 			effects = append(effects, sendIsReady(newState, isCaller)...)
@@ -32,7 +45,10 @@ func registerCommitmentScheme() {
 		onNoMove,
 		func(s, newState *state.State) []hypp.Effect {
 			effects := []hypp.Effect{
-				SendNoMoveEffect(),
+				{
+					Effecter: SendNoMoveEffecter,
+					Payload:  newState.DataChannel,
+				},
 			}
 			isCaller := !newState.Game.HasTurn()
 			effects = append(effects, sendIsReady(newState, isCaller)...)
@@ -85,7 +101,7 @@ func sendIsReady(newState *state.State, isCaller bool) []hypp.Effect {
 		IsCaller:        isCaller,
 	}
 	effects := []hypp.Effect{
-		SendIsReadyEffect(),
+		{Effecter: SendIsReadyEffecter, Payload: newState.DataChannel},
 	}
 	if !isCaller && newState.CommitmentScheme.OpponentIsReady {
 		effects = append(effects, sendFlipperSecret(newState)...)
@@ -97,15 +113,12 @@ func sendIsReady(newState *state.State, isCaller bool) []hypp.Effect {
 	return effects
 }
 
-func SendIsReadyEffect() hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[struct{}]{
-				Kind: SendIsReadyKind,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+func SendIsReadyEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	dc := payload.(webrtc.DataChannel)
+	message := CommitmentSchemeMessage[struct{}]{
+		Kind: SendIsReadyKind,
 	}
+	dc.Send(mustJSONMarshal(message))
 }
 
 func ReceiveIsReady(s *state.State, _ hypp.Payload) hypp.Dispatchable {
@@ -129,20 +142,28 @@ func sendFlipperSecret(newState *state.State) []hypp.Effect {
 	newState.CommitmentScheme.IsCaller = false
 	newState.CommitmentScheme.FlipperSecret = state.GenerateSecret()
 	return []hypp.Effect{
-		SendFlipperSecretEffect(newState.CommitmentScheme.FlipperSecret),
+		{
+			Effecter: SendFlipperSecretEffecter,
+			Payload: SendFlipperSecretPayload{
+				DataChannel:   newState.DataChannel,
+				FlipperSecret: newState.CommitmentScheme.FlipperSecret,
+			},
+		},
 	}
 }
 
-func SendFlipperSecretEffect(flipperSecret string) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[string]{
-				Kind: SendFlipperSecretKind,
-				Data: flipperSecret,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+type SendFlipperSecretPayload struct {
+	DataChannel   webrtc.DataChannel
+	FlipperSecret string
+}
+
+func SendFlipperSecretEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(SendFlipperSecretPayload)
+	message := CommitmentSchemeMessage[string]{
+		Kind: SendFlipperSecretKind,
+		Data: p.FlipperSecret,
 	}
+	p.DataChannel.Send(mustJSONMarshal(message))
 }
 
 func ReceiveFlipperSecret(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -165,21 +186,29 @@ func sendCommitment(newState *state.State) hypp.StateAndEffects[*state.State] {
 	return hypp.StateAndEffects[*state.State]{
 		State: newState,
 		Effects: []hypp.Effect{
-			SendCommitmentEffect(newState.CommitmentScheme.Commitment),
+			{
+				Effecter: SendCommitmentEffecter,
+				Payload: SendCommitmentPayload{
+					DataChannel: newState.DataChannel,
+					Commitment:  newState.CommitmentScheme.Commitment,
+				},
+			},
 		},
 	}
 }
 
-func SendCommitmentEffect(commitment string) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[string]{
-				Kind: SendCommitmentKind,
-				Data: commitment,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+type SendCommitmentPayload struct {
+	DataChannel webrtc.DataChannel
+	Commitment  string
+}
+
+func SendCommitmentEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(SendCommitmentPayload)
+	message := CommitmentSchemeMessage[string]{
+		Kind: SendCommitmentKind,
+		Data: p.Commitment,
 	}
+	p.DataChannel.Send(mustJSONMarshal(message))
 }
 
 func ReceiveCommitment(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -200,21 +229,29 @@ func sendFlipperResults(newState *state.State) hypp.StateAndEffects[*state.State
 	return hypp.StateAndEffects[*state.State]{
 		State: newState,
 		Effects: []hypp.Effect{
-			SendFlipperResultsEffect(newState.CommitmentScheme.FlipperResults),
+			{
+				Effecter: SendFlipperResultsEffecter,
+				Payload: SendFlipperResultsPayload{
+					DataChannel:    newState.DataChannel,
+					FlipperResults: newState.CommitmentScheme.FlipperResults,
+				},
+			},
 		},
 	}
 }
 
-func SendFlipperResultsEffect(flipperResults [4]bool) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[[4]bool]{
-				Kind: SendFlipperResultsKind,
-				Data: flipperResults,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+type SendFlipperResultsPayload struct {
+	DataChannel    webrtc.DataChannel
+	FlipperResults [4]bool
+}
+
+func SendFlipperResultsEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(SendFlipperResultsPayload)
+	message := CommitmentSchemeMessage[[4]bool]{
+		Kind: SendFlipperResultsKind,
+		Data: p.FlipperResults,
 	}
+	p.DataChannel.Send(mustJSONMarshal(message))
 }
 
 func ReceiveFlipperResults(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -234,30 +271,34 @@ func sendCallerSecretAndPredictions(newState *state.State) hypp.StateAndEffects[
 	return hypp.StateAndEffects[*state.State]{
 		State: newState,
 		Effects: []hypp.Effect{
-			SendCallerSecretAndPredictionsEffect(
-				newState.CommitmentScheme.CallerSecret,
-				newState.CommitmentScheme.CallerPredictions,
-			),
+			{
+				Effecter: SendCallerSecretAndPredictionsEffecter,
+				Payload: SendCallerSecretAndPredictionsPayload{
+					DataChannel:       newState.DataChannel,
+					CallerSecret:      newState.CommitmentScheme.CallerSecret,
+					CallerPredictions: newState.CommitmentScheme.CallerPredictions,
+				},
+			},
 		},
 	}
 }
 
-func SendCallerSecretAndPredictionsEffect(
-	callerSecret string,
-	callerPredictions [4]bool,
-) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
-				Kind: SendCallerSecretAndPredictionsKind,
-				Data: CallerSecretAndPredictions{
-					Secret:      callerSecret,
-					Predictions: callerPredictions,
-				},
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
+type SendCallerSecretAndPredictionsPayload struct {
+	DataChannel       webrtc.DataChannel
+	CallerSecret      string
+	CallerPredictions [4]bool
+}
+
+func SendCallerSecretAndPredictionsEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(SendCallerSecretAndPredictionsPayload)
+	message := CommitmentSchemeMessage[CallerSecretAndPredictions]{
+		Kind: SendCallerSecretAndPredictionsKind,
+		Data: CallerSecretAndPredictions{
+			Secret:      p.CallerSecret,
+			Predictions: p.CallerPredictions,
 		},
 	}
+	p.DataChannel.Send(mustJSONMarshal(message))
 }
 
 func flipsToValue(flips [4]bool) js.Value {
@@ -289,15 +330,12 @@ func ReceiveCallerSecretAndPredictions(s *state.State, payload hypp.Payload) hyp
 	return newState
 }
 
-func SendHasThrownEffect() hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[struct{}]{
-				Kind: SendHasThrownKind,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+func SendHasThrownEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	dc := payload.(webrtc.DataChannel)
+	message := CommitmentSchemeMessage[struct{}]{
+		Kind: SendHasThrownKind,
 	}
+	dc.Send(mustJSONMarshal(message))
 }
 
 func ReceiveHasThrown(s *state.State, _ hypp.Payload) hypp.Dispatchable {
@@ -306,19 +344,18 @@ func ReceiveHasThrown(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	return newState
 }
 
-func SendMoveEffect(from, to state.Position) hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[Move]{
-				Kind: SendMoveKind,
-				Data: Move{
-					From: from,
-					To:   to,
-				},
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+type SendMovePayload struct {
+	DataChannel webrtc.DataChannel
+	Move        Move
+}
+
+func SendMoveEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	p := payload.(SendMovePayload)
+	message := CommitmentSchemeMessage[Move]{
+		Kind: SendMoveKind,
+		Data: p.Move,
 	}
+	p.DataChannel.Send(mustJSONMarshal(message))
 }
 
 func ReceiveMove(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -339,15 +376,12 @@ func ReceiveMove(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	}
 }
 
-func SendNoMoveEffect() hypp.Effect {
-	return hypp.Effect{
-		Effecter: func(dispatch hypp.Dispatch, _ hypp.Payload) {
-			message := CommitmentSchemeMessage[struct{}]{
-				Kind: SendNoMoveKind,
-			}
-			sendDataChannelMessage(mustJSONMarshal(message))
-		},
+func SendNoMoveEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
+	dc := payload.(webrtc.DataChannel)
+	message := CommitmentSchemeMessage[struct{}]{
+		Kind: SendNoMoveKind,
 	}
+	dc.Send(mustJSONMarshal(message))
 }
 
 func ReceiveNoMove(s *state.State, _ hypp.Payload) hypp.Dispatchable {
