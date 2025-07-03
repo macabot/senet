@@ -584,8 +584,6 @@ func DataChannelOpen(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 }
 
 func DataChannelMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	event := payload.(webrtc.MessageEvent)
-	window.Console().Debug("<<< Receive data channel message", event.Data())
 	return s
 }
 
@@ -676,11 +674,6 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, payload hypp.Payload
 		}
 	})
 	return func() {}
-}
-
-func sendDataChannelMessage(dc webrtc.DataChannel, data string) {
-	window.Console().Debug(">>> Send DataChannel message", data)
-	dc.Send(data)
 }
 
 func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/macabot/hypp/js"
+	"github.com/macabot/hypp/window"
 	"github.com/macabot/senet/internal/pkg/promise"
 )
 
@@ -280,12 +281,15 @@ func (e MessageEvent) Data() string {
 
 func (c DataChannel) SetOnMessage(onMessage func(event MessageEvent)) {
 	c.Value.Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
-		onMessage(MessageEvent{args[0]})
+		event := MessageEvent{args[0]}
+		window.Console().Debug("<<< Receive data channel message", event.Data())
+		onMessage(event)
 		return nil
 	}))
 }
 
 func (c DataChannel) Send(data string) {
+	window.Console().Debug(">>> Send DataChannel message", data)
 	c.Value.Call("send", data)
 }
 
