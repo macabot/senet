@@ -78,6 +78,9 @@ func SetRoomNameByEvent(s *state.State, payload hypp.Payload) hypp.Dispatchable 
 func SetWebSocketConnected(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 	newState.WebSocketConnected = payload.(bool)
+	if newState.WebSocketConnected {
+		newState.ConnectingToWebSocket = false
+	}
 	return newState
 }
 
@@ -130,6 +133,7 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			}
 		})
 
+		dispatch(SetConnectingToWebSocket, true)
 		if err := sd.Connect(roomName); err != nil {
 			summary := "Failed to create room"
 			description := "Unknown error"
@@ -144,6 +148,12 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(SetSignalingError, signalingError)
 		}
 	}()
+}
+
+func SetConnectingToWebSocket(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.ConnectingToWebSocket = payload.(bool)
+	return newState
 }
 
 func OnWebSocketMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -361,6 +371,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			}
 		})
 
+		dispatch(SetConnectingToWebSocket, true)
 		if err := sd.Connect(roomName); err != nil {
 			summary := "Failed to join room"
 			description := "Unknown error"
@@ -383,10 +394,13 @@ func JoinGame(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 
 	return hypp.StateAndEffects[*state.State]{
 		State: s,
-		Effects: []hypp.Effect{{Effecter: JoinRoomEffecter, Payload: ScaledroneAndRoomName{
-			Scaledrone: s.Scaledrone,
-			RoomName:   s.RoomName,
-		}}},
+		Effects: []hypp.Effect{{
+			Effecter: JoinRoomEffecter,
+			Payload: ScaledroneAndRoomName{
+				Scaledrone: s.Scaledrone,
+				RoomName:   s.RoomName,
+			},
+		}},
 	}
 }
 

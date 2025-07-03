@@ -12,8 +12,7 @@ type State struct {
 	ShowMenu           bool
 	HideOrientationTip bool
 
-	// TODO Update ConnectingToWebsocket in dispatch package.
-	ConnectingToWebsocket      bool
+	ConnectingToWebSocket      bool
 	WebSocketConnected         bool
 	OpponentWebsocketConnected bool
 	WebRTCConnected            bool
@@ -39,7 +38,7 @@ func (s *State) Clone() *State {
 		ShowMenu:           s.ShowMenu,
 		HideOrientationTip: s.HideOrientationTip,
 
-		ConnectingToWebsocket:      s.ConnectingToWebsocket,
+		ConnectingToWebSocket:      s.ConnectingToWebSocket,
 		WebSocketConnected:         s.WebSocketConnected,
 		OpponentWebsocketConnected: s.OpponentWebsocketConnected,
 		WebRTCConnected:            s.WebRTCConnected,

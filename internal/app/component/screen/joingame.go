@@ -22,7 +22,7 @@ func JoinGame(s *state.State) *hypp.VNode {
 	)
 	inputDisabled := true
 
-	if !s.ConnectingToWebsocket {
+	if !s.ConnectingToWebSocket {
 		status = "Waiting for room name"
 		ctaButton = html.Button(
 			hypp.HProps{
@@ -42,7 +42,7 @@ func JoinGame(s *state.State) *hypp.VNode {
 		status = "Connected"
 		ctaButton = atom.Button(
 			"Next",
-			dispatch.JoinGame,
+			dispatch.GoToWhoGoesFirstScreen,
 			hypp.HProps{"class": "cta"},
 		)
 	}
@@ -55,7 +55,8 @@ func JoinGame(s *state.State) *hypp.VNode {
 		html.H1(nil, hypp.Text("Online - Join Game")),
 		html.Form(
 			hypp.HProps{
-				"class": "flex-column-center",
+				"class":    "flex-column-center",
+				"onsubmit": dispatch.JoinGame,
 			},
 			append(
 				molecule.RoomNameField(molecule.RoomNameFieldProps{
