@@ -44,7 +44,7 @@ func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
 				"title":     title,
 				"class":     "room-name-input",
 				"value":     props.RoomName,
-				"oninput":   dispatch.SetRoomName,
+				"oninput":   dispatch.SetRoomNameByEvent,
 			},
 		),
 		explanation,

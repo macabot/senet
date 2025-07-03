@@ -10,11 +10,6 @@ import (
 )
 
 func JoinGame(s *state.State) *hypp.VNode {
-	var signalingError *hypp.VNode
-	if s.SignalingError != nil {
-		signalingError = molecule.SignalingError(s.SignalingError)
-	}
-
 	var status string
 	ctaButton := html.Button(
 		nil,
@@ -65,7 +60,7 @@ func JoinGame(s *state.State) *hypp.VNode {
 					Disabled:  inputDisabled,
 				}),
 				html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
-				signalingError,
+				molecule.SignalingErrors(s.SignalingErrors),
 				html.Div(
 					nil,
 					molecule.CancelToStartPageButton(),

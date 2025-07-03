@@ -6,11 +6,22 @@ import (
 	"github.com/macabot/senet/internal/app/state"
 )
 
-func SignalingError(signalingError *state.SignalingError) *hypp.VNode {
-	if signalingError == nil {
+func SignalingErrors(signalingErrors []state.SignalingError) *hypp.VNode {
+	if len(signalingErrors) == 0 {
 		return nil
 	}
 
+	var children []*hypp.VNode
+	for _, e := range signalingErrors {
+		children = append(children, signalingError(e))
+	}
+	return html.Section(
+		nil,
+		children...,
+	)
+}
+
+func signalingError(signalingError state.SignalingError) *hypp.VNode {
 	return html.Div(
 		nil,
 		html.P(

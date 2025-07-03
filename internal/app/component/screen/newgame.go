@@ -10,11 +10,6 @@ import (
 )
 
 func NewGame(s *state.State) *hypp.VNode {
-	var signalingError *hypp.VNode
-	if s.SignalingError != nil {
-		signalingError = molecule.SignalingError(s.SignalingError)
-	}
-
 	var status string
 	var onClickNext hypp.Dispatchable
 	cta := false
@@ -47,7 +42,7 @@ func NewGame(s *state.State) *hypp.VNode {
 		children,
 		html.P(nil, hypp.Text("Share the room name with your opponent.")),
 		html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
-		signalingError,
+		molecule.SignalingErrors(s.SignalingErrors),
 		html.Div(
 			nil,
 			molecule.CancelToStartPageButton(),

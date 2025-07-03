@@ -16,7 +16,7 @@ type State struct {
 	WebSocketConnected         bool
 	OpponentWebsocketConnected bool
 	WebRTCConnected            bool
-	SignalingError             *SignalingError
+	SignalingErrors            []SignalingError
 	RoomName                   string
 	PeerConnection             webrtc.PeerConnection
 	DataChannel                webrtc.DataChannel
@@ -42,7 +42,7 @@ func (s *State) Clone() *State {
 		WebSocketConnected:         s.WebSocketConnected,
 		OpponentWebsocketConnected: s.OpponentWebsocketConnected,
 		WebRTCConnected:            s.WebRTCConnected,
-		SignalingError:             s.SignalingError,
+		SignalingErrors:            s.SignalingErrors,
 		RoomName:                   s.RoomName,
 		PeerConnection:             s.PeerConnection,
 		DataChannel:                s.DataChannel,

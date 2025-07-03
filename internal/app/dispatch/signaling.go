@@ -107,7 +107,7 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		})
 		sd.SetOnObserveMembers(func(members []string) {
 			if len(members) != 1 {
-				dispatch(SetSignalingError, state.NewSignalingError(
+				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
 					fmt.Sprintf("After creating the room there are %d users in the room insetead of 1: %s.", len(sd.Members()), strings.Join(members, ", ")),
 					errors.New("unexpected number of users in room"),
@@ -116,7 +116,7 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		})
 		sd.SetOnMemberJoin(func(memberID string) {
 			if len(sd.Members()) != 2 {
-				dispatch(SetSignalingError, state.NewSignalingError(
+				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
 					fmt.Sprintf("%s has joined and there are now %d users in the room.", memberID, len(sd.Members())),
 					errors.New("unexpected number of users in room"),
@@ -145,7 +145,7 @@ func CreateRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 				description,
 				err,
 			)
-			dispatch(SetSignalingError, signalingError)
+			dispatch(AddSignalingError, signalingError)
 		}
 	}()
 }
@@ -250,7 +250,7 @@ func CreateAnswerEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		defer RecoverEffectPanic(dispatch)
 
 		if err := p.PeerConnection.AwaitSetRemoteDescription(p.Message.Offer); err != nil {
-			dispatch(SetSignalingError, state.NewSignalingError(
+			dispatch(AddSignalingError, state.NewSignalingError(
 				"Failed to connect to opponent",
 				"Failed to set peer connection remote description",
 				err,
@@ -259,7 +259,7 @@ func CreateAnswerEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		}
 		answer, err := p.PeerConnection.AwaitCreateAnswer()
 		if err != nil {
-			dispatch(SetSignalingError, state.NewSignalingError(
+			dispatch(AddSignalingError, state.NewSignalingError(
 				"Failed to connect to opponent",
 				"Failed to create peer connection answer",
 				err,
@@ -267,7 +267,7 @@ func CreateAnswerEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			return
 		}
 		if err := p.PeerConnection.AwaitSetLocalDescription(answer); err != nil {
-			dispatch(SetSignalingError, state.NewSignalingError(
+			dispatch(AddSignalingError, state.NewSignalingError(
 				"Failed to connect to opponent",
 				"Failed to set peer connection local description",
 				err,
@@ -292,7 +292,7 @@ func HandleAnswerMessageEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		defer RecoverEffectPanic(dispatch)
 
 		if err := p.PeerConnection.AwaitSetRemoteDescription(p.Message.Answer); err != nil {
-			dispatch(SetSignalingError, state.NewSignalingError(
+			dispatch(AddSignalingError, state.NewSignalingError(
 				"Failed to connect to opponent",
 				"Failed to set peer connection remote description",
 				err,
@@ -313,7 +313,7 @@ func AddICECandidateEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		defer RecoverEffectPanic(dispatch)
 
 		if err := p.PeerConnection.AwaitAddICECandidate(p.Candidate); err != nil {
-			dispatch(SetSignalingError, state.NewSignalingError(
+			dispatch(AddSignalingError, state.NewSignalingError(
 				"Failed to connect to opponent",
 				"Failed to add ICE candidate",
 				err,
@@ -345,7 +345,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		})
 		sd.SetOnObserveMembers(func(members []string) {
 			if len(members) > 2 {
-				dispatch(SetSignalingError, state.NewSignalingError(
+				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
 					fmt.Sprintf("After joining the room there are %d users in the room instead of 2.: %s", len(sd.Members()), strings.Join(members, ", ")),
 					errors.New("unexpected number of users in room"),
@@ -358,7 +358,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		})
 		sd.SetOnMemberJoin(func(memberID string) {
 			if len(sd.Members()) != 2 {
-				dispatch(SetSignalingError, state.NewSignalingError(
+				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
 					fmt.Sprintf("%s has joined and there are now %d users in the room.", memberID, len(sd.Members())),
 					errors.New("unexpected number of users in room"),
@@ -383,7 +383,7 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 				description,
 				err,
 			)
-			dispatch(SetSignalingError, signalingError)
+			dispatch(AddSignalingError, signalingError)
 		}
 	}()
 }
@@ -423,7 +423,7 @@ func createScaledroneErrorHandler(dispatch hypp.Dispatch) func(err error) {
 			"",
 			err,
 		)
-		dispatch(SetSignalingError, signalingError)
+		dispatch(AddSignalingError, signalingError)
 	}
 }
 
@@ -454,7 +454,7 @@ func CreatePeerConnectionEffecter(dispatch hypp.Dispatch, payload hypp.Payload) 
 	pc.SetOnICECandidate(func(event webrtc.PeerConnectionICEEvent) {
 		if event.Candidate().Truthy() {
 			if !sd.IsConnected() {
-				dispatch(SetSignalingError, state.NewSignalingError(
+				dispatch(AddSignalingError, state.NewSignalingError(
 					"Failed to connect to opponent",
 					"Cannot send ICE candidate when WebSocket isn't connected.",
 					errors.New("websocket not connected"),
@@ -517,7 +517,7 @@ func CreateOfferAndDataChannelEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 	sd := peerConnectionAndWebSocket.Scaledrone
 
 	if !sd.IsConnected() {
-		dispatch(SetSignalingError, state.NewSignalingError(
+		dispatch(AddSignalingError, state.NewSignalingError(
 			"Failed to connect to the opponent",
 			"Cannot create offer when WebSocket isn't connected.",
 			errors.New("websocket not connected"),
@@ -531,7 +531,7 @@ func CreateOfferAndDataChannelEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 
 	offer, err := pc.AwaitCreateOffer()
 	if err != nil {
-		dispatch(SetSignalingError, state.NewSignalingError(
+		dispatch(AddSignalingError, state.NewSignalingError(
 			"Failed to connect to the opponent",
 			"Failed to create peer connection offer",
 			err,
@@ -539,7 +539,7 @@ func CreateOfferAndDataChannelEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 		return
 	}
 	if err := pc.AwaitSetLocalDescription(offer); err != nil {
-		dispatch(SetSignalingError, state.NewSignalingError(
+		dispatch(AddSignalingError, state.NewSignalingError(
 			"Failed to connect to the opponent",
 			"Failed to set peer connection local description",
 			err,
@@ -586,7 +586,7 @@ func setupDataChannelListenersEffecter(dispatch hypp.Dispatch, payload hypp.Payl
 		dispatch(DataChannelClose, dc)
 	})
 	dc.SetOnError(func(err error) {
-		dispatch(SetSignalingError, state.NewSignalingError("DataChannel error", err.Error(), err))
+		dispatch(AddSignalingError, state.NewSignalingError("DataChannel error", err.Error(), err))
 	})
 }
 
@@ -634,7 +634,7 @@ func HangUp(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState.WebRTCConnected = false
 	newState.OpponentWebsocketConnected = false
 	newState.WebRTCConnected = false
-	newState.SignalingError = nil
+	newState.SignalingErrors = nil
 	newState.RoomName = ""
 	newState.PeerConnection = webrtc.PeerConnection{}
 	newState.DataChannel = webrtc.DataChannel{}
@@ -690,7 +690,7 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, payload hypp.Payload
 	return func() {}
 }
 
-func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+func AddSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	signalingError := payload.(*state.SignalingError)
 
 	var stateDescription string
@@ -705,7 +705,9 @@ func SetSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 		signalingError.Description += "\n" + stateDescription
 	}
 
+	fmt.Println(signalingError.Description)
+
 	newState := s.Clone()
-	newState.SignalingError = signalingError
+	newState.SignalingErrors = append(newState.SignalingErrors, *signalingError)
 	return newState
 }
