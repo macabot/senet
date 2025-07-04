@@ -63,6 +63,7 @@ func SetRoomName(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	roomName := payload.(string)
 	newState := s.Clone()
 	newState.RoomName = roomName
+	newState.RoomNameErrorMessage = ""
 	return newState
 }
 
@@ -73,6 +74,12 @@ func SetRoomNameByEvent(s *state.State, payload hypp.Payload) hypp.Dispatchable 
 		Action:  SetRoomName,
 		Payload: strings.ToUpper(event.Target().Value()),
 	}
+}
+
+func SetRoomNameErrorMessage(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	newState := s.Clone()
+	newState.RoomNameErrorMessage = payload.(string)
+	return newState
 }
 
 func SetWebSocketConnected(s *state.State, payload hypp.Payload) hypp.Dispatchable {
@@ -332,6 +339,22 @@ type ScaledroneAndRoomName struct {
 	RoomName   string
 }
 
+func JoinGame(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	event := payload.(window.Event)
+	event.PreventDefault()
+
+	return hypp.StateAndEffects[*state.State]{
+		State: s,
+		Effects: []hypp.Effect{{
+			Effecter: JoinRoomEffecter,
+			Payload: ScaledroneAndRoomName{
+				Scaledrone: s.Scaledrone,
+				RoomName:   s.RoomName,
+			},
+		}},
+	}
+}
+
 func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 	scaledroneAndRoomName := payload.(ScaledroneAndRoomName)
 	sd := scaledroneAndRoomName.Scaledrone
@@ -344,6 +367,11 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(SetWebSocketConnected, true)
 		})
 		sd.SetOnObserveMembers(func(members []string) {
+			if len(members) == 1 {
+				dispatch(SetRoomNameErrorMessage, "Unknown room name")
+				dispatch(HangUp, HangUpPayload{KeepRoomName: true})
+			}
+
 			if len(members) > 2 {
 				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
@@ -386,22 +414,6 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(AddSignalingError, signalingError)
 		}
 	}()
-}
-
-func JoinGame(s *state.State, payload hypp.Payload) hypp.Dispatchable {
-	event := payload.(window.Event)
-	event.PreventDefault()
-
-	return hypp.StateAndEffects[*state.State]{
-		State: s,
-		Effects: []hypp.Effect{{
-			Effecter: JoinRoomEffecter,
-			Payload: ScaledroneAndRoomName{
-				Scaledrone: s.Scaledrone,
-				RoomName:   s.RoomName,
-			},
-		}},
-	}
 }
 
 func createScaledroneErrorHandler(dispatch hypp.Dispatch) func(err error) {
@@ -618,7 +630,11 @@ func HangUpEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 	dispatch(HangUp, nil)
 }
 
-func HangUp(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+type HangUpPayload struct {
+	KeepRoomName bool
+}
+
+func HangUp(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	newState := s.Clone()
 
 	if !newState.DataChannel.IsUndefined() {
@@ -635,7 +651,10 @@ func HangUp(s *state.State, _ hypp.Payload) hypp.Dispatchable {
 	newState.OpponentWebsocketConnected = false
 	newState.WebRTCConnected = false
 	newState.SignalingErrors = nil
-	newState.RoomName = ""
+	if p, ok := payload.(HangUpPayload); !ok || !p.KeepRoomName {
+		newState.RoomName = ""
+		newState.RoomNameErrorMessage = ""
+	}
 	newState.PeerConnection = webrtc.PeerConnection{}
 	newState.DataChannel = webrtc.DataChannel{}
 	newState.Scaledrone = scaledrone.NewScaledrone()

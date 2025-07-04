@@ -7,10 +7,11 @@ import (
 )
 
 type RoomNameFieldProps struct {
-	RoomName  string
-	ReadOnly  bool
-	Disabled  bool
-	AutoFocus bool
+	RoomName             string
+	RoomNameErrorMessage string
+	ReadOnly             bool
+	Disabled             bool
+	AutoFocus            bool
 }
 
 func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
@@ -21,6 +22,13 @@ func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
 		explanation = html.P(
 			hypp.HProps{"class": "explanation"},
 			hypp.Text("The room name consists of 2 letters alternated with 2 numbers. For example, \"R2D2\"."),
+		)
+	}
+	var errorMessage *hypp.VNode
+	if props.RoomNameErrorMessage != "" {
+		errorMessage = html.P(
+			hypp.HProps{"class": "error"},
+			hypp.Text(props.RoomNameErrorMessage),
 		)
 	}
 	id := "room-name"
@@ -47,6 +55,7 @@ func RoomNameField(props RoomNameFieldProps) []*hypp.VNode {
 				"oninput":   dispatch.SetRoomNameByEvent,
 			},
 		),
+		errorMessage,
 		explanation,
 	}
 }

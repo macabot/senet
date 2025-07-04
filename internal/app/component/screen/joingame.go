@@ -55,9 +55,10 @@ func JoinGame(s *state.State) *hypp.VNode {
 			},
 			append(
 				molecule.RoomNameField(molecule.RoomNameFieldProps{
-					RoomName:  s.RoomName,
-					AutoFocus: true,
-					Disabled:  inputDisabled,
+					RoomName:             s.RoomName,
+					RoomNameErrorMessage: s.RoomNameErrorMessage,
+					AutoFocus:            true,
+					Disabled:             inputDisabled,
 				}),
 				html.P(hypp.HProps{"class": "status"}, hypp.Text(status)),
 				molecule.SignalingErrors(s.SignalingErrors),

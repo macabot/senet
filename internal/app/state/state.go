@@ -18,6 +18,7 @@ type State struct {
 	WebRTCConnected            bool
 	SignalingErrors            []SignalingError
 	RoomName                   string
+	RoomNameErrorMessage       string
 	PeerConnection             webrtc.PeerConnection
 	DataChannel                webrtc.DataChannel
 	Scaledrone                 *scaledrone.Scaledrone
@@ -44,6 +45,7 @@ func (s *State) Clone() *State {
 		WebRTCConnected:            s.WebRTCConnected,
 		SignalingErrors:            s.SignalingErrors,
 		RoomName:                   s.RoomName,
+		RoomNameErrorMessage:       s.RoomNameErrorMessage,
 		PeerConnection:             s.PeerConnection,
 		DataChannel:                s.DataChannel,
 		Scaledrone:                 s.Scaledrone,
