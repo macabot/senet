@@ -693,19 +693,9 @@ func OnDataChannelMessageSubscriber(dispatch hypp.Dispatch, payload hypp.Payload
 func AddSignalingError(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	signalingError := payload.(*state.SignalingError)
 
-	var stateDescription string
-	if b, err := json.MarshalIndent(s, "", "  "); err == nil {
-		stateDescription = "[State]\n" + string(b)
-	} else {
-		stateDescription = "[Could not JSON encode state]\n" + err.Error()
-	}
-	if signalingError.Description == "" {
-		signalingError.Description = stateDescription
-	} else {
-		signalingError.Description += "\n" + stateDescription
-	}
-
-	fmt.Println(signalingError.Description)
+	window.Console().Error(signalingError.Summary)
+	window.Console().Error(signalingError.Description)
+	window.Console().Error(signalingError.Error())
 
 	newState := s.Clone()
 	newState.SignalingErrors = append(newState.SignalingErrors, *signalingError)
