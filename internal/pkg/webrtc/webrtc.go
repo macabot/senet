@@ -202,6 +202,7 @@ func (c PeerConnection) SignalingState() string {
 // Close terminates the RTCPeerConnection's ICE agent, ending any ongoing ICE processing and any active streams.
 // See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
 func (c PeerConnection) Close() {
+	window.Console().Debug("Closing PeerConnection")
 	c.Value.Call("close")
 }
 
@@ -282,14 +283,15 @@ func (e MessageEvent) Data() string {
 func (c DataChannel) SetOnMessage(onMessage func(event MessageEvent)) {
 	c.Value.Set("onmessage", js.FuncOf(func(this js.Value, args []js.Value) any {
 		event := MessageEvent{args[0]}
-		window.Console().Debug("<<< Receive data channel message", event.Data())
+		window.Console().Debug("<<< Receive data channel message:", event.Data())
 		onMessage(event)
 		return nil
 	}))
 }
 
+// TODO Should 'data' be of type []byte?
 func (c DataChannel) Send(data string) {
-	window.Console().Debug(">>> Send DataChannel message", data)
+	window.Console().Debug(">>> Send DataChannel message:", data)
 	c.Value.Call("send", data)
 }
 
@@ -304,5 +306,6 @@ func (c DataChannel) Label() string {
 // Close closes the RTCDataChannel. Closure of the data channel is not instantaneous.
 // See https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/close
 func (c DataChannel) Close() {
+	window.Console().Debug("Closing DataChannel", c.Label())
 	c.Value.Call("close")
 }

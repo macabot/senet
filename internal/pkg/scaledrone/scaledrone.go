@@ -126,13 +126,10 @@ func (s *Scaledrone) Connect(roomName string) error {
 			Callback: CallbackHandshake,
 		}
 		ws.Send(mustJSONMarshal(handshake))
-		window.Console().Debug("Sent handshake")
 	})
 
 	ws.OnMessage(func(e js.Value) {
 		rawData := e.Get("data").String()
-		window.Console().Debug("Received message", rawData)
-
 		eventData := parseEventData([]byte(rawData))
 
 		switch data := eventData.(type) {
@@ -158,7 +155,6 @@ func (s *Scaledrone) Connect(roomName string) error {
 				Callback: CallbackSubscribe,
 			}
 			ws.Send(mustJSONMarshal(subscribe))
-			window.Console().Debug("Subscribed to room", observableRoomName)
 		case SubscribeCallback:
 			s.isConnected = true
 			window.Console().Debug("Ready to send messages")

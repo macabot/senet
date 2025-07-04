@@ -365,24 +365,28 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 		sd.SetOnError(createScaledroneErrorHandler(dispatch))
 		sd.SetOnIsConnected(func() {
 			dispatch(SetWebSocketConnected, true)
+			if len(sd.Members()) == 2 {
+				dispatch(CreatePeerConnection, nil)
+			}
 		})
 		sd.SetOnObserveMembers(func(members []string) {
 			if len(members) == 1 {
 				dispatch(SetRoomNameErrorMessage, "Unknown room name")
 				dispatch(HangUp, HangUpPayload{KeepRoomName: true})
+				dispatch(FocusOnRoomNameInput, nil)
+				return
 			}
 
-			if len(members) > 2 {
+			if len(members) != 2 {
 				dispatch(AddSignalingError, state.NewSignalingError(
 					"Unexpected number of users in the room",
-					fmt.Sprintf("After joining the room there are %d users in the room instead of 2.: %s", len(sd.Members()), strings.Join(members, ", ")),
+					fmt.Sprintf("After joining the room there are %d users in the room instead of 2: %s", len(sd.Members()), strings.Join(members, ", ")),
 					errors.New("unexpected number of users in room"),
 				))
 				return
 			}
 
-			dispatch(SetOpponentWebSocketConnected, len(members) == 2)
-			dispatch(CreatePeerConnection, nil)
+			dispatch(SetOpponentWebSocketConnected, true)
 		})
 		sd.SetOnMemberJoin(func(memberID string) {
 			if len(sd.Members()) != 2 {
@@ -414,6 +418,26 @@ func JoinRoomEffecter(dispatch hypp.Dispatch, payload hypp.Payload) {
 			dispatch(AddSignalingError, signalingError)
 		}
 	}()
+}
+
+func FocusOnRoomNameInput(s *state.State, _ hypp.Payload) hypp.Dispatchable {
+	return hypp.StateAndEffects[*state.State]{
+		State: s,
+		Effects: []hypp.Effect{{
+			Effecter: FocusOnRoomNameInputEffecter,
+		}},
+	}
+}
+
+// FIXME Why is the focus not put on the room name input field?
+func FocusOnRoomNameInputEffecter(dispatch hypp.Dispatch, _ hypp.Payload) {
+	id := "room-name"
+	input := window.Document().GetElementById(id)
+	if input.IsNull() {
+		window.Console().Error("Could not find room name input element by ID '%s'.", id)
+		return
+	}
+	input.Call("focus")
 }
 
 func createScaledroneErrorHandler(dispatch hypp.Dispatch) func(err error) {
@@ -635,6 +659,7 @@ type HangUpPayload struct {
 }
 
 func HangUp(s *state.State, payload hypp.Payload) hypp.Dispatchable {
+	window.Console().Debug("HangUp")
 	newState := s.Clone()
 
 	if !newState.DataChannel.IsUndefined() {
@@ -643,10 +668,9 @@ func HangUp(s *state.State, payload hypp.Payload) hypp.Dispatchable {
 	if !newState.PeerConnection.IsUndefined() {
 		newState.PeerConnection.Close()
 	}
-	if newState.Scaledrone.IsConnected() {
-		newState.Scaledrone.Reset()
-	}
+	newState.Scaledrone.Reset()
 
+	newState.ConnectingToWebSocket = false
 	newState.WebRTCConnected = false
 	newState.OpponentWebsocketConnected = false
 	newState.WebRTCConnected = false
