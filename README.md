@@ -1,5 +1,7 @@
 # senet
 
+Play at <https://senet.macabot.com>.
+
 ## Dependencies
 
 - [Go](https://go.dev/)
@@ -167,55 +169,45 @@ class client-hypp,fairytale syscallJS;
 graph LR
     GitHub
 
-    subgraph home
+    subgraph home["Home"]
         home-play["play"]
         home-rules["rules"]
         home-sourceCode["source-code"]
     end
 
-    subgraph rules
-        rules-home["home"]
+    subgraph rules["Rules"]
         rules-start["start"]
+        rules-home["home"]
     end
 
-    subgraph SPA
+    subgraph Play
 
-        subgraph start
+        subgraph start["Start"]
             start-home["home"]
-            tutorial
-            local
-            online
+            start-tutorial["tutorial"]
+            start-local["local"]
+            start-online["online"]
             start-rules["rules"]
             start-sourceCode["source-code"]
         end
 
-        subgraph signaling
-            subgraph signaling-choices
-                new
-                join
-                signaling-back["back"]
-            end
-            subgraph NewGameOffer
-                NewGameOffer-next["next"]
-                NewGameOffer-cancel["cancel"]
-            end
-            subgraph NewGameAnswer
-                NewGameAnswer-next["next"]
-                NewGameAnswer-cancel["cancel"]
-            end
-            subgraph JoinGameOffer
-                JoinGameOffer-next["next"]
-                JoinGameOffer-cancel["cancel"]
-            end
-            subgraph JoinGameAnswer
-                JoinGameAnswer-next["next"]
-                JoinGameAnswer-cancel["cancel"]
-            end
+        subgraph online["Online"]
+            online-new["new"]
+            online-join["join"]
+            online-back["back"]
+        end
+        subgraph NewGame
+            NewGame-next["next"]
+            NewGame-cancel["cancel"]
+        end
+        subgraph JoinGame
+            JoinGame-next["next"]
+            JoinGame-cancel["cancel"]
         end
 
         subgraph WhoGoesFirst
             WhoGoesFirst-play["play"]
-            WhoGoesFirst-back["back"]
+            WhoGoesFirst-cancel["cancel"]
         end
 
         subgraph game
@@ -223,6 +215,8 @@ graph LR
         end
 
     end
+
+    GitHub --> home
 
     home-play --> start
     home-rules --> rules
@@ -234,22 +228,23 @@ graph LR
     start-home --> home
     start-rules --> rules
     start-sourceCode --> GitHub
-    online --> signaling-choices
-    signaling-back --> start
-    tutorial --> game
-    local --> game
-    new --> NewGameOffer
-    join --> JoinGameOffer
-    NewGameOffer-next --> NewGameAnswer
-    NewGameOffer-cancel --> start
-    JoinGameOffer-next --> JoinGameAnswer
-    JoinGameOffer-cancel --> start
-    NewGameAnswer-next --> WhoGoesFirst
-    NewGameAnswer-cancel --> start
-    JoinGameAnswer-next --> WhoGoesFirst
-    JoinGameAnswer-cancel --> start
+    start-online --> online
+    start-tutorial --> game
+    start-local --> game
+
+    online-back --> start
+    online-new --> NewGame
+    online-join --> JoinGame
+
+    NewGame-next --> WhoGoesFirst
+    NewGame-cancel --> start
+
+    JoinGame-next --> WhoGoesFirst
+    JoinGame-cancel --> start
+
     WhoGoesFirst-play --> game
-    WhoGoesFirst-back --> signaling-choices
+    WhoGoesFirst-cancel --> start
+
     game-quit --> start
 ```
 

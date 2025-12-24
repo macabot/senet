@@ -32,6 +32,10 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+button.cta {
+  background-color: lightgreen;
+}
+
 details summary {
   cursor: pointer;
 }
@@ -58,4 +62,11 @@ details[open] summary {
   padding: 1rem;
   border: 1px solid black;
   border-radius: 10px;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
